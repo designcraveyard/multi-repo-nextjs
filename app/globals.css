@@ -7,7 +7,7 @@
    ============================================================================= */
 
 :root {
-  /* Surfaces */
+  /* ── Surfaces ─────────────────────────────────────────────────────────────── */
   --surface-base-primary:          #FFFFFF;
   --surface-base-low-contrast:     #F5F5F5;
   --surface-base-high-contrast:    #E5E5E5;
@@ -32,7 +32,7 @@
   --surface-error-solid:           #DC2626;
   --surface-error-subtle:          #FEE2E2;
 
-  /* Typography */
+  /* ── Typography colors ────────────────────────────────────────────────────── */
   --text-primary:                  #0F172A;
   --text-secondary:                #334155;
   --text-muted:                    #64748B;
@@ -46,7 +46,7 @@
   --text-warning:                  #B45309;
   --text-error:                    #B91C1C;
 
-  /* Icons */
+  /* ── Icons ────────────────────────────────────────────────────────────────── */
   --icon-primary:                  #020617;
   --icon-secondary:                #475569;
   --icon-muted:                    #94A3B8;
@@ -59,7 +59,7 @@
   --icon-warning:                  #F59E0B;
   --icon-error:                    #EF4444;
 
-  /* Borders */
+  /* ── Borders ──────────────────────────────────────────────────────────────── */
   --border-default:                #E5E5E5;
   --border-muted:                  #F5F5F5;
   --border-active:                 #020617;
@@ -68,9 +68,105 @@
   --border-warning:                #D97706;
   --border-error:                  #DC2626;
 
-  /* Legacy aliases — kept so existing code doesn't break */
+  /* ── Legacy aliases — kept so existing code doesn't break ─────────────────── */
   --background: var(--surface-base-primary);
   --foreground: var(--text-primary);
+
+  /* ── Radius — Figma Simantic-Dimensions collection (Mobile default) ─────────
+     Desktop breakpoint overrides below in @media (min-width: 768px).           */
+  --radius-none: 0px;
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-2xl:  32px;
+  --radius-full: 9999px;
+
+  /* ── Spacing — Figma Primitives/Dimensions 4px grid ─────────────────────────
+     Mirrors Tailwind's numeric spacing scale (--space-N = N × 4px).
+     Web: use Tailwind utilities (p-4, gap-6) or var(--space-4) in custom CSS.  */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* ── Typography — Figma "🎨 Tokens & Styles" page (node 18:577) ─────────────
+     Font family: Inter (Figma) → Geist Sans on web (existing next/font setup).
+     Each role exposes three vars: -size, -leading (line-height), -weight.
+     Overline roles additionally expose -tracking (letter-spacing).             */
+
+  /* Font families */
+  --font-sans: var(--font-geist-sans), "Inter", system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), "JetBrains Mono", monospace;
+
+  /* Display */
+  --typography-display-lg-size: 96px;  --typography-display-lg-leading: 128px; --typography-display-lg-weight: 400;
+  --typography-display-md-size: 80px;  --typography-display-md-leading:  96px; --typography-display-md-weight: 400;
+  --typography-display-sm-size: 64px;  --typography-display-sm-leading:  96px; --typography-display-sm-weight: 400;
+
+  /* Heading */
+  --typography-heading-lg-size: 56px;  --typography-heading-lg-leading: 64px;  --typography-heading-lg-weight: 700;
+  --typography-heading-md-size: 48px;  --typography-heading-md-leading: 56px;  --typography-heading-md-weight: 700;
+  --typography-heading-sm-size: 40px;  --typography-heading-sm-leading: 44px;  --typography-heading-sm-weight: 700;
+
+  /* Title */
+  --typography-title-lg-size: 28px;    --typography-title-lg-leading: 32px;    --typography-title-lg-weight: 700;
+  --typography-title-md-size: 24px;    --typography-title-md-leading: 28px;    --typography-title-md-weight: 700;
+  --typography-title-sm-size: 20px;    --typography-title-sm-leading: 24px;    --typography-title-sm-weight: 700;
+
+  /* Body */
+  --typography-body-lg-size: 16px;     --typography-body-lg-leading: 24px;     --typography-body-lg-weight: 400;
+  --typography-body-md-size: 14px;     --typography-body-md-leading: 20px;     --typography-body-md-weight: 400;
+  --typography-body-sm-size: 12px;     --typography-body-sm-leading: 16px;     --typography-body-sm-weight: 400;
+
+  /* Body Emphasized */
+  --typography-body-lg-em-size: 16px;  --typography-body-lg-em-leading: 24px;  --typography-body-lg-em-weight: 500;
+  --typography-body-md-em-size: 14px;  --typography-body-md-em-leading: 20px;  --typography-body-md-em-weight: 500;
+  --typography-body-sm-em-size: 12px;  --typography-body-sm-em-leading: 16px;  --typography-body-sm-em-weight: 500;
+
+  /* CTA */
+  --typography-cta-lg-size: 16px;      --typography-cta-lg-leading: 24px;      --typography-cta-lg-weight: 600;
+  --typography-cta-md-size: 14px;      --typography-cta-md-leading: 20px;      --typography-cta-md-weight: 600;
+  --typography-cta-sm-size: 12px;      --typography-cta-sm-leading: 16px;      --typography-cta-sm-weight: 600;
+
+  /* Link */
+  --typography-link-lg-size: 16px;     --typography-link-lg-leading: 24px;     --typography-link-lg-weight: 500;
+  --typography-link-md-size: 14px;     --typography-link-md-leading: 20px;     --typography-link-md-weight: 500;
+  --typography-link-sm-size: 12px;     --typography-link-sm-leading: 16px;     --typography-link-sm-weight: 500;
+
+  /* Caption */
+  --typography-caption-md-size: 12px;  --typography-caption-md-leading: 16px;  --typography-caption-md-weight: 400;
+  --typography-caption-sm-size: 10px;  --typography-caption-sm-leading: 12px;  --typography-caption-sm-weight: 400;
+
+  /* Badge */
+  --typography-badge-md-size: 10px;    --typography-badge-md-leading: 12px;    --typography-badge-md-weight: 600;
+  --typography-badge-sm-size:  8px;    --typography-badge-sm-leading: 10px;    --typography-badge-sm-weight: 600;
+
+  /* Overline (letter-spacing from Figma: sm/md = 1px, lg = 2px) */
+  --typography-overline-sm-size:  8px; --typography-overline-sm-leading: 12px; --typography-overline-sm-weight: 700; --typography-overline-sm-tracking: 1px;
+  --typography-overline-md-size: 10px; --typography-overline-md-leading: 12px; --typography-overline-md-weight: 700; --typography-overline-md-tracking: 1px;
+  --typography-overline-lg-size: 12px; --typography-overline-lg-leading: 16px; --typography-overline-lg-weight: 700; --typography-overline-lg-tracking: 2px;
+}
+
+/* ── Desktop radius overrides (Figma Simantic-Dimensions › Desktop mode) ─────── */
+@media (min-width: 768px) {
+  :root {
+    --radius-xs:  8px;
+    --radius-sm:  12px;
+    --radius-md:  16px;
+    --radius-lg:  24px;
+    --radius-xl:  32px;
+    --radius-2xl: 48px;
+  }
 }
 
 @theme inline {
@@ -78,6 +174,50 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Radius → Tailwind rounded-* utilities */
+  --radius-xs:   var(--radius-xs);
+  --radius-sm:   var(--radius-sm);
+  --radius-md:   var(--radius-md);
+  --radius-lg:   var(--radius-lg);
+  --radius-xl:   var(--radius-xl);
+  --radius-2xl:  var(--radius-2xl);
+  --radius-full: var(--radius-full);
+
+  /* Spacing → Tailwind p-*, m-*, gap-* utilities */
+  --spacing-1:  var(--space-1);
+  --spacing-2:  var(--space-2);
+  --spacing-3:  var(--space-3);
+  --spacing-4:  var(--space-4);
+  --spacing-5:  var(--space-5);
+  --spacing-6:  var(--space-6);
+  --spacing-8:  var(--space-8);
+  --spacing-10: var(--space-10);
+  --spacing-12: var(--space-12);
+  --spacing-16: var(--space-16);
+  --spacing-20: var(--space-20);
+  --spacing-24: var(--space-24);
+
+  /* Font sizes → Tailwind text-* utilities */
+  --text-display-lg:  var(--typography-display-lg-size);
+  --text-display-md:  var(--typography-display-md-size);
+  --text-display-sm:  var(--typography-display-sm-size);
+  --text-heading-lg:  var(--typography-heading-lg-size);
+  --text-heading-md:  var(--typography-heading-md-size);
+  --text-heading-sm:  var(--typography-heading-sm-size);
+  --text-title-lg:    var(--typography-title-lg-size);
+  --text-title-md:    var(--typography-title-md-size);
+  --text-title-sm:    var(--typography-title-sm-size);
+  --text-body-lg:     var(--typography-body-lg-size);
+  --text-body-md:     var(--typography-body-md-size);
+  --text-body-sm:     var(--typography-body-sm-size);
+  --text-caption-md:  var(--typography-caption-md-size);
+  --text-caption-sm:  var(--typography-caption-sm-size);
+  --text-badge-md:    var(--typography-badge-md-size);
+  --text-badge-sm:    var(--typography-badge-sm-size);
+  --text-overline-lg: var(--typography-overline-lg-size);
+  --text-overline-md: var(--typography-overline-md-size);
+  --text-overline-sm: var(--typography-overline-sm-size);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -107,7 +247,7 @@
     --surface-error-solid:           #FCA5A5;
     --surface-error-subtle:          #450A0A;
 
-    /* Typography */
+    /* Typography colors */
     --text-primary:                  #F8FAFC;
     --text-secondary:                #CBD5E1;
     --text-muted:                    #94A3B8;
