@@ -1,79 +1,291 @@
 @import "tailwindcss";
 
 /* =============================================================================
-   Design Tokens — sourced from Figma "bubbles-kit" › Semantic collection
-   NeutralLight = light mode  |  NeutralDark = dark mode
+   Design Tokens — sourced from Figma "bubbles-kit"
+   Layer 1: Primitives  (--color-*)   raw Tailwind palette values
+   Layer 2: Semantic    (--surfaces-* --typography-* --icons-* --border-*)
+            NeutralLight = light mode  |  NeutralDark = dark mode
    DO NOT edit hex values manually — update in Figma, re-run /design-token-sync.
    ============================================================================= */
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   LAYER 1 — Primitives (Figma collection: "Primitives")
+   Names match Figma 1:1: Colors/<palette>/<shade>
+   ─────────────────────────────────────────────────────────────────────────── */
+
 :root {
-  /* ── Surfaces ─────────────────────────────────────────────────────────────── */
-  --surface-base-primary:          #FFFFFF;
-  --surface-base-low-contrast:     #F5F5F5;
-  --surface-base-high-contrast:    #E5E5E5;
-  --surface-inverse-primary:       #000000;
-  --surface-inverse-low-contrast:  #171717;
-  --surface-inverse-high-contrast: #262626;
+  /* Slate */
+  --color-slate-50:   #F8FAFC;
+  --color-slate-100:  #F1F5F9;
+  --color-slate-200:  #E2E8F0;
+  --color-slate-300:  #CBD5E1;
+  --color-slate-400:  #94A3B8;
+  --color-slate-500:  #64748B;
+  --color-slate-600:  #475569;
+  --color-slate-700:  #334155;
+  --color-slate-800:  #1E293B;
+  --color-slate-900:  #0F172A;
+  --color-slate-950:  #020617;
 
-  --surface-brand:                 #09090B;
-  --surface-brand-low-contrast:    #E4E4E7;
-  --surface-brand-high-contrast:   #D4D4D8;
-  --surface-brand-hover:           #27272A;
-  --surface-brand-pressed:         #09090B;
+  /* Zinc */
+  --color-zinc-50:    #FAFAFA;
+  --color-zinc-100:   #F4F4F5;
+  --color-zinc-200:   #E4E4E7;
+  --color-zinc-300:   #D4D4D8;
+  --color-zinc-400:   #A1A1AA;
+  --color-zinc-500:   #71717A;
+  --color-zinc-600:   #52525B;
+  --color-zinc-700:   #3F3F46;
+  --color-zinc-800:   #27272A;
+  --color-zinc-900:   #18181B;
+  --color-zinc-950:   #09090B;
 
-  --surface-accent-primary:        #4F46E5;
-  --surface-accent-low-contrast:   #C7D2FE;
-  --surface-accent-high-contrast:  #A5B4FC;
+  /* Neutral */
+  --color-neutral-50:   #FAFAFA;
+  --color-neutral-100:  #F5F5F5;
+  --color-neutral-200:  #E5E5E5;
+  --color-neutral-300:  #D4D4D4;
+  --color-neutral-400:  #A3A3A3;
+  --color-neutral-500:  #737373;
+  --color-neutral-600:  #525252;
+  --color-neutral-700:  #404040;
+  --color-neutral-800:  #262626;
+  --color-neutral-900:  #171717;
+  --color-neutral-950:  #0A0A0A;
 
-  --surface-success-solid:         #16A34A;
-  --surface-success-subtle:        #DCFCE7;
-  --surface-warning-solid:         #D97706;
-  --surface-warning-subtle:        #FEF3C7;
-  --surface-error-solid:           #DC2626;
-  --surface-error-subtle:          #FEE2E2;
+  /* Red */
+  --color-red-50:   #FEF2F2;
+  --color-red-100:  #FEE2E2;
+  --color-red-200:  #FECACA;
+  --color-red-300:  #FCA5A5;
+  --color-red-400:  #F87171;
+  --color-red-500:  #EF4444;
+  --color-red-600:  #DC2626;
+  --color-red-700:  #B91C1C;
+  --color-red-800:  #991B1B;
+  --color-red-900:  #7F1D1D;
+  --color-red-950:  #450A0A;
 
-  /* ── Typography colors ────────────────────────────────────────────────────── */
-  --text-primary:                  #0F172A;
-  --text-secondary:                #334155;
-  --text-muted:                    #64748B;
-  --text-inverse-primary:          #F8FAFC;
-  --text-inverse-secondary:        #CBD5E1;
-  --text-inverse-muted:            #64748B;
-  --text-brand:                    #09090B;
-  --text-on-brand-primary:         #FFFFFF;
-  --text-accent:                   #4F46E5;
-  --text-success:                  #15803D;
-  --text-warning:                  #B45309;
-  --text-error:                    #B91C1C;
+  /* Amber */
+  --color-amber-50:   #FFFBEB;
+  --color-amber-100:  #FEF3C7;
+  --color-amber-200:  #FDE68A;
+  --color-amber-300:  #FCD34D;
+  --color-amber-400:  #FBBF24;
+  --color-amber-500:  #F59E0B;
+  --color-amber-600:  #D97706;
+  --color-amber-700:  #B45309;
+  --color-amber-800:  #92400E;
+  --color-amber-900:  #78350F;
+  --color-amber-950:  #431407;
 
-  /* ── Icons ────────────────────────────────────────────────────────────────── */
-  --icon-primary:                  #020617;
-  --icon-secondary:                #475569;
-  --icon-muted:                    #94A3B8;
-  --icon-inverse-primary:          #F8FAFC;
-  --icon-inverse-secondary:        #94A3B8;
-  --icon-inverse-muted:            #1E293B;
-  --icon-brand:                    #09090B;
-  --icon-on-brand-primary:         #F8FAFC;
-  --icon-success:                  #16A34A;
-  --icon-warning:                  #F59E0B;
-  --icon-error:                    #EF4444;
+  /* Green */
+  --color-green-50:   #F0FDF4;
+  --color-green-100:  #DCFCE7;
+  --color-green-200:  #BBF7D0;
+  --color-green-300:  #86EFAC;
+  --color-green-400:  #4ADE80;
+  --color-green-500:  #22C55E;
+  --color-green-600:  #16A34A;
+  --color-green-700:  #15803D;
+  --color-green-800:  #166534;
+  --color-green-900:  #14532D;
+  --color-green-950:  #052E16;
 
-  /* ── Borders ──────────────────────────────────────────────────────────────── */
-  --border-default:                #E5E5E5;
-  --border-muted:                  #F5F5F5;
-  --border-active:                 #020617;
-  --border-brand:                  #09090B;
-  --border-success:                #16A34A;
-  --border-warning:                #D97706;
-  --border-error:                  #DC2626;
+  /* Indigo */
+  --color-indigo-50:   #EEF2FF;
+  --color-indigo-100:  #E0E7FF;
+  --color-indigo-200:  #C7D2FE;
+  --color-indigo-300:  #A5B4FC;
+  --color-indigo-400:  #818CF8;
+  --color-indigo-500:  #6366F1;
+  --color-indigo-600:  #4F46E5;
+  --color-indigo-700:  #4338CA;
+  --color-indigo-800:  #3730A3;
+  --color-indigo-900:  #312E81;
+  --color-indigo-950:  #1E1B4B;
 
-  /* ── Legacy aliases — kept so existing code doesn't break ─────────────────── */
-  --background: var(--surface-base-primary);
-  --foreground: var(--text-primary);
+  /* Base */
+  --color-base-black: #000000;
+  --color-base-white: #FFFFFF;
+}
 
-  /* ── Radius — Figma Simantic-Dimensions collection (Mobile default) ─────────
-     Desktop breakpoint overrides below in @media (min-width: 768px).           */
+/* ─────────────────────────────────────────────────────────────────────────────
+   LAYER 2 — Semantic (Figma collection: "Semantic", mode: NeutralLight)
+   Names match Figma 1:1, kebab-cased:
+     Surfaces/BrandInteractive  →  --surfaces-brand-interactive
+     Typography/OnBrandPrimary  →  --typography-on-brand-primary
+     Border/Brand               →  --border-brand
+   Each token is a CSS alias to the corresponding Primitive token.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Surfaces/Base ─────────────────────────────────────────────────────── */
+  --surfaces-base-primary:                  var(--color-base-white);
+  --surfaces-base-primary-hover:            var(--color-neutral-100);
+  --surfaces-base-primary-pressed:          var(--color-neutral-200);
+  --surfaces-base-low-contrast:             var(--color-neutral-100);
+  --surfaces-base-low-contrast-hover:       var(--color-neutral-200);
+  --surfaces-base-low-contrast-pressed:     var(--color-neutral-300);
+  --surfaces-base-high-contrast:            var(--color-neutral-200);
+  --surfaces-base-high-contrast-hover:      var(--color-neutral-300);
+  --surfaces-base-high-contrast-pressed:    var(--color-neutral-400);
+
+  /* ── Surfaces/Inverse ─────────────────────────────────────────────────── */
+  --surfaces-inverse-primary:               var(--color-base-black);
+  --surfaces-inverse-primary-hover:         var(--color-zinc-800);
+  --surfaces-inverse-primary-pressed:       var(--color-zinc-600);
+  --surfaces-inverse-low-contrast:          var(--color-neutral-900);
+  --surfaces-inverse-low-contrast-hover:    var(--color-neutral-800);
+  --surfaces-inverse-low-contrast-pressed:  var(--color-neutral-700);
+  --surfaces-inverse-high-contrast:         var(--color-neutral-800);
+  --surfaces-inverse-high-contrast-hover:   var(--color-neutral-700);
+  --surfaces-inverse-high-contrast-pressed: var(--color-neutral-600);
+
+  /* ── Surfaces/BrandInteractive ───────────────────────────────────────── */
+  --surfaces-brand-interactive:                        var(--color-zinc-950);
+  --surfaces-brand-interactive-hover:                  var(--color-zinc-800);
+  --surfaces-brand-interactive-pressed:                var(--color-zinc-950);
+  --surfaces-brand-interactive-low-contrast:           var(--color-zinc-200);
+  --surfaces-brand-interactive-low-contrast-hover:     var(--color-zinc-300);
+  --surfaces-brand-interactive-low-contrast-pressed:   var(--color-zinc-400);
+  --surfaces-brand-interactive-high-contrast:          var(--color-zinc-300);
+  --surfaces-brand-interactive-high-contrast-hover:    var(--color-zinc-400);
+  --surfaces-brand-interactive-high-contrast-pressed:  var(--color-zinc-500);
+
+  /* ── Surfaces/Accent ──────────────────────────────────────────────────── */
+  --surfaces-accent-primary:               var(--color-indigo-600);
+  --surfaces-accent-primary-hover:         var(--color-indigo-700);
+  --surfaces-accent-primary-pressed:       var(--color-indigo-800);
+  --surfaces-accent-low-contrast:          var(--color-indigo-200);
+  --surfaces-accent-low-contrast-hover:    var(--color-indigo-300);
+  --surfaces-accent-low-contrast-pressed:  var(--color-indigo-400);
+  --surfaces-accent-high-contrast:         var(--color-indigo-300);
+  --surfaces-accent-high-contrast-hover:   var(--color-indigo-400);
+  --surfaces-accent-high-contrast-pressed: var(--color-indigo-500);
+
+  /* ── Surfaces/Success ─────────────────────────────────────────────────── */
+  --surfaces-success-solid:          var(--color-green-600);
+  --surfaces-success-solid-hover:    var(--color-green-700);
+  --surfaces-success-solid-pressed:  var(--color-green-800);
+  --surfaces-success-subtle:         var(--color-green-100);
+  --surfaces-success-subtle-hover:   var(--color-green-200);
+  --surfaces-success-subtle-pressed: var(--color-green-300);
+
+  /* ── Surfaces/Warning ─────────────────────────────────────────────────── */
+  --surfaces-warning-solid:          var(--color-amber-600);
+  --surfaces-warning-solid-hover:    var(--color-amber-700);
+  --surfaces-warning-solid-pressed:  var(--color-amber-800);
+  --surfaces-warning-subtle:         var(--color-amber-100);
+  --surfaces-warning-subtle-hover:   var(--color-amber-200);
+  --surfaces-warning-subtle-pressed: var(--color-amber-300);
+
+  /* ── Surfaces/Error ───────────────────────────────────────────────────── */
+  --surfaces-error-solid:          var(--color-red-600);
+  --surfaces-error-solid-hover:    var(--color-red-700);
+  --surfaces-error-solid-pressed:  var(--color-red-800);
+  --surfaces-error-subtle:         var(--color-red-100);
+  --surfaces-error-subtle-hover:   var(--color-red-200);
+  --surfaces-error-subtle-pressed: var(--color-red-300);
+
+  /* ── Typography ───────────────────────────────────────────────────────── */
+  --typography-primary:          var(--color-slate-900);
+  --typography-secondary:        var(--color-slate-700);
+  --typography-muted:            var(--color-slate-500);
+  --typography-inverse-primary:  var(--color-slate-50);
+  --typography-inverse-secondary:var(--color-slate-300);
+  --typography-inverse-muted:    var(--color-slate-500);
+  --typography-brand:            var(--color-zinc-950);
+  --typography-on-brand-primary: var(--color-base-white);
+  --typography-accent:           var(--color-indigo-700);
+  --typography-success:          var(--color-green-700);
+  --typography-warning:          var(--color-amber-700);
+  --typography-error:            var(--color-red-700);
+  --typography-white:            var(--color-base-white);
+  --typography-black:            var(--color-base-black);
+
+  /* ── Icons ────────────────────────────────────────────────────────────── */
+  --icons-primary:           var(--color-slate-950);
+  --icons-secondary:         var(--color-slate-600);
+  --icons-muted:             var(--color-slate-400);
+  --icons-inverse-primary:   var(--color-slate-50);
+  --icons-inverse-secondary: var(--color-slate-400);
+  --icons-inverse-muted:     var(--color-slate-800);
+  --icons-brand:             var(--color-zinc-950);
+  --icons-on-brand-primary:  var(--color-slate-50);
+  --icons-accent:            var(--color-indigo-700);
+  --icons-success:           var(--color-green-600);
+  --icons-warning:           var(--color-amber-500);
+  --icons-error:             var(--color-red-500);
+  --icons-white:             var(--color-base-white);
+  --icons-black:             var(--color-base-black);
+
+  /* ── Border ───────────────────────────────────────────────────────────── */
+  --border-brand:    var(--color-zinc-950);
+  --border-active:   var(--color-slate-950);
+  --border-default:  var(--color-neutral-200);
+  --border-muted:    var(--color-neutral-100);
+  --border-success:  var(--color-green-600);
+  --border-warning:  var(--color-amber-600);
+  --border-error:    var(--color-red-600);
+
+  /* ── Legacy aliases — kept so existing code doesn't break ─────────────── */
+  /* Surfaces */
+  --surface-base-primary:            var(--surfaces-base-primary);
+  --surface-base-low-contrast:       var(--surfaces-base-low-contrast);
+  --surface-base-high-contrast:      var(--surfaces-base-high-contrast);
+  --surface-inverse-primary:         var(--surfaces-inverse-primary);
+  --surface-inverse-low-contrast:    var(--surfaces-inverse-low-contrast);
+  --surface-inverse-high-contrast:   var(--surfaces-inverse-high-contrast);
+  --surface-brand:                   var(--surfaces-brand-interactive);
+  --surface-brand-low-contrast:      var(--surfaces-brand-interactive-low-contrast);
+  --surface-brand-high-contrast:     var(--surfaces-brand-interactive-high-contrast);
+  --surface-brand-hover:             var(--surfaces-brand-interactive-hover);
+  --surface-brand-pressed:           var(--surfaces-brand-interactive-pressed);
+  --surface-brand-secondary-pressed: var(--surfaces-brand-interactive-low-contrast-pressed);
+  --surface-accent-primary:          var(--surfaces-accent-primary);
+  --surface-accent-low-contrast:     var(--surfaces-accent-low-contrast);
+  --surface-accent-high-contrast:    var(--surfaces-accent-high-contrast);
+  --surface-success-solid:           var(--surfaces-success-solid);
+  --surface-success-subtle:          var(--surfaces-success-subtle);
+  --surface-warning-solid:           var(--surfaces-warning-solid);
+  --surface-warning-subtle:          var(--surfaces-warning-subtle);
+  --surface-error-solid:             var(--surfaces-error-solid);
+  --surface-error-subtle:            var(--surfaces-error-subtle);
+  --surface-success-hover:           var(--surfaces-success-solid-hover);
+  --surface-success-pressed:         var(--surfaces-success-solid-pressed);
+  --surface-error-hover:             var(--surfaces-error-solid-hover);
+  --surface-error-pressed:           var(--surfaces-error-solid-pressed);
+  /* Typography */
+  --text-primary:           var(--typography-primary);
+  --text-secondary:         var(--typography-secondary);
+  --text-muted:             var(--typography-muted);
+  --text-inverse-primary:   var(--typography-inverse-primary);
+  --text-inverse-secondary: var(--typography-inverse-secondary);
+  --text-inverse-muted:     var(--typography-inverse-muted);
+  --text-brand:             var(--typography-brand);
+  --text-on-brand-primary:  var(--typography-on-brand-primary);
+  --text-accent:            var(--typography-accent);
+  --text-success:           var(--typography-success);
+  --text-warning:           var(--typography-warning);
+  --text-error:             var(--typography-error);
+  /* Icons */
+  --icon-primary:           var(--icons-primary);
+  --icon-secondary:         var(--icons-secondary);
+  --icon-muted:             var(--icons-muted);
+  --icon-inverse-primary:   var(--icons-inverse-primary);
+  --icon-inverse-secondary: var(--icons-inverse-secondary);
+  --icon-inverse-muted:     var(--icons-inverse-muted);
+  --icon-brand:             var(--icons-brand);
+  --icon-on-brand-primary:  var(--icons-on-brand-primary);
+  --icon-success:           var(--icons-success);
+  --icon-warning:           var(--icons-warning);
+  --icon-error:             var(--icons-error);
+  /* Other legacy */
+  --background: var(--surfaces-base-primary);
+  --foreground: var(--typography-primary);
+
+  /* ── Radius — Figma "Simantic-Dimensions" › Mobile ─────────────────────── */
   --radius-none: 0px;
   --radius-xs:   4px;
   --radius-sm:   8px;
@@ -83,9 +295,7 @@
   --radius-2xl:  32px;
   --radius-full: 9999px;
 
-  /* ── Spacing — Figma Primitives/Dimensions 4px grid ─────────────────────────
-     Mirrors Tailwind's numeric spacing scale (--space-N = N × 4px).
-     Web: use Tailwind utilities (p-4, gap-6) or var(--space-4) in custom CSS.  */
+  /* ── Spacing — Figma Primitives/Dimensions 4px grid ─────────────────────── */
   --space-1:  4px;
   --space-2:  8px;
   --space-3:  12px;
@@ -99,12 +309,7 @@
   --space-20: 80px;
   --space-24: 96px;
 
-  /* ── Typography — Figma "🎨 Tokens & Styles" page (node 18:577) ─────────────
-     Font family: Inter (Figma) → Geist Sans on web (existing next/font setup).
-     Each role exposes three vars: -size, -leading (line-height), -weight.
-     Overline roles additionally expose -tracking (letter-spacing).             */
-
-  /* Font families */
+  /* ── Typography — Figma "🎨 Tokens & Styles" page (node 18:577) ─────────── */
   --font-sans: var(--font-geist-sans), "Inter", system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), "JetBrains Mono", monospace;
 
@@ -151,13 +356,13 @@
   --typography-badge-md-size: 10px;    --typography-badge-md-leading: 12px;    --typography-badge-md-weight: 600;
   --typography-badge-sm-size:  8px;    --typography-badge-sm-leading: 10px;    --typography-badge-sm-weight: 600;
 
-  /* Overline (letter-spacing from Figma: sm/md = 1px, lg = 2px) */
+  /* Overline */
   --typography-overline-sm-size:  8px; --typography-overline-sm-leading: 12px; --typography-overline-sm-weight: 700; --typography-overline-sm-tracking: 1px;
   --typography-overline-md-size: 10px; --typography-overline-md-leading: 12px; --typography-overline-md-weight: 700; --typography-overline-md-tracking: 1px;
   --typography-overline-lg-size: 12px; --typography-overline-lg-leading: 16px; --typography-overline-lg-weight: 700; --typography-overline-lg-tracking: 2px;
 }
 
-/* ── Desktop radius overrides (Figma Simantic-Dimensions › Desktop mode) ─────── */
+/* ── Desktop radius overrides (Figma "Simantic-Dimensions" › Desktop mode) ── */
 @media (min-width: 768px) {
   :root {
     --radius-xs:  8px;
@@ -166,6 +371,116 @@
     --radius-lg:  24px;
     --radius-xl:  32px;
     --radius-2xl: 48px;
+  }
+}
+
+/* ── Dark mode — Semantic layer overrides (Figma mode: NeutralDark) ────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Surfaces/Base */
+    --surfaces-base-primary:                  var(--color-base-black);
+    --surfaces-base-primary-hover:            var(--color-neutral-800);
+    --surfaces-base-primary-pressed:          var(--color-neutral-700);
+    --surfaces-base-low-contrast:             var(--color-neutral-900);
+    --surfaces-base-low-contrast-hover:       var(--color-neutral-800);
+    --surfaces-base-low-contrast-pressed:     var(--color-neutral-600);
+    --surfaces-base-high-contrast:            var(--color-neutral-800);
+    --surfaces-base-high-contrast-hover:      var(--color-neutral-600);
+    --surfaces-base-high-contrast-pressed:    var(--color-neutral-500);
+
+    /* Surfaces/Inverse */
+    --surfaces-inverse-primary:               var(--color-base-white);
+    --surfaces-inverse-primary-hover:         var(--color-zinc-200);
+    --surfaces-inverse-primary-pressed:       var(--color-zinc-400);
+    --surfaces-inverse-low-contrast:          var(--color-neutral-100);
+    --surfaces-inverse-low-contrast-hover:    var(--color-neutral-200);
+    --surfaces-inverse-low-contrast-pressed:  var(--color-neutral-300);
+    --surfaces-inverse-high-contrast:         var(--color-neutral-200);
+    --surfaces-inverse-high-contrast-hover:   var(--color-neutral-300);
+    --surfaces-inverse-high-contrast-pressed: var(--color-neutral-200);
+
+    /* Surfaces/BrandInteractive */
+    --surfaces-brand-interactive:                        var(--color-zinc-50);
+    --surfaces-brand-interactive-hover:                  var(--color-zinc-200);
+    --surfaces-brand-interactive-pressed:                var(--color-zinc-400);
+    --surfaces-brand-interactive-low-contrast:           var(--color-zinc-800);
+    --surfaces-brand-interactive-low-contrast-hover:     var(--color-zinc-700);
+    --surfaces-brand-interactive-low-contrast-pressed:   var(--color-zinc-600);
+    --surfaces-brand-interactive-high-contrast:          var(--color-zinc-700);
+    --surfaces-brand-interactive-high-contrast-hover:    var(--color-zinc-600);
+    --surfaces-brand-interactive-high-contrast-pressed:  var(--color-zinc-500);
+
+    /* Surfaces/Accent */
+    --surfaces-accent-primary:               var(--color-indigo-400);
+    --surfaces-accent-primary-hover:         var(--color-indigo-300);
+    --surfaces-accent-primary-pressed:       var(--color-indigo-200);
+    --surfaces-accent-low-contrast:          var(--color-indigo-800);
+    --surfaces-accent-low-contrast-hover:    var(--color-indigo-700);
+    --surfaces-accent-low-contrast-pressed:  var(--color-indigo-600);
+    --surfaces-accent-high-contrast:         var(--color-indigo-700);
+    --surfaces-accent-high-contrast-hover:   var(--color-indigo-600);
+    --surfaces-accent-high-contrast-pressed: var(--color-indigo-500);
+
+    /* Surfaces/Success */
+    --surfaces-success-solid:          var(--color-green-300);
+    --surfaces-success-solid-hover:    var(--color-green-200);
+    --surfaces-success-solid-pressed:  var(--color-green-100);
+    --surfaces-success-subtle:         var(--color-green-950);
+    --surfaces-success-subtle-hover:   var(--color-green-900);
+    --surfaces-success-subtle-pressed: var(--color-green-800);
+
+    /* Surfaces/Warning */
+    --surfaces-warning-solid:          var(--color-amber-300);
+    --surfaces-warning-solid-hover:    var(--color-amber-200);
+    --surfaces-warning-solid-pressed:  var(--color-amber-100);
+    --surfaces-warning-subtle:         var(--color-amber-950);
+    --surfaces-warning-subtle-hover:   var(--color-amber-900);
+    --surfaces-warning-subtle-pressed: var(--color-amber-800);
+
+    /* Surfaces/Error */
+    --surfaces-error-solid:          var(--color-red-300);
+    --surfaces-error-solid-hover:    var(--color-red-200);
+    --surfaces-error-solid-pressed:  var(--color-red-100);
+    --surfaces-error-subtle:         var(--color-red-950);
+    --surfaces-error-subtle-hover:   var(--color-red-900);
+    --surfaces-error-subtle-pressed: var(--color-red-800);
+
+    /* Typography */
+    --typography-primary:          var(--color-slate-50);
+    --typography-secondary:        var(--color-slate-300);
+    --typography-muted:            var(--color-slate-400);
+    --typography-inverse-primary:  var(--color-slate-950);
+    --typography-inverse-secondary:var(--color-slate-700);
+    --typography-inverse-muted:    var(--color-slate-500);
+    --typography-brand:            var(--color-zinc-50);
+    --typography-on-brand-primary: var(--color-base-black);
+    --typography-accent:           var(--color-indigo-300);
+    --typography-success:          var(--color-green-400);
+    --typography-warning:          var(--color-amber-400);
+    --typography-error:            var(--color-red-400);
+
+    /* Icons */
+    --icons-primary:           var(--color-slate-50);
+    --icons-secondary:         var(--color-slate-400);
+    --icons-muted:             var(--color-slate-700);
+    --icons-inverse-primary:   var(--color-slate-950);
+    --icons-inverse-secondary: var(--color-slate-600);
+    --icons-inverse-muted:     var(--color-slate-400);
+    --icons-brand:             var(--color-zinc-50);
+    --icons-on-brand-primary:  var(--color-slate-950);
+    --icons-accent:            var(--color-indigo-300);
+    --icons-success:           var(--color-green-400);
+    --icons-warning:           var(--color-amber-400);
+    --icons-error:             var(--color-red-400);
+
+    /* Border */
+    --border-brand:    var(--color-zinc-50);
+    --border-active:   var(--color-slate-50);
+    --border-default:  var(--color-slate-800);
+    --border-muted:    var(--color-slate-900);
+    --border-success:  var(--color-green-300);
+    --border-warning:  var(--color-amber-300);
+    --border-error:    var(--color-red-300);
   }
 }
 
@@ -220,77 +535,8 @@
   --text-overline-sm: var(--typography-overline-sm-size);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Surfaces */
-    --surface-base-primary:          #000000;
-    --surface-base-low-contrast:     #171717;
-    --surface-base-high-contrast:    #262626;
-    --surface-inverse-primary:       #FFFFFF;
-    --surface-inverse-low-contrast:  #F5F5F5;
-    --surface-inverse-high-contrast: #E5E5E5;
-
-    --surface-brand:                 #FAFAFA;
-    --surface-brand-low-contrast:    #27272A;
-    --surface-brand-high-contrast:   #3F3F46;
-    --surface-brand-hover:           #E4E4E7;
-    --surface-brand-pressed:         #A1A1AA;
-
-    --surface-accent-primary:        #818CF8;
-    --surface-accent-low-contrast:   #3730A3;
-    --surface-accent-high-contrast:  #4338CA;
-
-    --surface-success-solid:         #86EFAC;
-    --surface-success-subtle:        #052E16;
-    --surface-warning-solid:         #FCD34D;
-    --surface-warning-subtle:        #431407;
-    --surface-error-solid:           #FCA5A5;
-    --surface-error-subtle:          #450A0A;
-
-    /* Typography colors */
-    --text-primary:                  #F8FAFC;
-    --text-secondary:                #CBD5E1;
-    --text-muted:                    #94A3B8;
-    --text-inverse-primary:          #020617;
-    --text-inverse-secondary:        #334155;
-    --text-inverse-muted:            #64748B;
-    --text-brand:                    #FAFAFA;
-    --text-on-brand-primary:         #000000;
-    --text-accent:                   #818CF8;
-    --text-success:                  #4ADE80;
-    --text-warning:                  #FBBF24;
-    --text-error:                    #F87171;
-
-    /* Icons */
-    --icon-primary:                  #F8FAFC;
-    --icon-secondary:                #94A3B8;
-    --icon-muted:                    #334155;
-    --icon-inverse-primary:          #020617;
-    --icon-inverse-secondary:        #475569;
-    --icon-inverse-muted:            #94A3B8;
-    --icon-brand:                    #FAFAFA;
-    --icon-on-brand-primary:         #020617;
-    --icon-success:                  #4ADE80;
-    --icon-warning:                  #FBBF24;
-    --icon-error:                    #F87171;
-
-    /* Borders */
-    --border-default:                #1E293B;
-    --border-muted:                  #0F172A;
-    --border-active:                 #F8FAFC;
-    --border-brand:                  #FAFAFA;
-    --border-success:                #86EFAC;
-    --border-warning:                #FCD34D;
-    --border-error:                  #FCA5A5;
-
-    /* Legacy aliases */
-    --background: var(--surface-base-primary);
-    --foreground: var(--text-primary);
-  }
-}
-
 body {
-  background: var(--surface-base-primary);
-  color: var(--text-primary);
+  background: var(--surfaces-base-primary);
+  color: var(--typography-primary);
   font-family: var(--font-geist-sans, Arial, Helvetica, sans-serif);
 }
