@@ -1,8 +1,76 @@
 @import "tailwindcss";
 
+/* =============================================================================
+   Design Tokens — sourced from Figma "bubbles-kit" › Semantic collection
+   NeutralLight = light mode  |  NeutralDark = dark mode
+   DO NOT edit hex values manually — update in Figma, re-run /design-token-sync.
+   ============================================================================= */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Surfaces */
+  --surface-base-primary:          #FFFFFF;
+  --surface-base-low-contrast:     #F5F5F5;
+  --surface-base-high-contrast:    #E5E5E5;
+  --surface-inverse-primary:       #000000;
+  --surface-inverse-low-contrast:  #171717;
+  --surface-inverse-high-contrast: #262626;
+
+  --surface-brand:                 #09090B;
+  --surface-brand-low-contrast:    #E4E4E7;
+  --surface-brand-high-contrast:   #D4D4D8;
+  --surface-brand-hover:           #27272A;
+  --surface-brand-pressed:         #09090B;
+
+  --surface-accent-primary:        #4F46E5;
+  --surface-accent-low-contrast:   #C7D2FE;
+  --surface-accent-high-contrast:  #A5B4FC;
+
+  --surface-success-solid:         #16A34A;
+  --surface-success-subtle:        #DCFCE7;
+  --surface-warning-solid:         #D97706;
+  --surface-warning-subtle:        #FEF3C7;
+  --surface-error-solid:           #DC2626;
+  --surface-error-subtle:          #FEE2E2;
+
+  /* Typography */
+  --text-primary:                  #0F172A;
+  --text-secondary:                #334155;
+  --text-muted:                    #64748B;
+  --text-inverse-primary:          #F8FAFC;
+  --text-inverse-secondary:        #CBD5E1;
+  --text-inverse-muted:            #64748B;
+  --text-brand:                    #09090B;
+  --text-on-brand-primary:         #FFFFFF;
+  --text-accent:                   #4F46E5;
+  --text-success:                  #15803D;
+  --text-warning:                  #B45309;
+  --text-error:                    #B91C1C;
+
+  /* Icons */
+  --icon-primary:                  #020617;
+  --icon-secondary:                #475569;
+  --icon-muted:                    #94A3B8;
+  --icon-inverse-primary:          #F8FAFC;
+  --icon-inverse-secondary:        #94A3B8;
+  --icon-inverse-muted:            #1E293B;
+  --icon-brand:                    #09090B;
+  --icon-on-brand-primary:         #F8FAFC;
+  --icon-success:                  #16A34A;
+  --icon-warning:                  #F59E0B;
+  --icon-error:                    #EF4444;
+
+  /* Borders */
+  --border-default:                #E5E5E5;
+  --border-muted:                  #F5F5F5;
+  --border-active:                 #020617;
+  --border-brand:                  #09090B;
+  --border-success:                #16A34A;
+  --border-warning:                #D97706;
+  --border-error:                  #DC2626;
+
+  /* Legacy aliases — kept so existing code doesn't break */
+  --background: var(--surface-base-primary);
+  --foreground: var(--text-primary);
 }
 
 @theme inline {
@@ -14,13 +82,75 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Surfaces */
+    --surface-base-primary:          #000000;
+    --surface-base-low-contrast:     #171717;
+    --surface-base-high-contrast:    #262626;
+    --surface-inverse-primary:       #FFFFFF;
+    --surface-inverse-low-contrast:  #F5F5F5;
+    --surface-inverse-high-contrast: #E5E5E5;
+
+    --surface-brand:                 #FAFAFA;
+    --surface-brand-low-contrast:    #27272A;
+    --surface-brand-high-contrast:   #3F3F46;
+    --surface-brand-hover:           #E4E4E7;
+    --surface-brand-pressed:         #A1A1AA;
+
+    --surface-accent-primary:        #818CF8;
+    --surface-accent-low-contrast:   #3730A3;
+    --surface-accent-high-contrast:  #4338CA;
+
+    --surface-success-solid:         #86EFAC;
+    --surface-success-subtle:        #052E16;
+    --surface-warning-solid:         #FCD34D;
+    --surface-warning-subtle:        #431407;
+    --surface-error-solid:           #FCA5A5;
+    --surface-error-subtle:          #450A0A;
+
+    /* Typography */
+    --text-primary:                  #F8FAFC;
+    --text-secondary:                #CBD5E1;
+    --text-muted:                    #94A3B8;
+    --text-inverse-primary:          #020617;
+    --text-inverse-secondary:        #334155;
+    --text-inverse-muted:            #64748B;
+    --text-brand:                    #FAFAFA;
+    --text-on-brand-primary:         #000000;
+    --text-accent:                   #818CF8;
+    --text-success:                  #4ADE80;
+    --text-warning:                  #FBBF24;
+    --text-error:                    #F87171;
+
+    /* Icons */
+    --icon-primary:                  #F8FAFC;
+    --icon-secondary:                #94A3B8;
+    --icon-muted:                    #334155;
+    --icon-inverse-primary:          #020617;
+    --icon-inverse-secondary:        #475569;
+    --icon-inverse-muted:            #94A3B8;
+    --icon-brand:                    #FAFAFA;
+    --icon-on-brand-primary:         #020617;
+    --icon-success:                  #4ADE80;
+    --icon-warning:                  #FBBF24;
+    --icon-error:                    #F87171;
+
+    /* Borders */
+    --border-default:                #1E293B;
+    --border-muted:                  #0F172A;
+    --border-active:                 #F8FAFC;
+    --border-brand:                  #FAFAFA;
+    --border-success:                #86EFAC;
+    --border-warning:                #FCD34D;
+    --border-error:                  #FCA5A5;
+
+    /* Legacy aliases */
+    --background: var(--surface-base-primary);
+    --foreground: var(--text-primary);
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--surface-base-primary);
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans, Arial, Helvetica, sans-serif);
 }
