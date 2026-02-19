@@ -35,10 +35,56 @@ npm run start    # Serve production build
 CSS custom properties in `globals.css` are the **web source of truth** for the shared design system.
 Run `/design-token-sync` after any token change to push updates to `DesignTokens.swift` on iOS.
 
-Current tokens:
-- `--background` / `--foreground`
+Token categories in `globals.css`:
+- **Colors** — `--surface-*`, `--text-*`, `--icon-*`, `--border-*`, `--overlay-*`
+- **Radius** — `--radius-xs` … `--radius-full` (Mobile default + `@media (min-width: 768px)` Desktop override)
+- **Spacing** — `--space-1` (4px) … `--space-24` (96px), wired into Tailwind `p-*`/`gap-*`/`m-*` utilities
+- **Typography** — `--typography-{role}-{size}-{size|leading|weight}` for all 28 type styles
 
 Always use `var(--token-name)` or Tailwind utilities in components — never hardcode hex.
+
+---
+
+## Icon System (Phosphor Icons)
+
+**Package:** `@phosphor-icons/react` — installed, tree-shaken via `optimizePackageImports` in `next.config.ts`
+**Same icon set used in Figma, web, and iOS.**
+
+### Rules
+
+- **Always** import from `@/app/components/icons` — never from `@phosphor-icons/react` directly
+- Use the typed `<Icon />` wrapper for all icon usage
+- Default weight: **regular** · Default size: **md** (20px)
+- Use `var(--icon-*)` CSS tokens for color, not hardcoded hex
+
+### Usage
+
+```tsx
+import { Icon } from "@/app/components/icons";
+
+// Basic (weight=regular, size=md, color=currentColor)
+<Icon name="House" />
+
+// With tokens
+<Icon name="Heart" weight="fill" size="lg" color="var(--icon-error)" />
+
+// Accessible (adds aria-label)
+<Icon name="Bell" label="Notifications" />
+```
+
+### Size tokens
+
+| Token | px  | Tailwind frame example |
+|-------|-----|------------------------|
+| `xs`  | 12  | `w-3 h-3`              |
+| `sm`  | 16  | `w-4 h-4`              |
+| `md`  | 20  | `w-5 h-5` _(default)_  |
+| `lg`  | 24  | `w-6 h-6`              |
+| `xl`  | 32  | `w-8 h-8`              |
+
+### Figma → Code
+
+Icon name in Figma sidebar (e.g. `House`) = `name` prop. Weight layer = `weight` prop. Size from Dimensions = nearest token.
 
 ---
 
