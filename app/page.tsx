@@ -1,65 +1,170 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState } from "react";
+import { Button } from "@/app/components/Button";
+import { IconButton } from "@/app/components/IconButton";
+import { Icon } from "@/app/components/icons";
+
+// ─── Section wrapper ──────────────────────────────────────────────────────────
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <section className="flex flex-col gap-4">
+      <h2 className="text-[length:var(--typography-label-sm-size)] font-[var(--typography-label-sm-weight)] uppercase tracking-widest text-[var(--typography-muted)]">
+        {title}
+      </h2>
+      {children}
+    </section>
+  );
+}
+
+// ─── Row helper ───────────────────────────────────────────────────────────────
+
+function Row({ children }: { children: React.ReactNode }) {
+  return <div className="flex flex-wrap items-center gap-3">{children}</div>;
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default function ComponentShowcase() {
+  const [loadingBtn, setLoadingBtn] = useState(false);
+
+  function triggerLoading() {
+    setLoadingBtn(true);
+    setTimeout(() => setLoadingBtn(false), 2000);
+  }
+
+  return (
+    <div className="min-h-screen bg-[var(--surfaces-base-primary)] px-6 py-12">
+      <div className="mx-auto max-w-2xl flex flex-col gap-12">
+
+        {/* Header */}
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-semibold text-[var(--typography-brand)]">
+            Component Showcase
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-[var(--typography-muted)] text-sm">
+            Live preview of all design-system components.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+        {/* ── Button: Variants ─────────────────────────────────────────────── */}
+        <Section title="Button — Variants">
+          <Row>
+            <Button label="Primary" variant="primary" />
+            <Button label="Secondary" variant="secondary" />
+            <Button label="Tertiary" variant="tertiary" />
+            <Button label="Success" variant="success" />
+            <Button label="Danger" variant="danger" />
+          </Row>
+        </Section>
+
+        {/* ── Button: Sizes ────────────────────────────────────────────────── */}
+        <Section title="Button — Sizes">
+          <Row>
+            <Button label="Large" variant="primary" size="lg" />
+            <Button label="Medium" variant="primary" size="md" />
+            <Button label="Small" variant="primary" size="sm" />
+          </Row>
+        </Section>
+
+        {/* ── Button: Icons ────────────────────────────────────────────────── */}
+        <Section title="Button — Icons">
+          <Row>
+            <Button
+              label="Leading"
+              variant="primary"
+              leadingIcon={<Icon name="House" size="md" />}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+            <Button
+              label="Trailing"
+              variant="secondary"
+              trailingIcon={<Icon name="ArrowRight" size="md" />}
+            />
+            <Button
+              label="Both"
+              variant="tertiary"
+              leadingIcon={<Icon name="Star" size="md" />}
+              trailingIcon={<Icon name="ArrowRight" size="md" />}
+            />
+            <Button
+              label="Delete"
+              variant="danger"
+              leadingIcon={<Icon name="Trash" size="md" />}
+            />
+          </Row>
+        </Section>
+
+        {/* ── Button: States ───────────────────────────────────────────────── */}
+        <Section title="Button — States">
+          <Row>
+            <Button
+              label={loadingBtn ? "Loading…" : "Click to Load"}
+              variant="primary"
+              isLoading={loadingBtn}
+              onClick={triggerLoading}
+            />
+            <Button label="Disabled" variant="primary" disabled />
+            <Button label="Disabled" variant="danger" disabled />
+            <Button label="Disabled" variant="tertiary" disabled />
+          </Row>
+        </Section>
+
+        {/* ── IconButton: Variants ─────────────────────────────────────────── */}
+        <Section title="IconButton — Variants">
+          <Row>
+            <IconButton icon={<Icon name="Heart" />}      label="Like"    variant="primary"     />
+            <IconButton icon={<Icon name="Bookmark" />}   label="Save"    variant="secondary"   />
+            <IconButton icon={<Icon name="Share" />}      label="Share"   variant="tertiary"    />
+            <IconButton icon={<Icon name="DotsThree" />}  label="More"    variant="quarternary" />
+            <IconButton icon={<Icon name="Check" />}      label="Confirm" variant="success"     />
+            <IconButton icon={<Icon name="Trash" />}      label="Delete"  variant="danger"      />
+          </Row>
+        </Section>
+
+        {/* ── IconButton: Sizes ─────────────────────────────────────────────── */}
+        <Section title="IconButton — Sizes">
+          <Row>
+            <IconButton icon={<Icon name="Star" />} label="Favourite" variant="primary" size="lg" />
+            <IconButton icon={<Icon name="Star" />} label="Favourite" variant="primary" size="md" />
+            <IconButton icon={<Icon name="Star" />} label="Favourite" variant="primary" size="sm" />
+          </Row>
+        </Section>
+
+        {/* ── IconButton: States ───────────────────────────────────────────── */}
+        <Section title="IconButton — States">
+          <Row>
+            <IconButton icon={<Icon name="Heart" />} label="Loading"  variant="primary" isLoading />
+            <IconButton icon={<Icon name="Heart" />} label="Disabled" variant="primary" disabled  />
+            <IconButton icon={<Icon name="Trash" />} label="Disabled" variant="danger"  disabled  />
+            <IconButton icon={<Icon name="Share" />} label="Disabled" variant="tertiary" disabled />
+          </Row>
+        </Section>
+
+        {/* ── Icons ────────────────────────────────────────────────────────── */}
+        <Section title="Icons — Sizes">
+          <Row>
+            {(["xs", "sm", "md", "lg", "xl"] as const).map((s) => (
+              <div key={s} className="flex flex-col items-center gap-1">
+                <Icon name="House" size={s} color="var(--icon-primary)" />
+                <span className="text-[10px] text-[var(--typography-muted)]">{s}</span>
+              </div>
+            ))}
+          </Row>
+        </Section>
+
+        <Section title="Icons — Weights">
+          <Row>
+            {(["thin", "light", "regular", "bold", "fill", "duotone"] as const).map((w) => (
+              <div key={w} className="flex flex-col items-center gap-1">
+                <Icon name="Heart" weight={w} size="lg" color="var(--icon-primary)" />
+                <span className="text-[10px] text-[var(--typography-muted)]">{w}</span>
+              </div>
+            ))}
+          </Row>
+        </Section>
+
+      </div>
     </div>
   );
 }
