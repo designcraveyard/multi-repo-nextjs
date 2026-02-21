@@ -12,6 +12,11 @@ import { Toast, ToastContainer } from "@/app/components/Toast";
 import { Badge } from "@/app/components/Badge";
 import { InputField, TextField } from "@/app/components/InputField";
 import { Thumbnail } from "@/app/components/Thumbnail";
+import { Label } from "@/app/components/Label";
+import { TextBlock } from "@/app/components/patterns/TextBlock";
+import { StepIndicator } from "@/app/components/patterns/StepIndicator";
+import { Stepper } from "@/app/components/patterns/Stepper";
+import { ListItem } from "@/app/components/patterns/ListItem";
 
 // ─── Section wrapper ──────────────────────────────────────────────────────────
 
@@ -411,8 +416,49 @@ export default function ComponentShowcase() {
           </Row>
         </Section>
 
+        {/* ── Label ────────────────────────────────────────────────────────── */}
+        <Section title="Label — Sizes × Types">
+          <div className="flex flex-col gap-3">
+            {(["sm", "md", "lg"] as const).map((sz) => (
+              <div key={sz} className="flex flex-col gap-1">
+                <span className="text-[10px] text-[var(--typography-muted)] uppercase tracking-wider">{sz}</span>
+                <div className="flex flex-wrap gap-4">
+                  <Label size={sz} type="secondaryAction" label="Secondary" />
+                  <Label size={sz} type="primaryAction" label="Primary" />
+                  <Label size={sz} type="brandInteractive" label="Brand" />
+                  <Label size={sz} type="information" label="Info" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section title="Label — With Icons">
+          <Row>
+            <Label
+              size="lg"
+              type="primaryAction"
+              label="Verified"
+              leadingIcon={<Icon name="CheckCircle" size="lg" />}
+            />
+            <Label
+              size="md"
+              type="secondaryAction"
+              label="USD"
+              trailingIcon={<Icon name="CaretDown" size="md" />}
+            />
+            <Label
+              size="sm"
+              type="information"
+              label="Info"
+              leadingIcon={<Icon name="Info" size="sm" />}
+              trailingIcon={<Icon name="CaretRight" size="sm" />}
+            />
+          </Row>
+        </Section>
+
         {/* ── Input Field ──────────────────────────────────────────────────── */}
-        <Section title="Input Field">
+        <Section title="Input Field — States">
           <InputField
             id="name"
             label="Full Name"
@@ -461,6 +507,93 @@ export default function ComponentShowcase() {
           />
         </Section>
 
+        <Section title="Input Field — Icon Slots">
+          <InputField
+            id="leading-icon"
+            label="Leading icon"
+            placeholder="Search…"
+            leadingIcon={<Icon name="MagnifyingGlass" size="md" />}
+            value=""
+            onChange={() => {}}
+          />
+          <InputField
+            id="trailing-icon"
+            label="Trailing icon"
+            placeholder="Password"
+            trailingIcon={<Icon name="Eye" size="md" />}
+            value=""
+            onChange={() => {}}
+          />
+          <InputField
+            id="both-icons"
+            label="Both icons"
+            placeholder="Search"
+            leadingIcon={<Icon name="MagnifyingGlass" size="md" />}
+            trailingIcon={<Icon name="X" size="md" />}
+            value="query"
+            onChange={() => {}}
+          />
+        </Section>
+
+        <Section title="Input Field — Label Slots">
+          <InputField
+            id="leading-label"
+            label="Leading label"
+            placeholder="0.00"
+            leadingLabel={<Label label="USD" size="md" type="secondaryAction" />}
+            value=""
+            onChange={() => {}}
+          />
+          <InputField
+            id="leading-label-sep"
+            label="Leading label + separator"
+            placeholder="0.00"
+            leadingLabel={<Label label="USD" size="md" type="secondaryAction" />}
+            leadingSeparator
+            value=""
+            onChange={() => {}}
+          />
+          <InputField
+            id="trailing-label"
+            label="Trailing label"
+            placeholder="Enter amount"
+            trailingLabel={<Label label="kg" size="md" type="information" />}
+            value=""
+            onChange={() => {}}
+          />
+          <InputField
+            id="trailing-label-sep"
+            label="Trailing label + separator"
+            placeholder="Enter amount"
+            trailingLabel={<Label label="kg" size="md" type="information" />}
+            trailingSeparator
+            value=""
+            onChange={() => {}}
+          />
+          <InputField
+            id="both-labels"
+            label="Both labels + separators"
+            placeholder="0.00"
+            leadingLabel={<Label label="From" size="md" type="secondaryAction" />}
+            trailingLabel={<Label label="USD" size="md" type="brandInteractive" />}
+            leadingSeparator
+            trailingSeparator
+            value=""
+            onChange={() => {}}
+          />
+          <InputField
+            id="leading-label-state"
+            label="Label slot + success state"
+            placeholder="0.00"
+            leadingLabel={<Label label="USD" size="md" type="secondaryAction" />}
+            leadingSeparator
+            state="success"
+            hint="Valid amount"
+            value="42.00"
+            onChange={() => {}}
+          />
+        </Section>
+
         {/* ── Thumbnail ────────────────────────────────────────────────────── */}
         <Section title="Thumbnail — Sizes (square)">
           <Row>
@@ -490,6 +623,102 @@ export default function ComponentShowcase() {
             <Thumbnail alt="John Doe"    size="xl" rounded>JD</Thumbnail>
             <Thumbnail alt="Maria Kim"   size="xxl">MK</Thumbnail>
           </Row>
+        </Section>
+
+        {/* ── TextBlock ────────────────────────────────────────────────────── */}
+        <Section title="TextBlock — All slots">
+          <TextBlock
+            overline="Recent"
+            title="Trip to Bali"
+            subtext="Summer vacation"
+            body="Some description can come here regarding the task or event."
+            metadata="Posted 2d ago"
+          />
+        </Section>
+
+        <Section title="TextBlock — Combinations">
+          <div className="flex flex-col gap-4">
+            <TextBlock title="Title only" />
+            <Divider type="row" />
+            <TextBlock title="Ayurveda Books" subtext="bought for Anjali at airport" />
+            <Divider type="row" />
+            <TextBlock body="Some description text here." metadata="3 days ago" />
+          </div>
+        </Section>
+
+        {/* ── StepIndicator ────────────────────────────────────────────────── */}
+        <Section title="StepIndicator">
+          <Row>
+            <div className="flex flex-col items-center gap-1">
+              <StepIndicator completed={false} />
+              <span className="text-[10px] text-[var(--typography-muted)]">incomplete</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <StepIndicator completed />
+              <span className="text-[10px] text-[var(--typography-muted)]">completed</span>
+            </div>
+          </Row>
+        </Section>
+
+        {/* ── Stepper ──────────────────────────────────────────────────────── */}
+        <Section title="Stepper — All completed">
+          <Stepper
+            steps={[
+              { title: "Ordered",   subtitle: "Mar 1", completed: true },
+              { title: "Shipped",   subtitle: "Mar 2", completed: true },
+              { title: "Delivered", subtitle: "Mar 4", completed: true },
+            ]}
+          />
+        </Section>
+
+        <Section title="Stepper — Mixed state">
+          <Stepper
+            steps={[
+              { title: "Ayurveda Books", subtitle: "bought for Anjali at airport", completed: true },
+              { title: "Pack luggage",   completed: false },
+              { title: "Depart",         subtitle: "Flight at 08:00", completed: false },
+            ]}
+          />
+        </Section>
+
+        <Section title="Stepper — Single step with body">
+          <Stepper
+            steps={[
+              { title: "Submit application", body: "Fill in all required fields before submitting." },
+            ]}
+          />
+        </Section>
+
+        {/* ── ListItem ─────────────────────────────────────────────────────── */}
+        <Section title="ListItem — Variants">
+          <div className="flex flex-col">
+            <ListItem title="Title only" divider />
+            <ListItem title="Ayurveda Books" subtitle="bought for Anjali at airport" divider />
+            <ListItem
+              title="Pack luggage"
+              subtitle="Ready for the trip"
+              thumbnail={{ src: "", alt: "luggage" }}
+              trailing={{ type: "badge", label: "New", badgeVariant: "brand" }}
+              divider
+            />
+            <ListItem
+              title="Depart"
+              subtitle="Flight at 08:00"
+              trailing={{ type: "button", label: "Edit", onPress: () => {} }}
+              divider
+            />
+            <ListItem
+              title="Trip to Bali"
+              subtitle="Summer vacation"
+              body="Remember to pack sunscreen and the camera."
+              trailing={{
+                type: "iconButton",
+                icon: "DotsThree",
+                accessibilityLabel: "More options",
+                onPress: () => {},
+              }}
+            />
+          </div>
         </Section>
 
       </div>
