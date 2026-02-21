@@ -126,7 +126,7 @@ export function SegmentControlBar({
       className={[
         "relative inline-flex items-center",
         isSegment
-          ? "px-1 py-0.5 bg-[var(--surfaces-base-low-contrast-pressed)] rounded-[var(--radius-md)]"
+          ? "px-1 py-0.5 bg-[var(--surfaces-base-low-contrast)] rounded-[var(--radius-md)]"
           : "gap-2",
         className,
       ].join(" ")}
