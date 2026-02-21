@@ -6,12 +6,9 @@ import { Icon } from "@/app/components/icons";
 // ─── Types ────────────────────────────────────────────────────────────────────
 //
 // Figma: Toast Message (node 108:4229)
-// Variants: Type(Default/Success/Warning/Error/Info) × has-action(off/on) × has-dismiss(off/on)
-
-export type ToastVariant = "default" | "success" | "warning" | "error" | "info";
+// Only the default variant is implemented.
 
 export interface ToastProps {
-  variant?: ToastVariant;
   message: string;
   /** Optional description / secondary line */
   description?: string;
@@ -26,70 +23,24 @@ export interface ToastProps {
   className?: string;
 }
 
-// ─── Variant Config ───────────────────────────────────────────────────────────
+// ─── Default Toast Style ──────────────────────────────────────────────────────
 //
-// Default:  Surfaces/InversePrimary bg,  Typography/InversePrimary text
-// Success:  Surfaces/SuccessSubtle  bg,  Typography/Success text, border-success
-// Warning:  Surfaces/WarningSubtle  bg,  Typography/Warning text, border-warning
-// Error:    Surfaces/ErrorSubtle    bg,  Typography/Error text,   border-error
-// Info:     Surfaces/AccentLowContrast bg, Typography/Accent text, border-accent(indigo)
+// Surfaces/InversePrimary bg (dark theme)
+// Typography/InversePrimary text color
+// Info icon, rounded-full pill shape for default, action button on the right
 
-type ToastVariantStyle = {
-  wrapper: string;
-  iconName: string;
-  iconColor: string;
-  textColor: string;
-  descColor: string;
-  actionColor: string;
-};
-
-const variantStyles: Record<ToastVariant, ToastVariantStyle> = {
-  default: {
-    wrapper: "bg-[var(--surfaces-inverse-primary)] border-transparent",
-    iconName: "Info",
-    iconColor: "var(--icons-inverse-primary)",
-    textColor: "text-[var(--typography-inverse-primary)]",
-    descColor: "text-[var(--typography-inverse-secondary)]",
-    actionColor: "text-[var(--typography-inverse-primary)] underline",
-  },
-  success: {
-    wrapper: "bg-[var(--surfaces-success-subtle)] border-[var(--border-success)]",
-    iconName: "CheckCircle",
-    iconColor: "var(--icons-success)",
-    textColor: "text-[var(--typography-success)]",
-    descColor: "text-[var(--typography-success)]",
-    actionColor: "text-[var(--typography-success)] underline",
-  },
-  warning: {
-    wrapper: "bg-[var(--surfaces-warning-subtle)] border-[var(--border-warning)]",
-    iconName: "Warning",
-    iconColor: "var(--icons-warning)",
-    textColor: "text-[var(--typography-warning)]",
-    descColor: "text-[var(--typography-warning)]",
-    actionColor: "text-[var(--typography-warning)] underline",
-  },
-  error: {
-    wrapper: "bg-[var(--surfaces-error-subtle)] border-[var(--border-error)]",
-    iconName: "XCircle",
-    iconColor: "var(--icons-error)",
-    textColor: "text-[var(--typography-error)]",
-    descColor: "text-[var(--typography-error)]",
-    actionColor: "text-[var(--typography-error)] underline",
-  },
-  info: {
-    wrapper: "bg-[var(--surfaces-accent-low-contrast)] border-[var(--surfaces-accent-primary)]",
-    iconName: "Info",
-    iconColor: "var(--icons-accent)",
-    textColor: "text-[var(--typography-accent)]",
-    descColor: "text-[var(--typography-accent)]",
-    actionColor: "text-[var(--typography-accent)] underline",
-  },
+const toastStyle = {
+  wrapper: "bg-[var(--surfaces-inverse-primary)] border-transparent",
+  iconName: "Info",
+  iconColor: "var(--icons-inverse-primary)",
+  textColor: "text-[var(--typography-inverse-primary)]",
+  descColor: "text-[var(--typography-inverse-secondary)]",
+  actionColor: "text-[var(--typography-inverse-primary)] underline",
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function Toast({
-  variant = "default",
   message,
   description,
   actionLabel,
@@ -99,7 +50,7 @@ export function Toast({
   duration = 0,
   className = "",
 }: ToastProps) {
-  const v = variantStyles[variant];
+  const v = toastStyle;
 
   const dismiss = useCallback(() => {
     onDismiss?.();
@@ -112,8 +63,6 @@ export function Toast({
     }
   }, [duration, dismiss]);
 
-  const isDefault = variant === "default";
-
   return (
     <div
       role="alert"
@@ -121,9 +70,7 @@ export function Toast({
       aria-atomic="true"
       className={[
         "flex items-center gap-3 w-full",
-        isDefault
-          ? "pl-5 pr-3 py-3 rounded-full border"
-          : "pl-4 pr-3 py-3 rounded-[var(--radius-md)] border shadow-md max-w-sm",
+        "pl-5 pr-3 py-3 rounded-full border",
         v.wrapper,
         className,
       ].join(" ")}
@@ -150,22 +97,10 @@ export function Toast({
             {description}
           </p>
         )}
-        {!isDefault && actionLabel && onAction && (
-          <button
-            onClick={onAction}
-            className={[
-              "mt-1.5 text-[length:var(--typography-cta-sm-size)] leading-[var(--typography-cta-sm-leading)] font-[var(--typography-cta-sm-weight)]",
-              "focus-visible:outline-none focus-visible:ring-1",
-              v.actionColor,
-            ].join(" ")}
-          >
-            {actionLabel}
-          </button>
-        )}
       </div>
 
-      {/* Action pill button (default variant only) */}
-      {isDefault && actionLabel && onAction && (
+      {/* Action pill button */}
+      {actionLabel && onAction && (
         <button
           onClick={onAction}
           className={[
@@ -173,7 +108,7 @@ export function Toast({
             "text-[length:var(--typography-cta-sm-size)] leading-[var(--typography-cta-sm-leading)] font-[var(--typography-cta-sm-weight)]",
             "bg-[var(--surfaces-base-primary)] opacity-90 hover:opacity-100 transition-opacity",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current",
-            v.textColor,
+            "text-[var(--typography-brand)]",
           ].join(" ")}
         >
           {actionLabel}

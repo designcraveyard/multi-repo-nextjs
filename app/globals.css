@@ -145,7 +145,7 @@
   /* ── Surfaces/BrandInteractive ───────────────────────────────────────── */
   --surfaces-brand-interactive:                        var(--color-zinc-950);
   --surfaces-brand-interactive-hover:                  var(--color-zinc-800);
-  --surfaces-brand-interactive-pressed:                var(--color-zinc-950);
+  --surfaces-brand-interactive-pressed:                var(--color-zinc-700);
   --surfaces-brand-interactive-low-contrast:           var(--color-zinc-200);
   --surfaces-brand-interactive-low-contrast-hover:     var(--color-zinc-300);
   --surfaces-brand-interactive-low-contrast-pressed:   var(--color-zinc-400);

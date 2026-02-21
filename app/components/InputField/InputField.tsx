@@ -105,10 +105,10 @@ const STATE_SPEC: Record<InputFieldState, StateSpec> = {
 
 // ─── Shared class fragments ───────────────────────────────────────────────────
 
-// Figma: bg=surfaces/baselowcontrast, px=16px, py=14px, radius=lg (16px mobile / 24px desktop)
+// Figma: bg=surfaces/baselowcontrast, px=16px, py=14px, radius=12px (fixed, non-responsive)
 // border is applied via state spec (transparent at rest for default, coloured for validation states)
 const WRAPPER_BASE =
-  "flex items-stretch gap-2 w-full px-4 py-3.5 rounded-[var(--radius-lg)] bg-[var(--surfaces-base-low-contrast)] transition-colors duration-150";
+  "flex items-stretch gap-2 w-full px-4 py-3.5 rounded-[12px] bg-[var(--surfaces-base-low-contrast)] transition-colors duration-150";
 
 const INPUT_BASE = [
   "flex-1 min-w-0 bg-transparent outline-none self-center",
@@ -263,7 +263,7 @@ export const TextField = forwardRef<HTMLTextAreaElement, TextFieldProps>(
         <div
           className={[
             "w-full px-4 py-3.5",
-            "rounded-[var(--radius-lg)]",
+            "rounded-[12px]",
             "bg-[var(--surfaces-base-low-contrast)]",
             "transition-colors duration-150",
             spec.border,

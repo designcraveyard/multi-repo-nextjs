@@ -168,8 +168,10 @@ export function Button({
         s.wrapper,
         // Variant colours (all via Semantic CSS custom properties)
         v.wrapper,
+        // Cursor
+        "cursor-pointer disabled:cursor-not-allowed",
         // Disabled: 50% opacity — matches Figma disabled state
-        "disabled:opacity-50 disabled:cursor-not-allowed",
+        "disabled:opacity-50",
         // Transition
         "transition-colors duration-150 ease-out",
         // Focus ring (uses Semantic token color)
