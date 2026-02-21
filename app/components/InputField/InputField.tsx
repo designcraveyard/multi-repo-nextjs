@@ -1,35 +1,57 @@
 "use client";
 
+/**
+ * InputField / TextField — Figma: bubbles-kit › node 90:3753 "_InputField" 90:3525
+ *
+ * Axes: State × Type = 11 combinations
+ *   State: default | success | warning | error  (+ disabled via prop)
+ *   Type:  InputField (single-line) | TextField (multiline)
+ *
+ * Figma primitive slots (left→right):
+ *   [leadingLabel?] [leadingSeparator?] [input text area] [trailingSeparator?] [trailingLabel?]
+ *
+ * Usage:
+ *   <InputField label="Email" placeholder="you@example.com" />
+ *   <InputField state="error" hint="Invalid email" trailingLabel={<Label label="Clear" trailingIcon={<Icon name="X" />} />} />
+ *   <InputField leadingLabel={<Label label="USD" />} leadingSeparator />
+ *   <TextField label="Bio" placeholder="Tell us about yourself…" />
+ */
+
 import {
   forwardRef,
   InputHTMLAttributes,
   TextareaHTMLAttributes,
   ReactNode,
-  useState,
   useId,
 } from "react";
+import { Icon } from "@/app/components/icons";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-//
-// Figma: Input Field (node 90:3753)
-// Axes: State(Default/Disabled/Focus/Filled/Success/Warning/Error) × Type(Default/TextField) = 11
-//
-// Default   — text input, single line
-// TextField — multiline textarea
 
-export type InputFieldType = "default" | "textField";
 export type InputFieldState = "default" | "success" | "warning" | "error";
+// kept for back-compat
+export type InputFieldType = "default" | "textField";
 
 export interface InputFieldProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
+  /** Floating label rendered above the input */
   label?: string;
+  /** Helper / validation text below the input */
   hint?: string;
   /** Validation state */
   state?: InputFieldState;
-  /** Optional leading icon element */
+  /** Left slot — pass a <Label> component (icon + text badge) */
+  leadingLabel?: ReactNode;
+  /** Right slot — pass a <Label> component */
+  trailingLabel?: ReactNode;
+  /** Simple leading icon (no label) */
   leadingIcon?: ReactNode;
-  /** Optional trailing icon/action element */
+  /** Simple trailing icon */
   trailingIcon?: ReactNode;
+  /** 1px separator between leadingLabel and the text area */
+  leadingSeparator?: boolean;
+  /** 1px separator between the text area and trailingLabel */
+  trailingSeparator?: boolean;
   className?: string;
 }
 
@@ -42,57 +64,70 @@ export interface TextFieldProps
   className?: string;
 }
 
-// ─── Token Mapping ─────────────────────────────────────────────────────────────
-//
-// Default:  border-default → focus: border-active
-// Success:  border-success (always)
-// Warning:  border-warning (always)
-// Error:    border-error   (always)
+// ─── State visual spec ────────────────────────────────────────────────────────
 
-const stateStyles: Record<InputFieldState, { border: string; hint: string; icon: string }> = {
+interface StateSpec {
+  border: string;
+  hint: string;
+  iconColor: string;
+  /** Phosphor icon name for trailing state indicator, null = no icon */
+  stateIcon: "CheckCircle" | "Warning" | "WarningCircle" | null;
+}
+
+const STATE_SPEC: Record<InputFieldState, StateSpec> = {
+  // Default: no border at rest, active border on focus only
   default: {
-    border: [
-      "border-[var(--border-default)]",
-      "focus-within:border-[var(--border-active)]",
-    ].join(" "),
+    border: "border border-transparent focus-within:border-[var(--border-active)]",
     hint: "text-[var(--typography-muted)]",
-    icon: "text-[var(--icons-muted)]",
+    iconColor: "text-[var(--icons-muted)]",
+    stateIcon: null,
   },
+  // Validation states always show their border
   success: {
-    border: "border-[var(--border-success)]",
+    border: "border border-[var(--border-success)]",
     hint: "text-[var(--typography-success)]",
-    icon: "text-[var(--icons-success)]",
+    iconColor: "text-[var(--icons-success)]",
+    stateIcon: "CheckCircle",
   },
   warning: {
-    border: "border-[var(--border-warning)]",
+    border: "border border-[var(--border-warning)]",
     hint: "text-[var(--typography-warning)]",
-    icon: "text-[var(--icons-warning)]",
+    iconColor: "text-[var(--icons-warning)]",
+    stateIcon: "Warning",
   },
   error: {
-    border: "border-[var(--border-error)]",
+    border: "border border-[var(--border-error)]",
     hint: "text-[var(--typography-error)]",
-    icon: "text-[var(--icons-error)]",
+    iconColor: "text-[var(--icons-error)]",
+    stateIcon: "WarningCircle",
   },
 };
 
-// ─── Shared wrapper classes ────────────────────────────────────────────────────
+// ─── Shared class fragments ───────────────────────────────────────────────────
 
-const wrapperBase = [
-  "flex items-center gap-2",
-  "w-full px-4 py-3.5",
-  "rounded-2xl",
-  "bg-[var(--surfaces-base-low-contrast)]",
-  "border transition-colors duration-150",
-  "disabled:opacity-50",
-].join(" ");
+// Figma: bg=surfaces/baselowcontrast, px=16px, py=14px, radius=lg (16px mobile / 24px desktop)
+// border is applied via state spec (transparent at rest for default, coloured for validation states)
+const WRAPPER_BASE =
+  "flex items-stretch gap-2 w-full px-4 py-3.5 rounded-[var(--radius-lg)] bg-[var(--surfaces-base-low-contrast)] transition-colors duration-150";
 
-const inputBase = [
-  "flex-1 min-w-0 bg-transparent outline-none",
+const INPUT_BASE = [
+  "flex-1 min-w-0 bg-transparent outline-none self-center",
   "text-[length:var(--typography-body-md-size)] leading-[var(--typography-body-md-leading)] font-[var(--typography-body-md-weight)]",
   "text-[var(--typography-primary)]",
   "placeholder:text-[var(--typography-muted)]",
+  // Caret colour = brand interactive primary
+  "caret-[var(--surfaces-brand-interactive)]",
   "disabled:cursor-not-allowed",
 ].join(" ");
+
+const LABEL_STYLE =
+  "text-[length:var(--typography-body-sm-em-size)] leading-[var(--typography-body-sm-em-leading)] font-[var(--typography-body-sm-em-weight)] text-[var(--typography-secondary)]";
+
+const HINT_STYLE =
+  "text-[length:var(--typography-caption-md-size)] leading-[var(--typography-caption-md-leading)] font-[var(--typography-caption-md-weight)]";
+
+// Separator — 1px divider, surfaces/basehighcontrast
+const SEPARATOR = "self-stretch w-px shrink-0 bg-[var(--surfaces-base-high-contrast)]";
 
 // ─── InputField (single line) ─────────────────────────────────────────────────
 
@@ -102,8 +137,12 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       label,
       hint,
       state = "default",
+      leadingLabel,
+      trailingLabel,
       leadingIcon,
       trailingIcon,
+      leadingSeparator = false,
+      trailingSeparator = false,
       disabled,
       className = "",
       id: propId,
@@ -113,28 +152,43 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
   ) {
     const generatedId = useId();
     const id = propId ?? generatedId;
-    const s = stateStyles[state];
+    const spec = STATE_SPEC[state];
+
+    // Auto-inject state icon into trailing slot when state !== default
+    // and no explicit trailingIcon/trailingLabel is provided
+    const stateIconEl =
+      spec.stateIcon && !trailingIcon && !trailingLabel ? (
+        <span className={`w-5 h-5 flex-shrink-0 self-center ${spec.iconColor}`} aria-hidden="true">
+          <Icon name={spec.stateIcon} size="md" />
+        </span>
+      ) : null;
 
     return (
       <div className={["flex flex-col gap-1", className].join(" ")}>
         {label && (
-          <label
-            htmlFor={id}
-            className="text-[length:var(--typography-body-sm-em-size)] leading-[var(--typography-body-sm-em-leading)] font-[var(--typography-body-sm-em-weight)] text-[var(--typography-secondary)]"
-          >
+          <label htmlFor={id} className={LABEL_STYLE}>
             {label}
           </label>
         )}
 
         <div
           className={[
-            wrapperBase,
-            s.border,
+            WRAPPER_BASE,
+            spec.border,
             disabled ? "opacity-50 cursor-not-allowed" : "",
           ].join(" ")}
         >
+          {/* Leading label slot (e.g. currency badge, unit) */}
+          {leadingLabel && (
+            <span className="flex-shrink-0 self-center">{leadingLabel}</span>
+          )}
+
+          {/* Leading separator */}
+          {leadingSeparator && leadingLabel && <div className={SEPARATOR} />}
+
+          {/* Leading icon (simple, no label) */}
           {leadingIcon && (
-            <span className={`w-4 h-4 flex-shrink-0 ${s.icon}`} aria-hidden="true">
+            <span className={`w-5 h-5 flex-shrink-0 self-center ${spec.iconColor}`} aria-hidden="true">
               {leadingIcon}
             </span>
           )}
@@ -145,25 +199,31 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             disabled={disabled}
             aria-describedby={hint ? `${id}-hint` : undefined}
             aria-invalid={state === "error" ? "true" : undefined}
-            className={inputBase}
+            className={INPUT_BASE}
             {...rest}
           />
 
+          {/* Trailing icon (simple) */}
           {trailingIcon && (
-            <span className={`w-4 h-4 flex-shrink-0 ${s.icon}`} aria-hidden="true">
+            <span className={`w-5 h-5 flex-shrink-0 self-center ${spec.iconColor}`} aria-hidden="true">
               {trailingIcon}
             </span>
+          )}
+
+          {/* Auto state icon */}
+          {stateIconEl}
+
+          {/* Trailing separator */}
+          {trailingSeparator && trailingLabel && <div className={SEPARATOR} />}
+
+          {/* Trailing label slot */}
+          {trailingLabel && (
+            <span className="flex-shrink-0 self-center">{trailingLabel}</span>
           )}
         </div>
 
         {hint && (
-          <p
-            id={`${id}-hint`}
-            className={[
-              "text-[length:var(--typography-caption-md-size)] leading-[var(--typography-caption-md-leading)] font-[var(--typography-caption-md-weight)]",
-              s.hint,
-            ].join(" ")}
-          >
+          <p id={`${id}-hint`} className={[HINT_STYLE, spec.hint].join(" ")}>
             {hint}
           </p>
         )}
@@ -190,15 +250,12 @@ export const TextField = forwardRef<HTMLTextAreaElement, TextFieldProps>(
   ) {
     const generatedId = useId();
     const id = propId ?? generatedId;
-    const s = stateStyles[state];
+    const spec = STATE_SPEC[state];
 
     return (
       <div className={["flex flex-col gap-1", className].join(" ")}>
         {label && (
-          <label
-            htmlFor={id}
-            className="text-[length:var(--typography-body-sm-em-size)] leading-[var(--typography-body-sm-em-leading)] font-[var(--typography-body-sm-em-weight)] text-[var(--typography-secondary)]"
-          >
+          <label htmlFor={id} className={LABEL_STYLE}>
             {label}
           </label>
         )}
@@ -206,10 +263,10 @@ export const TextField = forwardRef<HTMLTextAreaElement, TextFieldProps>(
         <div
           className={[
             "w-full px-4 py-3.5",
-            "rounded-2xl",
+            "rounded-[var(--radius-lg)]",
             "bg-[var(--surfaces-base-low-contrast)]",
-            "border transition-colors duration-150",
-            s.border,
+            "transition-colors duration-150",
+            spec.border,
             disabled ? "opacity-50" : "",
           ].join(" ")}
         >
@@ -225,6 +282,7 @@ export const TextField = forwardRef<HTMLTextAreaElement, TextFieldProps>(
               "text-[length:var(--typography-body-md-size)] leading-[var(--typography-body-md-leading)] font-[var(--typography-body-md-weight)]",
               "text-[var(--typography-primary)]",
               "placeholder:text-[var(--typography-muted)]",
+              "caret-[var(--surfaces-brand-interactive)]",
               "disabled:cursor-not-allowed",
             ].join(" ")}
             {...rest}
@@ -232,13 +290,7 @@ export const TextField = forwardRef<HTMLTextAreaElement, TextFieldProps>(
         </div>
 
         {hint && (
-          <p
-            id={`${id}-hint`}
-            className={[
-              "text-[length:var(--typography-caption-md-size)] leading-[var(--typography-caption-md-leading)] font-[var(--typography-caption-md-weight)]",
-              s.hint,
-            ].join(" ")}
-          >
+          <p id={`${id}-hint`} className={[HINT_STYLE, spec.hint].join(" ")}>
             {hint}
           </p>
         )}
