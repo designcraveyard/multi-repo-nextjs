@@ -46,8 +46,8 @@ export function Divider({
   // Horizontal with label
   if (label) {
     const lineClass = isSection
-      ? "bg-[var(--surfaces-base-low-contrast)]"
-      : "bg-[var(--surfaces-base-low-contrast-pressed)]";
+      ? "bg-[var(--border-default)]"
+      : "bg-[var(--border-muted)]";
     return (
       <div
         role="separator"
@@ -71,8 +71,8 @@ export function Divider({
       className={[
         "border-0 w-full",
         isSection
-          ? "h-2 bg-[var(--surfaces-base-low-contrast)]"
-          : "h-px bg-[var(--surfaces-base-low-contrast-pressed)]",
+          ? "h-2 bg-[var(--border-default)]"
+          : "h-px bg-[var(--border-muted)]",
         className,
       ].join(" ")}
     />
