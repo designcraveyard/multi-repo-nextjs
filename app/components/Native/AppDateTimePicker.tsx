@@ -12,22 +12,20 @@ import { Icon } from "@/app/components/icons/Icon";
 
 const styling = {
   colors: {
-    // Trigger button background
+    // Trigger button background and hover/pressed states (no border in normal state)
     triggerBg:       "var(--surfaces-base-primary)",
-    // Trigger button text
+    triggerHoverBg:  "var(--surfaces-base-primary-hover)",
     triggerText:     "var(--typography-primary)",
-    // Trigger button border
-    triggerBorder:   "var(--border-default)",
     // Calendar popup background
-    calendarBg:      "var(--surfaces-base-low-contrast)",
+    calendarBg:      "var(--surfaces-base-primary)",
     // Calendar icon inside the trigger
     icon:            "var(--icons-secondary)",
     // Label text above the trigger
     label:           "var(--typography-primary)",
     // Time input text
     timeText:        "var(--typography-primary)",
-    timeBorder:      "var(--border-default)",
     timeBg:          "var(--surfaces-base-primary)",
+    // Active/selected day in calendar uses SurfacesBrandInteractive via Calendar component
   },
   layout: {
     triggerRadius:   "var(--radius-md)",
@@ -142,15 +140,15 @@ export function AppDateTimePicker({
             style={{
               backgroundColor: styling.colors.timeBg,
               color:           styling.colors.timeText,
-              borderColor:     styling.colors.timeBorder,
-              borderWidth:     "1px",
-              borderStyle:     "solid",
+              // No default border; use border-default only when focused via outline
+              border:          "none",
               borderRadius:    styling.layout.triggerRadius,
               paddingLeft:     "var(--space-2)",
               paddingRight:    "var(--space-2)",
               paddingTop:      "var(--space-1)",
               paddingBottom:   "var(--space-1)",
               fontSize:        styling.typography.time,
+              cursor:          "pointer",
             }}
           />
         </div>
@@ -180,9 +178,8 @@ export function AppDateTimePicker({
               style={{
                 backgroundColor: styling.colors.triggerBg,
                 color:           styling.colors.triggerText,
-                borderColor:     styling.colors.triggerBorder,
-                borderWidth:     "1px",
-                borderStyle:     "solid",
+                // No default border — clean surface appearance
+                border:          "none",
                 borderRadius:    styling.layout.triggerRadius,
                 paddingLeft:     styling.layout.triggerPaddingX,
                 paddingRight:    styling.layout.triggerPaddingX,
@@ -204,7 +201,8 @@ export function AppDateTimePicker({
             </button>
           </PopoverTrigger>
 
-          <PopoverContent className="p-0 w-auto" align="start">
+          {/* No border on the popover panel */}
+          <PopoverContent className="p-0 w-auto border-none" align="start">
             {calendarNode}
           </PopoverContent>
         </Popover>

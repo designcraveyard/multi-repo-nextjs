@@ -1,6 +1,5 @@
 "use client";
 
-import { ReactNode } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -105,8 +104,12 @@ export function AppAlertPopup({
 }: AppAlertPopupProps) {
   return (
     <AlertDialog open={isPresented} onOpenChange={(open) => !open && onClose()}>
+      {/*
+        AlertDialogContent is centered by default (Radix Dialog: fixed + translate-x/y
+        50% centering). We set our surface background, radius, and no border.
+      */}
       <AlertDialogContent
-        className={className}
+        className={`border-none ${className}`}
         style={{
           backgroundColor: styling.colors.background,
           borderRadius:    styling.layout.radius,
@@ -150,6 +153,7 @@ export function AppAlertPopup({
               paddingBottom:   styling.layout.buttonPaddingY,
               fontSize:        styling.typography.button,
               border:          "none",
+              cursor:          "pointer",
             };
 
             // AlertDialogCancel closes without triggering an action;

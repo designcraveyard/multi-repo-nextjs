@@ -29,9 +29,9 @@ const styling = {
     // Destructive item text — red
     destructiveText: "var(--typography-error)",
     // Item background on hover
-    itemHoverBg:     "var(--surfaces-base-low-contrast)",
-    // Thin divider between rows
-    rowDivider:      "var(--border-muted)",
+    itemHoverBg:     "var(--surfaces-base-primary-hover)",
+    // Thin divider between rows — border-default per design rules
+    rowDivider:      "var(--border-default)",
   },
   layout: {
     // Corner radius of the menu panel
@@ -92,6 +92,8 @@ function itemStyle(destructive?: boolean): React.CSSProperties {
     paddingBottom: styling.layout.itemPaddingY,
     gap:           styling.layout.iconSpacing,
     cursor:        "pointer",
+    // No per-item border-radius — the panel radius clips the outer corners
+    borderRadius:  0,
   };
 }
 
@@ -130,6 +132,9 @@ export function AppContextMenu({
               <ContextMenuItem
                 onSelect={item.onPress}
                 style={itemStyle(item.destructive)}
+                // rounded-none: override shadcn's rounded-sm so items don't get their own radius
+                // focus/hover bg via data-highlighted since ContextMenuItem uses Radix pointer events
+                className="rounded-none data-[highlighted]:bg-[var(--surfaces-base-primary-hover)] data-[highlighted]:text-[var(--typography-primary)]"
               >
                 {item.icon && <span aria-hidden="true">{item.icon}</span>}
                 {item.label}
@@ -158,6 +163,8 @@ export function AppContextMenu({
             <DropdownMenuItem
               onSelect={item.onPress}
               style={itemStyle(item.destructive)}
+              // rounded-none: override shadcn's rounded-sm so items don't get their own radius
+              className="rounded-none data-[highlighted]:bg-[var(--surfaces-base-primary-hover)] data-[highlighted]:text-[var(--typography-primary)]"
             >
               {item.icon && <span aria-hidden="true">{item.icon}</span>}
               {item.label}

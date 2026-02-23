@@ -14,10 +14,10 @@ import {
 
 const styling = {
   colors: {
-    // Active page dot
+    // Active page dot — brand color marks the current slide
     dotActive:   "var(--surfaces-brand-interactive)",
-    // Inactive page dots
-    dotInactive: "var(--surfaces-base-low-contrast)",
+    // Inactive page dots — high-contrast surface so dots read on any background
+    dotInactive: "var(--surfaces-base-high-contrast)",
   },
   layout: {
     // Horizontal gap between cards in scroll-snap style

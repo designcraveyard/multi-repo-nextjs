@@ -27,18 +27,22 @@ const styling = {
     // Cancel button (separated at bottom)
     cancelText:      "var(--typography-brand)",
     cancelBg:        "var(--surfaces-base-primary)",
-    // Thin divider between rows
+    // Thin divider between rows — border-default per design rules
     divider:         "var(--border-default)",
+    // Action row hover background
+    actionHoverBg:   "var(--surfaces-base-primary-hover)",
   },
   layout: {
     // Corner radius of the action group panel
-    panelRadius:   "var(--radius-xl)",
+    panelRadius:  "var(--radius-xl)",
     // Corner radius of the cancel button
-    cancelRadius:  "var(--radius-xl)",
-    itemPaddingX:  "var(--space-4)",
-    itemPaddingY:  "var(--space-4)",
+    cancelRadius: "var(--radius-xl)",
+    itemPaddingX: "var(--space-4)",
+    itemPaddingY: "var(--space-4)",
     // Gap between the action group and the cancel button
-    cancelGap:     "var(--space-2)",
+    cancelGap:    "var(--space-2)",
+    // Max width of the sheet panel — centered on screen
+    maxWidth:     "380px",
   },
   typography: {
     title:        "var(--typography-caption-md-size)",
@@ -93,12 +97,23 @@ export function AppActionSheet({
 
   return (
     <AlertDialog open={isPresented} onOpenChange={(open) => !open && onClose()}>
-      {/* Render as a bottom sheet: position fixed to bottom, full-width on mobile */}
+      {/*
+        AlertDialogContent centers by default (Radix Dialog primitive uses
+        fixed + translate-x/y centering). We constrain width and remove the
+        shadcn border so only our panel radius and background are visible.
+        No explicit bottom/top positioning — the dialog is centered on screen.
+      */}
       <AlertDialogContent
-        className="fixed bottom-4 left-4 right-4 w-auto max-w-sm mx-auto p-0 border-none shadow-lg"
-        style={{ borderRadius: styling.layout.panelRadius }}
+        className="w-full border-none shadow-lg p-0"
+        style={{
+          maxWidth: styling.layout.maxWidth,
+          // The outer AlertDialogContent is the transparent wrapper;
+          // no radius here — the inner panels define their own shapes.
+          borderRadius: 0,
+          background:   "transparent",
+        }}
       >
-        {/* Main actions group */}
+        {/* Main actions group — rounded panel with overflow-hidden to clip rows */}
         <div
           style={{
             backgroundColor: styling.colors.background,
@@ -147,7 +162,7 @@ export function AppActionSheet({
             <button
               key={i}
               onClick={() => handleAction(action)}
-              className="w-full text-center transition-colors"
+              className="w-full text-center transition-colors hover:bg-[var(--surfaces-base-primary-hover)]"
               style={{
                 color:         action.role === "destructive"
                                  ? styling.colors.destructiveText
@@ -171,11 +186,11 @@ export function AppActionSheet({
           ))}
         </div>
 
-        {/* Cancel button — separate panel below, matches iOS layout */}
+        {/* Cancel button — separate rounded panel below, matches iOS layout */}
         {cancelAction && (
           <button
             onClick={() => handleAction(cancelAction)}
-            className="w-full text-center transition-colors"
+            className="w-full text-center transition-colors hover:bg-[var(--surfaces-base-primary-hover)]"
             style={{
               marginTop:       styling.layout.cancelGap,
               backgroundColor: styling.colors.cancelBg,

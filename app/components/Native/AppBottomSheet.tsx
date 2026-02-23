@@ -16,27 +16,21 @@ import {
 const styling = {
   colors: {
     // Sheet background surface
-    background:    "var(--surfaces-base-primary)",
-    // Drag indicator pill color
-    dragIndicator: "var(--border-default)",
+    background: "var(--surfaces-base-primary)",
     // Optional title text
-    titleText:     "var(--typography-primary)",
+    titleText:  "var(--typography-primary)",
     // Optional description text
-    descText:      "var(--typography-secondary)",
+    descText:   "var(--typography-secondary)",
   },
   layout: {
     // Corner radius of the sheet's top corners
-    cornerRadius:    "var(--radius-xl)",
+    cornerRadius:  "var(--radius-xl)",
     // Inner horizontal padding around sheet content
-    paddingX:        "var(--space-4)",
-    // Top padding below the drag indicator
-    paddingTop:      "var(--space-3)",
+    paddingX:      "var(--space-4)",
+    // Top padding below the shadcn drag indicator
+    paddingTop:    "var(--space-3)",
     // Bottom safe-area padding
-    paddingBottom:   "var(--space-6)",
-    // Width and height of the drag indicator pill
-    indicatorW:      "32px",
-    indicatorH:      "4px",
-    indicatorRadius: "var(--radius-full)",
+    paddingBottom: "var(--space-6)",
   },
   typography: {
     title: "var(--typography-title-sm-size)",
@@ -84,6 +78,11 @@ export function AppBottomSheet({
       // vaul snap points: array of fractions (0–1) or pixel heights
       snapPoints={snapPoints}
     >
+      {/*
+        DrawerContent from shadcn/vaul already renders a single drag handle
+        pill at the top — we rely on that built-in handle and do NOT add a
+        second one manually to avoid duplicate indicators.
+      */}
       <DrawerContent
         className={className}
         style={{
@@ -96,19 +95,6 @@ export function AppBottomSheet({
           paddingBottom:        styling.layout.paddingBottom,
         }}
       >
-        {/* Drag indicator pill — always visible, matches iOS grabber */}
-        <div
-          aria-hidden="true"
-          className="mx-auto"
-          style={{
-            width:           styling.layout.indicatorW,
-            height:          styling.layout.indicatorH,
-            backgroundColor: styling.colors.dragIndicator,
-            borderRadius:    styling.layout.indicatorRadius,
-            marginBottom:    styling.layout.paddingTop,
-          }}
-        />
-
         {/* Optional header */}
         {(title || description) && (
           <DrawerHeader className="px-0">
