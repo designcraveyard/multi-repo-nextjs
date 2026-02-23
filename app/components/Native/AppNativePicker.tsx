@@ -148,17 +148,17 @@ export function AppNativePicker<T extends string = string>({
         </SelectTrigger>
 
         {/*
-          border-none p-0: strip shadcn defaults
-          overflow inline style (not class): beats Radix Portal stacking context — ensures
-            the panel clips children to its border-radius reliably
-          [&>[role=listbox]]:p-0: zero out shadcn Viewport's p-1 so items sit flush at edges
-          [&>[role=listbox]]:overflow-hidden + [&>[role=listbox]]:rounded-*: the Viewport is
-            the DIRECT parent of SelectItems — giving it matching overflow+radius means
-            items are clipped at both the outer panel AND at the viewport level, fixing
-            first/last item corner bleed in all browsers
+          border-none: strip shadcn border default on the outer panel
+          viewportClassName passes classes directly into cn() on SelectPrimitive.Viewport —
+            avoids all child-selector parsing issues (nested brackets in [&>[...]] break
+            Tailwind v4's class parser regardless of attribute format)
+          p-1: 4px breathing room on all four sides between items and panel edges
+          overflow-hidden + rounded-[...]: Viewport is the DIRECT parent of SelectItems so
+            clipping here fixes first/last item corner bleed at both panel and viewport level
         */}
         <SelectContent
-          className="border-none p-0 [&>[role=listbox]]:p-0 [&>[role=listbox]]:overflow-hidden [&>[role=listbox]]:rounded-[var(--radius-md)]"
+          className="border-none"
+          viewportClassName="p-1 overflow-hidden rounded-[var(--radius-md)]"
           style={{
             backgroundColor: styling.colors.menuBg,
             borderRadius:    styling.layout.radius,
