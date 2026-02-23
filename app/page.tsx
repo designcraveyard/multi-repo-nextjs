@@ -88,6 +88,15 @@ export default function ComponentShowcase() {
   const [email, setEmail] = useState("user@example");
   const [bio, setBio] = useState("");
 
+  // Form — Pickers + Input Fields
+  const [formName, setFormName] = useState("");
+  const [formEmail, setFormEmail] = useState("");
+  const [formCountry, setFormCountry] = useState("IN");
+  const [formDOB, setFormDOB] = useState<Date>(new Date());
+  const [formLanguage, setFormLanguage] = useState("EN");
+  const [formPhone, setFormPhone] = useState("");
+  const [formBio, setFormBio] = useState("");
+
   // Form Controls
   const [radioValue, setRadioValue] = useState("email");
   const [checkNotifications, setCheckNotifications] = useState(true);
@@ -631,6 +640,71 @@ export default function ComponentShowcase() {
             value="42.00"
             onChange={() => {}}
           />
+        </Section>
+
+        {/* ── Form — Pickers + Input Fields ──────────────────────────────── */}
+        <Section title="Form — Pickers + Input Fields">
+          <div className="flex flex-col gap-4">
+            <InputField
+              id="form-name"
+              label="Full Name"
+              placeholder="Enter your name"
+              value={formName}
+              onChange={(e) => setFormName(e.target.value)}
+              leadingIcon={<Icon name="User" size="md" />}
+            />
+            <InputField
+              id="form-email"
+              label="Email"
+              placeholder="you@example.com"
+              value={formEmail}
+              onChange={(e) => setFormEmail(e.target.value)}
+              leadingIcon={<Icon name="Envelope" size="md" />}
+            />
+            <AppNativePicker
+              label="Country"
+              value={formCountry}
+              onChange={setFormCountry}
+              options={[
+                { label: "Australia", value: "AU" },
+                { label: "India",     value: "IN" },
+                { label: "USA",       value: "US" },
+                { label: "UK",        value: "UK" },
+              ]}
+            />
+            <AppDateTimePicker
+              label="Date of Birth"
+              mode="date"
+              value={formDOB}
+              onChange={setFormDOB}
+            />
+            <AppNativePicker
+              label="Preferred Language"
+              value={formLanguage}
+              onChange={setFormLanguage}
+              options={[
+                { label: "English", value: "EN" },
+                { label: "Hindi",   value: "HI" },
+                { label: "Spanish", value: "ES" },
+              ]}
+            />
+            <InputField
+              id="form-phone"
+              label="Phone"
+              placeholder="+1 (555) 000-0000"
+              value={formPhone}
+              onChange={(e) => setFormPhone(e.target.value)}
+              leadingIcon={<Icon name="Phone" size="md" />}
+            />
+            <TextField
+              id="form-bio"
+              label="Bio"
+              placeholder="Tell us about yourself…"
+              value={formBio}
+              onChange={(e) => setFormBio(e.target.value)}
+            />
+            <Button label="Submit" variant="primary" />
+          </div>
         </Section>
 
         {/* ── Thumbnail ────────────────────────────────────────────────────── */}
