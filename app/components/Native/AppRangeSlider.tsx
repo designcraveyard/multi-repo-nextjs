@@ -108,6 +108,18 @@ export function AppRangeSlider({
             } as React.CSSProperties
           }
           className="w-full"
+          // active:cursor-grabbing on the thumb alone fails during a drag — once Radix
+          // captures the pointer and moves away from the thumb element, the browser drops
+          // :active on that element and the cursor reverts. Setting it on document.body for
+          // the drag duration wins everywhere regardless of where the pointer is.
+          onPointerDown={() => {
+            document.body.style.cursor = "grabbing";
+            const release = () => {
+              document.body.style.cursor = "";
+              document.removeEventListener("pointerup", release);
+            };
+            document.addEventListener("pointerup", release);
+          }}
         />
       </div>
 
