@@ -19,9 +19,12 @@ import { Badge } from "@/app/components/Badge";
 import type { BadgeType } from "@/app/components/Badge";
 import { Button } from "@/app/components/Button";
 import type { ButtonVariant } from "@/app/components/Button";
+import { Checkbox } from "@/app/components/Checkbox";
 import { Divider } from "@/app/components/Divider";
 import { Icon } from "@/app/components/icons";
 import { IconButton } from "@/app/components/IconButton";
+import { RadioButton } from "@/app/components/RadioButton";
+import { Switch } from "@/app/components/Switch";
 import { Thumbnail } from "@/app/components/Thumbnail";
 import { TextBlock } from "@/app/components/patterns/TextBlock";
 
@@ -32,6 +35,9 @@ export type ListItemTrailing =
   /** icon: Phosphor icon name (PascalCase, e.g. "DotsThree") */
   | { type: "iconButton"; icon: string; accessibilityLabel: string; onPress: () => void }
   | { type: "badge"; label: string; badgeVariant?: BadgeType }
+  | { type: "radio"; checked: boolean; onChange: (checked: boolean) => void; value?: string }
+  | { type: "checkbox"; checked: boolean; onChange: (checked: boolean) => void; indeterminate?: boolean }
+  | { type: "switch"; checked: boolean; onChange: (checked: boolean) => void }
   | { type: "none" };
 
 export interface ListItemProps {
@@ -81,6 +87,29 @@ function TrailingSlot({ trailing }: { trailing: ListItemTrailing }) {
           label={trailing.label}
           type={trailing.badgeVariant ?? "brand"}
           size="sm"
+        />
+      );
+    case "radio":
+      return (
+        <RadioButton
+          checked={trailing.checked}
+          onChange={trailing.onChange}
+          value={trailing.value}
+        />
+      );
+    case "checkbox":
+      return (
+        <Checkbox
+          checked={trailing.checked}
+          onChange={trailing.onChange}
+          indeterminate={trailing.indeterminate}
+        />
+      );
+    case "switch":
+      return (
+        <Switch
+          checked={trailing.checked}
+          onChange={trailing.onChange}
         />
       );
     case "none":

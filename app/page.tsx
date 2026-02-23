@@ -17,6 +17,9 @@ import { TextBlock } from "@/app/components/patterns/TextBlock";
 import { StepIndicator } from "@/app/components/patterns/StepIndicator";
 import { Stepper } from "@/app/components/patterns/Stepper";
 import { ListItem } from "@/app/components/patterns/ListItem";
+import { RadioButton, RadioGroup } from "@/app/components/RadioButton";
+import { Checkbox } from "@/app/components/Checkbox";
+import { Switch } from "@/app/components/Switch";
 import {
   AppNativePicker,
   AppDateTimePicker,
@@ -84,6 +87,19 @@ export default function ComponentShowcase() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("user@example");
   const [bio, setBio] = useState("");
+
+  // Form Controls
+  const [radioValue, setRadioValue] = useState("email");
+  const [checkNotifications, setCheckNotifications] = useState(true);
+  const [checkUpdates, setCheckUpdates] = useState(false);
+  const [checkMarketing, setCheckMarketing] = useState(false);
+  const [switchDarkMode, setSwitchDarkMode] = useState(false);
+  const [switchNotifications, setSwitchNotifications] = useState(true);
+  const [switchLocation, setSwitchLocation] = useState(false);
+
+  // Compute "select all" state
+  const allChecked = checkNotifications && checkUpdates && checkMarketing;
+  const someChecked = checkNotifications || checkUpdates || checkMarketing;
 
   // Native components
   const [pickerVal, setPickerVal] = useState("react");
@@ -744,6 +760,140 @@ export default function ComponentShowcase() {
           </div>
         </Section>
 
+        {/* ── Radio Buttons ─────────────────────────────────────────────────── */}
+        <Section title="Radio Buttons">
+          <div className="flex flex-col gap-4">
+            <h3 className="text-[length:var(--typography-caption-md-size)] text-[var(--typography-muted)]">
+              Standalone
+            </h3>
+            <Row>
+              <RadioButton checked={true} label="Selected radio" />
+              <RadioButton checked={false} label="Unselected radio" />
+              <RadioButton checked={true} label="Disabled selected" disabled />
+            </Row>
+
+            <h3 className="text-[length:var(--typography-caption-md-size)] text-[var(--typography-muted)] mt-4">
+              Radio Group — Contact preference
+            </h3>
+            <RadioGroup value={radioValue} onChange={setRadioValue}>
+              <RadioButton value="email" label="Email" />
+              <RadioButton value="sms" label="SMS" />
+              <RadioButton value="push" label="Push notification" />
+            </RadioGroup>
+
+            <h3 className="text-[length:var(--typography-caption-md-size)] text-[var(--typography-muted)] mt-4">
+              As ListItem rows
+            </h3>
+            <div className="mt-2">
+              <ListItem
+                title="Email"
+                subtitle="Receive updates via email"
+                trailing={{ type: "radio", checked: radioValue === "email", onChange: () => setRadioValue("email") }}
+                divider
+              />
+              <ListItem
+                title="SMS"
+                subtitle="Receive updates via text message"
+                trailing={{ type: "radio", checked: radioValue === "sms", onChange: () => setRadioValue("sms") }}
+                divider
+              />
+              <ListItem
+                title="Push notification"
+                subtitle="Receive updates on your device"
+                trailing={{ type: "radio", checked: radioValue === "push", onChange: () => setRadioValue("push") }}
+              />
+            </div>
+          </div>
+        </Section>
+
+        {/* ── Checkboxes ────────────────────────────────────────────────────── */}
+        <Section title="Checkboxes">
+          <div className="flex flex-col gap-4">
+            <h3 className="text-[length:var(--typography-caption-md-size)] text-[var(--typography-muted)]">
+              Standalone
+            </h3>
+            <Row>
+              <Checkbox checked={true} label="Checked" />
+              <Checkbox checked={false} label="Unchecked" />
+              <Checkbox checked={true} indeterminate label="Indeterminate" />
+              <Checkbox checked={true} label="Disabled checked" disabled />
+            </Row>
+
+            <h3 className="text-[length:var(--typography-caption-md-size)] text-[var(--typography-muted)] mt-4">
+              As ListItem rows — Email preferences
+            </h3>
+            <div className="mt-2">
+              <ListItem
+                title="Select all"
+                trailing={{
+                  type: "checkbox",
+                  checked: allChecked,
+                  indeterminate: !allChecked && someChecked,
+                  onChange: (val) => {
+                    setCheckNotifications(val);
+                    setCheckUpdates(val);
+                    setCheckMarketing(val);
+                  },
+                }}
+                divider
+              />
+              <ListItem
+                title="Notifications"
+                subtitle="Transaction alerts and reminders"
+                trailing={{ type: "checkbox", checked: checkNotifications, onChange: setCheckNotifications }}
+                divider
+              />
+              <ListItem
+                title="Product updates"
+                subtitle="New features and improvements"
+                trailing={{ type: "checkbox", checked: checkUpdates, onChange: setCheckUpdates }}
+                divider
+              />
+              <ListItem
+                title="Marketing"
+                subtitle="Promotions and special offers"
+                trailing={{ type: "checkbox", checked: checkMarketing, onChange: setCheckMarketing }}
+              />
+            </div>
+          </div>
+        </Section>
+
+        {/* ── Switches ──────────────────────────────────────────────────────── */}
+        <Section title="Switches">
+          <div className="flex flex-col gap-4">
+            <h3 className="text-[length:var(--typography-caption-md-size)] text-[var(--typography-muted)]">
+              Standalone
+            </h3>
+            <Row>
+              <Switch checked={true} label="On" />
+              <Switch checked={false} label="Off" />
+              <Switch checked={true} label="Disabled on" disabled />
+            </Row>
+
+            <h3 className="text-[length:var(--typography-caption-md-size)] text-[var(--typography-muted)] mt-4">
+              As ListItem rows — Settings
+            </h3>
+            <div className="mt-2">
+              <ListItem
+                title="Dark mode"
+                subtitle="Use dark color theme"
+                trailing={{ type: "switch", checked: switchDarkMode, onChange: setSwitchDarkMode }}
+                divider
+              />
+              <ListItem
+                title="Notifications"
+                subtitle="Enable push notifications"
+                trailing={{ type: "switch", checked: switchNotifications, onChange: setSwitchNotifications }}
+                divider
+              />
+              <ListItem
+                title="Location services"
+                subtitle="Allow access to your location"
+                trailing={{ type: "switch", checked: switchLocation, onChange: setSwitchLocation }}
+              />
+            </div>
+          </div>
+        </Section>
 
         {/* ── AppNativePicker ───────────────────────────────────────────────── */}
         <Section title="Native Picker — States">
