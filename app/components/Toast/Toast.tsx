@@ -10,6 +10,8 @@ import { Icon } from "@/app/components/icons";
 
 export interface ToastProps {
   message: string;
+  /** Visual variant — only "default" is currently implemented */
+  variant?: "default" | "success" | "warning" | "error" | "info";
   /** Optional description / secondary line */
   description?: string;
   /** Optional action button label */

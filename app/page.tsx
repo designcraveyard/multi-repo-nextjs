@@ -17,6 +17,19 @@ import { TextBlock } from "@/app/components/patterns/TextBlock";
 import { StepIndicator } from "@/app/components/patterns/StepIndicator";
 import { Stepper } from "@/app/components/patterns/Stepper";
 import { ListItem } from "@/app/components/patterns/ListItem";
+import {
+  AppNativePicker,
+  AppDateTimePicker,
+  AppBottomSheet,
+  AppProgressLoader,
+  AppCarousel,
+  AppContextMenu,
+  AppActionSheet,
+  AppAlertPopup,
+  AppTooltip,
+  AppRangeSlider,
+  AppColorPicker,
+} from "@/app/components/Native";
 
 // ─── Section wrapper ──────────────────────────────────────────────────────────
 
@@ -71,6 +84,16 @@ export default function ComponentShowcase() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("user@example");
   const [bio, setBio] = useState("");
+
+  // Native components
+  const [pickerVal, setPickerVal] = useState("react");
+  const [dateVal, setDateVal] = useState<Date>(new Date());
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [actionSheetOpen, setActionSheetOpen] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [sliderLow, setSliderLow] = useState(20);
+  const [sliderHigh, setSliderHigh] = useState(80);
+  const [colorVal, setColorVal] = useState("#6366f1");
 
   function triggerLoading() {
     setLoadingBtn(true);
@@ -719,6 +742,271 @@ export default function ComponentShowcase() {
               }}
             />
           </div>
+        </Section>
+
+
+        {/* ── AppNativePicker ───────────────────────────────────────────────── */}
+        <Section title="Native Picker — States">
+          <AppNativePicker
+            label="Framework"
+            value={pickerVal}
+            onChange={setPickerVal}
+            options={[
+              { label: "React",   value: "react" },
+              { label: "Vue",     value: "vue" },
+              { label: "Svelte",  value: "svelte" },
+              { label: "Angular", value: "angular" },
+            ]}
+          />
+          <AppNativePicker
+            label="Disabled"
+            value="react"
+            onChange={() => {}}
+            options={[{ label: "React", value: "react" }]}
+            disabled
+          />
+          <AppNativePicker
+            label="Error state"
+            value=""
+            onChange={() => {}}
+            options={[{ label: "React", value: "react" }]}
+            placeholder="Select a framework"
+            showError
+            errorMessage="Please select a framework"
+          />
+        </Section>
+
+        {/* ── AppDateTimePicker ─────────────────────────────────────────────── */}
+        <Section title="Date Time Picker — Modes">
+          <AppDateTimePicker
+            label="Date (compact)"
+            mode="date"
+            value={dateVal}
+            onChange={setDateVal}
+          />
+          <AppDateTimePicker
+            label="Time"
+            mode="time"
+            value={dateVal}
+            onChange={setDateVal}
+          />
+          <AppDateTimePicker
+            label="Date & Time"
+            mode="dateAndTime"
+            value={dateVal}
+            onChange={setDateVal}
+          />
+          <AppDateTimePicker
+            label="Inline calendar"
+            mode="date"
+            displayStyle="inline"
+            value={dateVal}
+            onChange={setDateVal}
+          />
+        </Section>
+
+        {/* ── AppBottomSheet ────────────────────────────────────────────────── */}
+        <Section title="Bottom Sheet">
+          <Row>
+            <Button
+              label="Open Sheet"
+              variant="secondary"
+              onClick={() => setSheetOpen(true)}
+            />
+          </Row>
+          <AppBottomSheet
+            isPresented={sheetOpen}
+            onClose={() => setSheetOpen(false)}
+            title="Sheet Title"
+            description="Swipe down or tap the backdrop to dismiss."
+          >
+            <div className="flex flex-col gap-3 pb-4">
+              <p className="text-sm text-[var(--typography-secondary)]">
+                Sheet body content goes here. You can put any React nodes inside.
+              </p>
+              <Button label="Close" variant="primary" onClick={() => setSheetOpen(false)} />
+            </div>
+          </AppBottomSheet>
+        </Section>
+
+        {/* ── AppProgressLoader ─────────────────────────────────────────────── */}
+        <Section title="Progress Loader — Variants">
+          <div className="flex flex-col gap-4">
+            <div>
+              <p className="text-xs text-[var(--typography-muted)] mb-2">Indefinite (spinner)</p>
+              <AppProgressLoader variant="indefinite" label="Loading…" />
+            </div>
+            <div>
+              <p className="text-xs text-[var(--typography-muted)] mb-2">Definite — 40%</p>
+              <AppProgressLoader variant="definite" value={40} total={100} label="40 of 100" />
+            </div>
+            <div>
+              <p className="text-xs text-[var(--typography-muted)] mb-2">Definite — complete</p>
+              <AppProgressLoader variant="definite" value={100} total={100} />
+            </div>
+          </div>
+        </Section>
+
+        {/* ── AppCarousel ──────────────────────────────────────────────────── */}
+        <Section title="Carousel — Paged">
+          <AppCarousel
+            style="paged"
+            showDots
+            items={["Slide 1", "Slide 2", "Slide 3"].map((s) => (
+              <div
+                key={s}
+                className="flex items-center justify-center h-32 rounded-[var(--radius-lg)] bg-[var(--surfaces-base-low-contrast)] text-[var(--typography-secondary)] text-sm font-medium"
+              >
+                {s}
+              </div>
+            ))}
+          />
+        </Section>
+
+        <Section title="Carousel — Scroll Snap">
+          <AppCarousel
+            style="scrollSnap"
+            showDots
+            items={["Card A", "Card B", "Card C", "Card D"].map((s) => (
+              <div
+                key={s}
+                className="flex items-center justify-center h-24 rounded-[var(--radius-md)] bg-[var(--surfaces-base-low-contrast)] text-[var(--typography-secondary)] text-sm font-medium"
+              >
+                {s}
+              </div>
+            ))}
+          />
+        </Section>
+
+        {/* ── AppContextMenu ───────────────────────────────────────────────── */}
+        <Section title="Context Menu — Right-click">
+          <AppContextMenu
+            mode="context"
+            items={[
+              { label: "Open",     onPress: () => {} },
+              { label: "Copy link", onPress: () => {} },
+              { label: "Share…",   onPress: () => {} },
+              { label: "Delete",   destructive: true, separatorAbove: true, onPress: () => {} },
+            ]}
+          >
+            <div className="flex items-center justify-center h-20 rounded-[var(--radius-md)] border border-[var(--border-default)] text-sm text-[var(--typography-muted)]">
+              Right-click (or long-press) here
+            </div>
+          </AppContextMenu>
+        </Section>
+
+        <Section title="Context Menu — Dropdown">
+          <Row>
+            <AppContextMenu
+              mode="dropdown"
+              items={[
+                { label: "Edit",      onPress: () => {} },
+                { label: "Duplicate", onPress: () => {} },
+                { label: "Delete",    destructive: true, separatorAbove: true, onPress: () => {} },
+              ]}
+            >
+              <Button
+                label="Options"
+                variant="secondary"
+                trailingIcon={<Icon name="CaretDown" size="sm" />}
+              />
+            </AppContextMenu>
+          </Row>
+        </Section>
+
+        {/* ── AppActionSheet ───────────────────────────────────────────────── */}
+        <Section title="Action Sheet">
+          <Row>
+            <Button
+              label="Open Action Sheet"
+              variant="secondary"
+              onClick={() => setActionSheetOpen(true)}
+            />
+          </Row>
+          <AppActionSheet
+            isPresented={actionSheetOpen}
+            onClose={() => setActionSheetOpen(false)}
+            title="Share via"
+            message="Choose how to share this item"
+            actions={[
+              { label: "Copy Link",     role: "default",     onPress: () => setActionSheetOpen(false) },
+              { label: "Send as Email", role: "default",     onPress: () => setActionSheetOpen(false) },
+              { label: "Delete Item",   role: "destructive", onPress: () => setActionSheetOpen(false) },
+              { label: "Cancel",        role: "cancel",      onPress: () => setActionSheetOpen(false) },
+            ]}
+          />
+        </Section>
+
+        {/* ── AppAlertPopup ────────────────────────────────────────────────── */}
+        <Section title="Alert Popup">
+          <Row>
+            <Button
+              label="Open Alert"
+              variant="secondary"
+              onClick={() => setAlertOpen(true)}
+            />
+          </Row>
+          <AppAlertPopup
+            isPresented={alertOpen}
+            onClose={() => setAlertOpen(false)}
+            title="Delete item?"
+            message="This action cannot be undone. The item will be permanently removed."
+            buttons={[
+              { label: "Cancel", role: "cancel",      onPress: () => setAlertOpen(false) },
+              { label: "Delete", role: "destructive", onPress: () => setAlertOpen(false) },
+            ]}
+          />
+        </Section>
+
+        {/* ── AppTooltip ───────────────────────────────────────────────────── */}
+        <Section title="Tooltip — Sides">
+          <Row>
+            <AppTooltip tipText="Saved to your library" side="top">
+              <IconButton icon={<Icon name="Bookmark" />} label="Save"  variant="secondary" />
+            </AppTooltip>
+            <AppTooltip tipText="Share with others" side="right">
+              <IconButton icon={<Icon name="Share" />}    label="Share" variant="tertiary"  />
+            </AppTooltip>
+            <AppTooltip tipText="View details" side="bottom">
+              <Button label="Details" variant="secondary" size="sm" />
+            </AppTooltip>
+            <AppTooltip tipText="Remove from list" side="left">
+              <IconButton icon={<Icon name="Trash" />} label="Delete" variant="danger" />
+            </AppTooltip>
+          </Row>
+        </Section>
+
+        {/* ── AppRangeSlider ───────────────────────────────────────────────── */}
+        <Section title="Range Slider">
+          <AppRangeSlider
+            lowerValue={sliderLow}
+            upperValue={sliderHigh}
+            onChange={([lo, hi]) => { setSliderLow(lo); setSliderHigh(hi); }}
+            range={[0, 100]}
+            step={5}
+            showLabels
+          />
+          <p className="text-xs text-[var(--typography-muted)]">
+            Selected: {sliderLow} – {sliderHigh}
+          </p>
+        </Section>
+
+        {/* ── AppColorPicker ───────────────────────────────────────────────── */}
+        <Section title="Color Picker">
+          <Row>
+            <AppColorPicker
+              label="Accent color"
+              value={colorVal}
+              onChange={setColorVal}
+            />
+            <AppColorPicker
+              label="Disabled"
+              value="#999999"
+              onChange={() => {}}
+              disabled
+            />
+          </Row>
+          <p className="text-xs text-[var(--typography-muted)]">Selected: {colorVal}</p>
         </Section>
 
       </div>
