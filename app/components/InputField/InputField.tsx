@@ -8,13 +8,17 @@
  *   Type:  InputField (single-line) | TextField (multiline)
  *
  * Figma primitive slots (left→right):
- *   [leadingLabel?] [leadingSeparator?] [input text area] [trailingSeparator?] [trailingLabel?]
+ *   [leadingLabel?] [leadingPicker?] [leadingSeparator?] [input text area] [trailingSeparator?] [trailingPicker?] [trailingLabel?]
  *
  * Usage:
  *   <InputField label="Email" placeholder="you@example.com" />
  *   <InputField state="error" hint="Invalid email" trailingLabel={<Label label="Clear" trailingIcon={<Icon name="X" />} />} />
  *   <InputField leadingLabel={<Label label="USD" />} leadingSeparator />
  *   <TextField label="Bio" placeholder="Tell us about yourself…" />
+ *   // With picker:
+ *   <InputField label="Amount" placeholder="0.00"
+ *     leadingPicker={<AppNativePicker label="Currency" value={cur} onChange={setCur} options={currencies} embedded />}
+ *     leadingSeparator />
  */
 
 import {
@@ -23,6 +27,7 @@ import {
   TextareaHTMLAttributes,
   ReactNode,
   useId,
+  useState,
 } from "react";
 import { Icon } from "@/app/components/icons";
 
@@ -44,13 +49,24 @@ export interface InputFieldProps
   leadingLabel?: ReactNode;
   /** Right slot — pass a <Label> component */
   trailingLabel?: ReactNode;
+  /**
+   * Left picker slot — pass <AppNativePicker embedded ... />.
+   * Renders after leadingLabel and before the text area.
+   */
+  leadingPicker?: ReactNode;
+  /**
+   * Right picker slot — pass <AppNativePicker embedded ... />.
+   * Renders after the text area and before trailingLabel.
+   * When set, suppresses the automatic trailing state icon.
+   */
+  trailingPicker?: ReactNode;
   /** Simple leading icon (no label) */
   leadingIcon?: ReactNode;
   /** Simple trailing icon */
   trailingIcon?: ReactNode;
-  /** 1px separator between leadingLabel and the text area */
+  /** 1px separator between leading content (label or picker) and the text area */
   leadingSeparator?: boolean;
-  /** 1px separator between the text area and trailingLabel */
+  /** 1px separator between the text area and trailing content (label or picker) */
   trailingSeparator?: boolean;
   className?: string;
 }
@@ -139,6 +155,8 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       state = "default",
       leadingLabel,
       trailingLabel,
+      leadingPicker,
+      trailingPicker,
       leadingIcon,
       trailingIcon,
       leadingSeparator = false,
@@ -146,6 +164,9 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       disabled,
       className = "",
       id: propId,
+      onFocus: propOnFocus,
+      onBlur: propOnBlur,
+      onChange: propOnChange,
       ...rest
     },
     ref
@@ -154,14 +175,43 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
     const id = propId ?? generatedId;
     const spec = STATE_SPEC[state];
 
+    // ── Focus + fill tracking for default-state icon color ──
+    const [isFocused, setIsFocused] = useState(false);
+    const [hasValue, setHasValue] = useState(() => Boolean(rest.value ?? rest.defaultValue));
+
+    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+      setIsFocused(true);
+      propOnFocus?.(e);
+    };
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+      setIsFocused(false);
+      propOnBlur?.(e);
+    };
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setHasValue(Boolean(e.target.value));
+      propOnChange?.(e);
+    };
+
+    // Default state: muted at rest → primary when focused or filled
+    const iconColor =
+      state === "default"
+        ? isFocused || hasValue
+          ? "text-[var(--icons-primary)]"
+          : "text-[var(--icons-muted)]"
+        : spec.iconColor;
+
     // Auto-inject state icon into trailing slot when state !== default
-    // and no explicit trailingIcon/trailingLabel is provided
+    // and no explicit trailingIcon/trailingLabel/trailingPicker is provided
     const stateIconEl =
-      spec.stateIcon && !trailingIcon && !trailingLabel ? (
+      spec.stateIcon && !trailingIcon && !trailingLabel && !trailingPicker ? (
         <span className={`w-5 h-5 flex-shrink-0 self-center ${spec.iconColor}`} aria-hidden="true">
           <Icon name={spec.stateIcon} size="md" />
         </span>
       ) : null;
+
+    // Separator shows when prop is true AND there is content on that side
+    const showLeadingSep = leadingSeparator && (leadingLabel || leadingPicker);
+    const showTrailingSep = trailingSeparator && (trailingLabel || trailingPicker);
 
     return (
       <div className={["flex flex-col gap-1", className].join(" ")}>
@@ -183,12 +233,17 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             <span className="flex-shrink-0 self-center">{leadingLabel}</span>
           )}
 
+          {/* Leading picker slot — use <AppNativePicker embedded ... /> */}
+          {leadingPicker && (
+            <span className="flex-shrink-0 self-center">{leadingPicker}</span>
+          )}
+
           {/* Leading separator */}
-          {leadingSeparator && leadingLabel && <div className={SEPARATOR} />}
+          {showLeadingSep && <div className={SEPARATOR} />}
 
           {/* Leading icon (simple, no label) */}
           {leadingIcon && (
-            <span className={`w-5 h-5 flex-shrink-0 self-center ${spec.iconColor}`} aria-hidden="true">
+            <span className={`w-5 h-5 flex-shrink-0 self-center ${iconColor}`} aria-hidden="true">
               {leadingIcon}
             </span>
           )}
@@ -200,12 +255,15 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             aria-describedby={hint ? `${id}-hint` : undefined}
             aria-invalid={state === "error" ? "true" : undefined}
             className={INPUT_BASE}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onChange={handleChange}
             {...rest}
           />
 
           {/* Trailing icon (simple) */}
           {trailingIcon && (
-            <span className={`w-5 h-5 flex-shrink-0 self-center ${spec.iconColor}`} aria-hidden="true">
+            <span className={`w-5 h-5 flex-shrink-0 self-center ${iconColor}`} aria-hidden="true">
               {trailingIcon}
             </span>
           )}
@@ -214,7 +272,12 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
           {stateIconEl}
 
           {/* Trailing separator */}
-          {trailingSeparator && trailingLabel && <div className={SEPARATOR} />}
+          {showTrailingSep && <div className={SEPARATOR} />}
+
+          {/* Trailing picker slot — use <AppNativePicker embedded ... /> */}
+          {trailingPicker && (
+            <span className="flex-shrink-0 self-center">{trailingPicker}</span>
+          )}
 
           {/* Trailing label slot */}
           {trailingLabel && (

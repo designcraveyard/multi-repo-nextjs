@@ -14,21 +14,25 @@ import {
 
 const styling = {
   colors: {
-    // Trigger button background and hover/pressed states
-    triggerBg:        "var(--surfaces-base-primary)",
-    triggerHoverBg:   "var(--surfaces-base-primary-hover)",
-    triggerPressedBg: "var(--surfaces-base-primary-pressed)",
-    // Trigger button text + chevron icon
+    // Trigger: chip-tab inactive appearance (surfaces-base-low-contrast bg, secondary text)
+    triggerBg:        "var(--surfaces-base-low-contrast)",
+    triggerHoverBg:   "var(--surfaces-base-low-contrast-hover)",
+    triggerPressedBg: "var(--surfaces-base-low-contrast-pressed)",
+    // Trigger text — primary when a value is selected, muted for placeholder (set via SelectValue)
     triggerText:      "var(--typography-primary)",
     // Error-state border only — no border in normal state
     borderError:      "var(--border-error)",
+    // filters variant border (non-error)
+    borderDefault:    "var(--border-default)",
+    // filters variant background
+    triggerBgFilters: "var(--surfaces-base-primary)",
     // Dropdown menu panel background
     menuBg:           "var(--surfaces-base-primary)",
     // Unselected option hover background
     optionHoverBg:    "var(--surfaces-base-primary-hover)",
     // Unselected option text
     optionText:       "var(--typography-primary)",
-    // Selected option: hover surface + primary text (emphasized weight distinguishes from unselected)
+    // Selected option: hover-surface bg + primary text (emphasized weight distinguishes from unselected)
     selectedBg:       "var(--surfaces-base-primary-hover)",
     selectedText:     "var(--typography-primary)",
     // Error message text below trigger
@@ -37,24 +41,51 @@ const styling = {
     placeholder:      "var(--typography-muted)",
   },
   layout: {
-    // Corner radius of trigger and dropdown panel
-    radius:           "var(--radius-md)",
-    // Vertical padding inside the trigger
-    paddingY:         "var(--space-2)",
-    // Horizontal padding inside the trigger
-    paddingX:         "var(--space-4)",
+    // Pill shape matching chip component (9999px = fully rounded capsule)
+    radius:           "9999px",
     // Error border width
     errorBorderWidth: "1.5px",
   },
   typography: {
-    // Trigger label + option row font size
-    label:          "var(--typography-body-md-size)",
-    leading:        "var(--typography-body-md-leading)",
-    weight:         "var(--typography-body-md-weight)",
-    // Selected item — medium weight (emphasized) to distinguish from unselected
+    // Selected item — medium weight (emphasized) to distinguish from unselected in dropdown
     selectedWeight: "500",
     // Helper / error text below trigger
     helper:         "var(--typography-caption-md-size)",
+  },
+  // Form label above trigger (non-embedded mode)
+  formLabel: {
+    size:    "var(--typography-body-sm-em-size)",
+    leading: "var(--typography-body-sm-em-leading)",
+    weight:  "var(--typography-body-sm-em-weight)",
+    color:   "var(--typography-secondary)",
+  },
+} as const;
+
+// ─── Chip size spec ───────────────────────────────────────────────────────────
+// Mirrors AppChipSize trigger dimensions (sm/md/lg).
+// Embedded mode always uses sm. Standalone uses the size prop.
+
+const CHIP_SIZE_SPEC = {
+  sm: {
+    paddingX:   "var(--space-3)",  // 12px
+    paddingY:   "var(--space-1)",  // 4px
+    fontSize:   "var(--typography-cta-sm-size)",
+    lineHeight: "var(--typography-cta-sm-leading)",
+    fontWeight: "var(--typography-cta-sm-weight)",
+  },
+  md: {
+    paddingX:   "var(--space-4)",  // 16px
+    paddingY:   "var(--space-2)",  // 8px
+    fontSize:   "var(--typography-cta-sm-size)",
+    lineHeight: "var(--typography-cta-sm-leading)",
+    fontWeight: "var(--typography-cta-sm-weight)",
+  },
+  lg: {
+    paddingX:   "var(--space-5)",  // 20px
+    paddingY:   "var(--space-3)",  // 12px
+    fontSize:   "var(--typography-cta-md-size)",
+    lineHeight: "var(--typography-cta-md-leading)",
+    fontWeight: "var(--typography-cta-md-weight)",
   },
 } as const;
 
@@ -66,8 +97,8 @@ export interface PickerOption<T extends string = string> {
 }
 
 export interface AppNativePickerProps<T extends string = string> {
-  /** Label shown above the trigger */
-  label: string;
+  /** Label shown above the trigger (standalone mode) or as aria-label (embedded mode) */
+  label?: string;
   /** Currently selected value */
   value: T;
   /** Called when the user selects a new option */
@@ -82,7 +113,31 @@ export interface AppNativePickerProps<T extends string = string> {
   showError?: boolean;
   /** Validation message shown below trigger when showError is true */
   errorMessage?: string;
-  /** Additional CSS class for the wrapper */
+  /**
+   * When true, renders only the chip trigger — no label above, no error text below.
+   * Use this when embedding inside InputField's leadingPicker or trailingPicker slot.
+   * Embedded mode always uses sm size and chipTabs variant, and removes the focus ring.
+   * @example
+   *   <InputField
+   *     label="Amount"
+   *     leadingPicker={<AppNativePicker label="Currency" value={currency} onChange={setCurrency} options={currencies} embedded />}
+   *     leadingSeparator
+   *   />
+   */
+  embedded?: boolean;
+  /**
+   * Chip size for standalone mode: sm | md | lg.
+   * Ignored when embedded (always sm).
+   */
+  size?: "sm" | "md" | "lg";
+  /**
+   * Chip variant for standalone mode: chipTabs | filters.
+   * chipTabs: surfaces-base-low-contrast bg, no border.
+   * filters: surfaces-base-primary bg, border-default border.
+   * Ignored when embedded (always chipTabs).
+   */
+  variant?: "chipTabs" | "filters";
+  /** Additional CSS class for the wrapper (ignored in embedded mode) */
   className?: string;
 }
 
@@ -97,103 +152,140 @@ export function AppNativePicker<T extends string = string>({
   disabled = false,
   showError = false,
   errorMessage = "",
+  embedded = false,
+  size = "sm",
+  variant = "chipTabs",
   className = "",
 }: AppNativePickerProps<T>) {
-  return (
-    <div className={`flex flex-col gap-1 ${className}`}>
-      {/* Accessible label above the trigger */}
-      <span
+  // Embedded mode always uses sm/chipTabs; standalone respects props
+  const effectiveSize    = embedded ? "sm" : size;
+  const effectiveVariant = embedded ? "chipTabs" : variant;
+  const sizeSpec         = CHIP_SIZE_SPEC[effectiveSize];
+  const isFilters        = effectiveVariant === "filters";
+
+  // ── Shared dropdown content (same in both modes) ──
+  const dropdownContent = (
+    <>
+      <SelectTrigger
+        aria-label={label}
         style={{
-          fontSize:   styling.typography.label,
-          lineHeight: styling.typography.leading,
-          fontWeight: styling.typography.weight,
-          color:      styling.colors.triggerText,
+          backgroundColor: isFilters ? styling.colors.triggerBgFilters : styling.colors.triggerBg,
+          color:           styling.colors.triggerText,
+          border:          showError
+            ? `${styling.layout.errorBorderWidth} solid ${styling.colors.borderError}`
+            : isFilters
+              ? `1px solid ${styling.colors.borderDefault}`
+              : "none",
+          borderRadius:    styling.layout.radius,
+          paddingTop:      sizeSpec.paddingY,
+          paddingBottom:   sizeSpec.paddingY,
+          paddingLeft:     sizeSpec.paddingX,
+          paddingRight:    sizeSpec.paddingX,
+          fontSize:        sizeSpec.fontSize,
+          lineHeight:      sizeSpec.lineHeight,
+          fontWeight:      sizeSpec.fontWeight,
+          cursor:          disabled ? "not-allowed" : "pointer",
+          opacity:         disabled ? 0.5 : 1,
+          height:          "auto",
+        }}
+        // Remove focus ring in embedded mode — the parent InputField handles focus styling
+        className={
+          embedded
+            ? "focus:ring-0 focus-visible:ring-0 focus:outline-none"
+            : "focus:ring-2 focus:ring-[var(--border-brand)] focus:ring-offset-2 focus-visible:ring-2 focus-visible:ring-[var(--border-brand)]"
+        }
+      >
+        <SelectValue
+          placeholder={
+            <span style={{ color: styling.colors.placeholder }}>{placeholder}</span>
+          }
+        />
+      </SelectTrigger>
+
+      {/*
+        border-none: strip shadcn border default on the outer panel
+        viewportClassName passes classes directly into cn() on SelectPrimitive.Viewport —
+          avoids all child-selector parsing issues (nested brackets in [&>[...]] break
+          Tailwind v4's class parser regardless of attribute format)
+        p-1: 4px breathing room on all four sides between items and panel edges
+        overflow-hidden + rounded-[...]: Viewport is the DIRECT parent of SelectItems so
+          clipping here fixes first/last item corner bleed at both panel and viewport level
+      */}
+      <SelectContent
+        className="border-none"
+        viewportClassName="p-1 overflow-hidden rounded-[var(--radius-md)]"
+        style={{
+          backgroundColor: styling.colors.menuBg,
+          borderRadius:    "var(--radius-md)",
+          overflow:        "hidden",
         }}
       >
-        {label}
-      </span>
+        {options.map((opt) => {
+          const isSelected = opt.value === value;
+          return (
+            <SelectItem
+              key={opt.value}
+              value={opt.value}
+              // rounded-none: no per-item radius (panel radius clips corners)
+              // [&>span:first-child]:hidden: remove shadcn's absolute checkmark
+              //   indicator span so there is no invisible left indent
+              // pl/pr/py: compact uniform padding matching AppContextMenu rows
+              // data-[highlighted]: hover bg, no radius (flat rows)
+              // data-[state=checked]: hover-surface bg + emphasized weight via style
+              className="rounded-none cursor-pointer [&>span:first-child]:hidden pl-[var(--space-4)] pr-[var(--space-4)] py-[var(--space-3)] data-[highlighted]:bg-[var(--surfaces-base-primary-hover)] data-[highlighted]:text-[var(--typography-primary)] data-[state=checked]:bg-[var(--surfaces-base-primary-hover)] data-[state=checked]:text-[var(--typography-primary)]"
+              style={{
+                fontSize:        sizeSpec.fontSize,
+                lineHeight:      sizeSpec.lineHeight,
+                color:           styling.colors.optionText,
+                backgroundColor: isSelected ? styling.colors.selectedBg : undefined,
+                fontWeight:      isSelected ? styling.typography.selectedWeight : sizeSpec.fontWeight,
+              }}
+            >
+              {opt.label}
+            </SelectItem>
+          );
+        })}
+      </SelectContent>
+    </>
+  );
+
+  // ── Embedded mode: chip trigger only, no wrapper or form label ──
+  if (embedded) {
+    return (
+      <Select
+        value={value}
+        onValueChange={(v) => onChange(v as T)}
+        disabled={disabled}
+      >
+        {dropdownContent}
+      </Select>
+    );
+  }
+
+  // ── Standalone mode: form label above + chip trigger + optional error text ──
+  return (
+    <div className={`flex flex-col gap-1 ${className}`}>
+      {label && (
+        <span
+          style={{
+            fontSize:   styling.formLabel.size,
+            lineHeight: styling.formLabel.leading,
+            fontWeight: styling.formLabel.weight,
+            color:      styling.formLabel.color,
+          }}
+        >
+          {label}
+        </span>
+      )}
 
       <Select
         value={value}
         onValueChange={(v) => onChange(v as T)}
         disabled={disabled}
       >
-        <SelectTrigger
-          style={{
-            backgroundColor: styling.colors.triggerBg,
-            color:           styling.colors.triggerText,
-            // No border in normal state; error border only when showError
-            border:          showError
-              ? `${styling.layout.errorBorderWidth} solid ${styling.colors.borderError}`
-              : "none",
-            borderRadius:    styling.layout.radius,
-            paddingTop:      styling.layout.paddingY,
-            paddingBottom:   styling.layout.paddingY,
-            paddingLeft:     styling.layout.paddingX,
-            paddingRight:    styling.layout.paddingX,
-            fontSize:        styling.typography.label,
-            lineHeight:      styling.typography.leading,
-            cursor:          disabled ? "not-allowed" : "pointer",
-            // Disabled: 0.5 opacity — design system convention
-            opacity:         disabled ? 0.5 : 1,
-          }}
-          // Override shadcn focus ring with our brand token; suppress default ring
-          className="focus:ring-2 focus:ring-[var(--border-brand)] focus:ring-offset-2 focus-visible:ring-2 focus-visible:ring-[var(--border-brand)]"
-        >
-          <SelectValue
-            placeholder={
-              <span style={{ color: styling.colors.placeholder }}>{placeholder}</span>
-            }
-          />
-        </SelectTrigger>
-
-        {/*
-          border-none: strip shadcn border default on the outer panel
-          viewportClassName passes classes directly into cn() on SelectPrimitive.Viewport —
-            avoids all child-selector parsing issues (nested brackets in [&>[...]] break
-            Tailwind v4's class parser regardless of attribute format)
-          p-1: 4px breathing room on all four sides between items and panel edges
-          overflow-hidden + rounded-[...]: Viewport is the DIRECT parent of SelectItems so
-            clipping here fixes first/last item corner bleed at both panel and viewport level
-        */}
-        <SelectContent
-          className="border-none"
-          viewportClassName="p-1 overflow-hidden rounded-[var(--radius-md)]"
-          style={{
-            backgroundColor: styling.colors.menuBg,
-            borderRadius:    styling.layout.radius,
-            overflow:        "hidden",
-          }}
-        >
-          {options.map((opt) => {
-            const isSelected = opt.value === value;
-            return (
-              <SelectItem
-                key={opt.value}
-                value={opt.value}
-                // rounded-none: no per-item radius (panel radius clips corners)
-                // [&>span:first-child]:hidden: remove shadcn's absolute checkmark
-                //   indicator span so there is no invisible left indent
-                // pl/pr/py: compact uniform padding matching AppContextMenu rows
-                // data-[highlighted]: hover bg, no radius (flat rows)
-                // data-[state=checked]: hover-surface bg + emphasized weight via style
-                className="rounded-none cursor-pointer [&>span:first-child]:hidden pl-[var(--space-4)] pr-[var(--space-4)] py-[var(--space-3)] data-[highlighted]:bg-[var(--surfaces-base-primary-hover)] data-[highlighted]:text-[var(--typography-primary)] data-[state=checked]:bg-[var(--surfaces-base-primary-hover)] data-[state=checked]:text-[var(--typography-primary)]"
-                style={{
-                  fontSize:        styling.typography.label,
-                  lineHeight:      styling.typography.leading,
-                  color:           styling.colors.optionText,
-                  backgroundColor: isSelected ? styling.colors.selectedBg : undefined,
-                  fontWeight:      isSelected ? styling.typography.selectedWeight : styling.typography.weight,
-                }}
-              >
-                {opt.label}
-              </SelectItem>
-            );
-          })}
-        </SelectContent>
+        {dropdownContent}
       </Select>
 
-      {/* Validation error message */}
       {showError && errorMessage && (
         <span
           style={{

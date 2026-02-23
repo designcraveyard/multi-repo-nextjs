@@ -1,0 +1,306 @@
+/* ─── MarkdownEditor — ProseMirror content styles ──────────────────────────── */
+/* All tokens reference semantic CSS custom properties from globals.css.         */
+/* Never use primitive tokens (--color-*) or hardcoded hex values here.          */
+
+/* ─── Base ─────────────────────────────────────────────────────────────────── */
+
+.markdown-editor .ProseMirror {
+  outline: none;
+  min-height: inherit;
+  font-family: var(--font-sans);
+  font-size: var(--typography-body-md-size);
+  line-height: var(--typography-body-md-leading);
+  font-weight: var(--typography-body-md-weight);
+  color: var(--typography-primary);
+  caret-color: var(--surfaces-brand-interactive);
+}
+
+.markdown-editor .ProseMirror > * + * {
+  margin-top: var(--space-2);
+}
+
+/* ─── Placeholder ──────────────────────────────────────────────────────────── */
+
+.markdown-editor .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--typography-muted);
+  pointer-events: none;
+  height: 0;
+}
+
+/* ─── Headings ─────────────────────────────────────────────────────────────── */
+
+.markdown-editor .ProseMirror h1 {
+  font-size: var(--typography-title-lg-size);
+  line-height: var(--typography-title-lg-leading);
+  font-weight: var(--typography-title-lg-weight);
+  color: var(--typography-primary);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-2);
+}
+
+.markdown-editor .ProseMirror h2 {
+  font-size: var(--typography-title-md-size);
+  line-height: var(--typography-title-md-leading);
+  font-weight: var(--typography-title-md-weight);
+  color: var(--typography-primary);
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-2);
+}
+
+.markdown-editor .ProseMirror h3 {
+  font-size: var(--typography-title-sm-size);
+  line-height: var(--typography-title-sm-leading);
+  font-weight: var(--typography-title-sm-weight);
+  color: var(--typography-primary);
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-1);
+}
+
+.markdown-editor .ProseMirror h4 {
+  font-size: var(--typography-body-lg-em-size);
+  line-height: var(--typography-body-lg-em-leading);
+  font-weight: 600;
+  color: var(--typography-primary);
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-1);
+}
+
+.markdown-editor .ProseMirror h5 {
+  font-size: var(--typography-body-md-em-size);
+  line-height: var(--typography-body-md-em-leading);
+  font-weight: 600;
+  color: var(--typography-secondary);
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-1);
+}
+
+.markdown-editor .ProseMirror h6 {
+  font-size: var(--typography-body-sm-em-size);
+  line-height: var(--typography-body-sm-em-leading);
+  font-weight: 600;
+  color: var(--typography-muted);
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-1);
+}
+
+/* First heading has no top margin */
+.markdown-editor .ProseMirror > h1:first-child,
+.markdown-editor .ProseMirror > h2:first-child,
+.markdown-editor .ProseMirror > h3:first-child,
+.markdown-editor .ProseMirror > h4:first-child,
+.markdown-editor .ProseMirror > h5:first-child,
+.markdown-editor .ProseMirror > h6:first-child {
+  margin-top: 0;
+}
+
+/* ─── Inline formatting ────────────────────────────────────────────────────── */
+
+.markdown-editor .ProseMirror strong {
+  font-weight: 700;
+}
+
+.markdown-editor .ProseMirror em {
+  font-style: italic;
+}
+
+.markdown-editor .ProseMirror s {
+  text-decoration: line-through;
+}
+
+.markdown-editor .ProseMirror code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--surfaces-base-low-contrast);
+  color: var(--typography-accent);
+  padding: 2px var(--space-1);
+  border-radius: var(--radius-xs);
+}
+
+/* ─── Links ────────────────────────────────────────────────────────────────── */
+
+.markdown-editor .ProseMirror a {
+  color: var(--typography-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.markdown-editor .ProseMirror a:hover {
+  color: var(--surfaces-accent-primary-hover);
+}
+
+/* ─── Blockquotes ──────────────────────────────────────────────────────────── */
+
+.markdown-editor .ProseMirror blockquote {
+  border-left: 3px solid var(--border-default);
+  padding-left: var(--space-4);
+  color: var(--typography-secondary);
+  margin: var(--space-2) 0;
+}
+
+.markdown-editor .ProseMirror blockquote blockquote {
+  margin-top: var(--space-2);
+}
+
+/* ─── Lists ────────────────────────────────────────────────────────────────── */
+
+.markdown-editor .ProseMirror ul {
+  list-style: disc;
+  padding-left: var(--space-6);
+  margin: var(--space-1) 0;
+}
+
+.markdown-editor .ProseMirror ol {
+  list-style: decimal;
+  padding-left: var(--space-6);
+  margin: var(--space-1) 0;
+}
+
+/* Nested list style cycling */
+.markdown-editor .ProseMirror ul ul { list-style: circle; }
+.markdown-editor .ProseMirror ul ul ul { list-style: square; }
+.markdown-editor .ProseMirror ul ul ul ul { list-style: disc; }
+
+.markdown-editor .ProseMirror ol ol { list-style: lower-alpha; }
+.markdown-editor .ProseMirror ol ol ol { list-style: lower-roman; }
+
+.markdown-editor .ProseMirror li {
+  margin: 2px 0;
+}
+
+.markdown-editor .ProseMirror li > p {
+  margin: 0;
+}
+
+/* ─── Task lists ───────────────────────────────────────────────────────────── */
+
+.markdown-editor .ProseMirror ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: var(--space-1);
+}
+
+.markdown-editor .ProseMirror ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.markdown-editor .ProseMirror ul[data-type="taskList"] li > label {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.markdown-editor .ProseMirror ul[data-type="taskList"] li > label input[type="checkbox"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--border-default);
+  border-radius: var(--radius-xs);
+  background: var(--surfaces-base-primary);
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+}
+
+.markdown-editor .ProseMirror ul[data-type="taskList"] li > label input[type="checkbox"]:checked {
+  background: var(--surfaces-brand-interactive);
+  border-color: var(--surfaces-brand-interactive);
+}
+
+.markdown-editor .ProseMirror ul[data-type="taskList"] li > label input[type="checkbox"]:checked::after {
+  content: "";
+  width: 6px;
+  height: 10px;
+  border: solid var(--typography-on-brand-primary);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translateY(-1px);
+}
+
+.markdown-editor .ProseMirror ul[data-type="taskList"] li[data-checked="true"] > div > p {
+  text-decoration: line-through;
+  color: var(--typography-muted);
+}
+
+/* ─── Code blocks ──────────────────────────────────────────────────────────── */
+
+.markdown-editor .ProseMirror pre {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--surfaces-base-low-contrast);
+  color: var(--typography-primary);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  margin: var(--space-3) 0;
+}
+
+.markdown-editor .ProseMirror pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+/* ─── Horizontal rule ──────────────────────────────────────────────────────── */
+
+.markdown-editor .ProseMirror hr {
+  border: none;
+  border-top: 1px solid var(--border-default);
+  margin: var(--space-4) 0;
+}
+
+/* ─── Tables ───────────────────────────────────────────────────────────────── */
+
+.markdown-editor .ProseMirror table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: var(--space-3) 0;
+  overflow: hidden;
+}
+
+.markdown-editor .ProseMirror td,
+.markdown-editor .ProseMirror th {
+  border: 1px solid var(--border-default);
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  vertical-align: top;
+  position: relative;
+  min-width: 80px;
+}
+
+.markdown-editor .ProseMirror th {
+  font-weight: var(--typography-body-md-em-weight);
+  background: var(--surfaces-base-low-contrast);
+}
+
+/* Selected cell */
+.markdown-editor .ProseMirror .selectedCell {
+  background: var(--surfaces-accent-low-contrast);
+}
+
+/* Column resize handle */
+.markdown-editor .ProseMirror .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--surfaces-brand-interactive);
+  cursor: col-resize;
+  z-index: 10;
+}
+
+/* ─── Selection ────────────────────────────────────────────────────────────── */
+
+.markdown-editor .ProseMirror ::selection {
+  background: var(--surfaces-accent-low-contrast);
+}
+
+/* ─── Gapcursor ────────────────────────────────────────────────────────────── */
+
+.markdown-editor .ProseMirror .ProseMirror-gapcursor::after {
+  border-top: 1px solid var(--typography-primary);
+}
