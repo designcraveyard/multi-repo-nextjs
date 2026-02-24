@@ -15,7 +15,7 @@
  *   <MarkdownEditor value={md} onChange={setMd} state="error" hint="Content is required" />
  */
 
-import { useEffect, useRef, useCallback, useId, useState } from "react";
+import { useEffect, useRef, useCallback, useId } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import { StarterKit } from "@tiptap/starter-kit";
@@ -127,7 +127,6 @@ export function MarkdownEditor({
   const generatedId = useId();
   const spec = STATE_SPEC[state];
   const isInternalUpdate = useRef(false);
-  const [isFocused, setIsFocused] = useState(false);
 
   // ── Tiptap editor ──
   const editor = useEditor({
@@ -163,8 +162,6 @@ export function MarkdownEditor({
       const md = getMarkdownFromEditor(ed);
       onChange(md);
     },
-    onFocus: () => setIsFocused(true),
-    onBlur: () => setIsFocused(false),
     editorProps: {
       attributes: {
         "aria-describedby": hint ? `${generatedId}-hint` : "",
@@ -221,6 +218,7 @@ export function MarkdownEditor({
       {/* ── Editor container ── */}
       <div
         className={[
+          "flex flex-col flex-1",
           "rounded-[var(--radius-md)]",
           "bg-[var(--surfaces-base-low-contrast)]",
           "transition-colors duration-150",
@@ -336,7 +334,7 @@ export function MarkdownEditor({
 
         {/* ── Editor content area ── */}
         <div
-          className="markdown-editor px-4 py-3.5 overflow-y-auto"
+          className="markdown-editor px-4 py-3.5 overflow-y-auto flex-1"
           style={{
             minHeight: `${minHeight}px`,
             ...(maxHeight ? { maxHeight: `${maxHeight}px` } : {}),
@@ -349,7 +347,7 @@ export function MarkdownEditor({
         {editor && <TableToolbar editor={editor} />}
 
         {/* ── Bottom formatting toolbar ── */}
-        {isFocused && <MarkdownToolbar editor={editor} />}
+        <MarkdownToolbar editor={editor} />
       </div>
 
       {/* ── Hint ── */}

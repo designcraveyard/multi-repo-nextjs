@@ -126,8 +126,39 @@ Credentials live in `.env.local` (gitignored). Copy from `.env.local.example`.
 
 ---
 
+## Authentication
+
+Auth gate via Next.js middleware — unauthenticated users are redirected to `/login`.
+
+**Route groups:**
+- `app/(auth)/` — Public routes (login page)
+- `app/(authenticated)/` — Protected routes (requires session)
+
+**Key files:**
+- `middleware.ts` — Session refresh + route protection (redirects to `/login` if no session)
+- `lib/auth/actions.ts` — Server actions: `signInWithEmail`, `signUpWithEmail`, `signInWithGoogle`, `signInWithApple`, `signOut`
+- `lib/auth/auth-context.tsx` — Client-side `AuthProvider` + `useAuth()` hook (wraps `onAuthStateChange`)
+- `lib/auth/profile.ts` — `getProfile()` server helper
+- `app/auth/callback/route.ts` — OAuth code → session exchange
+- `app/(authenticated)/layout.tsx` — Wraps children with `AuthProvider`
+
+**Providers:** Google (OAuth redirect), Apple (OAuth redirect), Email/Password
+
+**Usage in screens:**
+```tsx
+// Client components
+const { user, session } = useAuth();
+
+// Server components / Server Actions
+const supabase = await createClient();
+const { data: { user } } = await supabase.auth.getUser();
+```
+
+---
+
 ## Screens / Routes
 
-- `/` — Home (`app/page.tsx`)
+- `/login` — Login screen (`app/(auth)/login/page.tsx`)
+- `/` — Home / Component showcase (`app/(authenticated)/page.tsx`)
 
 _Add new routes here as features are added via `/cross-platform-feature` or `/new-screen`._
