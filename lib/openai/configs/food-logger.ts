@@ -33,7 +33,8 @@ import type { TransformConfig, ToolHandler } from "../types";
  * @returns JSON string with `{ results: [...] }` — always returns a string per ToolHandler contract.
  */
 const foodSearchHandler: ToolHandler = async (args) => {
-  const { query } = args as { query: string };
+  const { query } = args as { query?: string };
+  if (!query) return JSON.stringify({ error: "Missing required argument: query" });
   const apiKey = process.env.USDA_API_KEY;
   if (!apiKey) return JSON.stringify({ error: "USDA_API_KEY not configured" });
 
@@ -78,7 +79,7 @@ const foodSearchHandler: ToolHandler = async (args) => {
 export const foodLoggerConfig: TransformConfig = {
   id: "food-logger",
   model: "gpt-4o",
-  systemPrompt: `You are a food logging assistant. When the user describes food they ate, use the food_search tool to look up nutritional information from the USDA database. Present the results in a clear, readable format with calories and macronutrients. If there are multiple matches, help the user pick the right one.`,
+  systemPrompt: `You are a food logging assistant. When the user describes food they ate, ALWAYS call the food_search function tool to look up nutritional information from the USDA database — do NOT use web search for this. Present the results in a clear, readable format with calories and macronutrients. If there are multiple matches, help the user pick the right one.`,
   tools: [
     // OpenAI-hosted web search — fallback for foods not in the USDA database
     { type: "web_search_preview" },
@@ -96,6 +97,7 @@ export const foodLoggerConfig: TransformConfig = {
           },
         },
         required: ["query"],
+        additionalProperties: false,
       },
     },
   ],

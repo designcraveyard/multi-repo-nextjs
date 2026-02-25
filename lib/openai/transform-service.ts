@@ -41,6 +41,7 @@ function buildToolDefs(tools: TransformTool[]): AnyObj[] {
       name: tool.name,
       description: tool.description,
       parameters: tool.parameters,
+      strict: true,
     };
   });
 }
@@ -159,66 +160,69 @@ export async function* transform(
     }
 
     // --- Inner loop: parse SSE stream from this response ---
+    // The Responses API uses two IDs for the same function call:
+    //   item.call_id ("call_xxx") — present in output_item.added and most stream events
+    //   item.id ("fc_xxx") — present as item_id in delta/done stream events
+    // Register each call under BOTH keys. Store the real callId in the value so output
+    // items always use the correct identifier when submitting tool results.
     const decoder = new TextDecoder();
-    let buffer = ""; // Accumulates partial lines across chunk boundaries
-    const pendingFunctionCalls = new Map<string, { name: string; args: string }>();
+    let buffer = "";
+    const pendingFunctionCalls = new Map<string, { name: string; callId: string; args: string }>();
     let hasFunctionCalls = false;
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
 
-      // Decode bytes and split into lines. The last element may be a partial line,
-      // so we keep it in `buffer` and prepend it to the next chunk.
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split("\n");
       buffer = lines.pop() || "";
 
       for (const line of lines) {
-        // SSE format: only process lines starting with "data: "
         if (!line.startsWith("data: ")) continue;
         const data = line.slice(6).trim();
-        if (data === "[DONE]") continue; // Terminal SSE marker from OpenAI
+        if (data === "[DONE]") continue;
 
         let event: AnyObj;
-        try { event = JSON.parse(data); } catch { continue; } // Skip malformed JSON
+        try { event = JSON.parse(data); } catch { continue; }
 
         const eventType = event.type as string;
 
-        // --- Text output: yield incremental tokens to the caller ---
         if (eventType === "response.output_text.delta") {
           if (event.delta) yield { type: "textDelta", delta: event.delta };
 
-        // --- Function call detected: register it in pendingFunctionCalls ---
+        // Register under both item.call_id and item.id so delta/done lookups always succeed.
         } else if (eventType === "response.output_item.added") {
           const item = event.item;
           if (item?.type === "function_call" && item.call_id && item.name) {
             yield { type: "functionCallStart", callId: item.call_id, name: item.name };
-            pendingFunctionCalls.set(item.call_id, { name: item.name, args: "" });
+            const entry = { name: item.name as string, callId: item.call_id as string, args: "" };
+            pendingFunctionCalls.set(item.call_id, entry);
+            if (item.id && item.id !== item.call_id) {
+              pendingFunctionCalls.set(item.id, entry); // alias by item.id ("fc_xxx")
+            }
             hasFunctionCalls = true;
           }
 
-        // --- Function call arguments streaming in chunks ---
+        // Both call_id and item_id resolve to the same entry via dual-key registration.
         } else if (eventType === "response.function_call_arguments.delta") {
-          const callId = event.call_id || event.item_id || "";
+          const key = event.call_id || event.item_id || "";
           if (event.delta) {
-            yield { type: "functionCallDelta", callId, delta: event.delta };
-            // Accumulate argument chunks so we have the full JSON when done
-            const pending = pendingFunctionCalls.get(callId);
-            if (pending) pending.args += event.delta;
+            yield { type: "functionCallDelta", callId: key, delta: event.delta };
+            const pending = pendingFunctionCalls.get(key);
+            if (pending) pending.args += event.delta; // mutates shared object — both keys updated
           }
 
-        // --- Function call arguments complete ---
+        // Overwrite with the authoritative complete args from the API.
         } else if (eventType === "response.function_call_arguments.done") {
-          const callId = event.call_id || event.item_id || "";
+          const key = event.call_id || event.item_id || "";
           const args = event.arguments || "";
-          const pending = pendingFunctionCalls.get(callId);
+          const pending = pendingFunctionCalls.get(key);
           if (pending) {
-            pending.args = args; // Use the final complete arguments (not accumulated deltas)
-            yield { type: "functionCallDone", callId, name: pending.name, arguments: args };
+            pending.args = args; // mutates shared object — both keys updated
+            yield { type: "functionCallDone", callId: key, name: pending.name, arguments: args };
           }
 
-        // --- Response completed: capture ID for multi-turn chaining ---
         } else if (eventType === "response.completed") {
           if (event.response?.id) previousResponseId = event.response.id;
         }
@@ -226,29 +230,31 @@ export async function* transform(
     }
 
     // --- Tool execution phase ---
-    // If the model requested function calls, execute them and loop back to submit results.
-    // This enables the model to use tool results in its next response.
-    if (hasFunctionCalls && config.toolHandlers && pendingFunctionCalls.size > 0) {
+    // Deduplicate by real callId before executing (each call was registered under two keys).
+    if (hasFunctionCalls && config.toolHandlers) {
+      const seen = new Set<string>();
       const results: AnyObj[] = [];
-      for (const [callId, { name, args }] of pendingFunctionCalls) {
-        const handler = config.toolHandlers[name];
+      for (const entry of pendingFunctionCalls.values()) {
+        if (seen.has(entry.callId)) continue; // skip the alias entry
+        seen.add(entry.callId);
+        const handler = config.toolHandlers[entry.name];
         if (handler) {
           try {
-            const parsed = args ? JSON.parse(args) : {};
+            // Use {} if args are empty to prevent JSON.parse("") crashes in the handler
+            const parsed = entry.args ? JSON.parse(entry.args) : {};
             const result = await handler(parsed);
-            results.push({ type: "function_call_output", call_id: callId, output: result });
+            results.push({ type: "function_call_output", call_id: entry.callId, output: result });
           } catch (err) {
-            // Tool errors are non-fatal: we report the error to the model so it can recover
             const msg = err instanceof Error ? err.message : "Tool execution failed";
-            yield { type: "error", message: `Tool '${name}' error: ${msg}` };
-            results.push({ type: "function_call_output", call_id: callId, output: JSON.stringify({ error: msg }) });
+            yield { type: "error", message: `Tool '${entry.name}' error: ${msg}` };
+            results.push({ type: "function_call_output", call_id: entry.callId, output: JSON.stringify({ error: msg }) });
           }
         }
       }
 
       if (results.length > 0) {
         toolOutputs = results;
-        continue; // Loop back to submit tool outputs in the next API call
+        continue;
       }
     }
 
