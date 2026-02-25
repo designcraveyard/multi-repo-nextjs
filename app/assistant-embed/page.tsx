@@ -12,8 +12,8 @@ export default function AssistantEmbedPage() {
         return client_secret;
       },
     },
-    theme: {
-      colorScheme: "system",
+    composer: {
+      attachments: { enabled: true },
     },
   });
 

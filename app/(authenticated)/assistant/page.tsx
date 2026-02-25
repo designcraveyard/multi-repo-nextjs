@@ -13,8 +13,8 @@ export default function AssistantPage() {
         return client_secret;
       },
     },
-    theme: {
-      colorScheme: "system",
+    composer: {
+      attachments: { enabled: true },
     },
   });
 
