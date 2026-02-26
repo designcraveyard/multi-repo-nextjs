@@ -11,6 +11,7 @@
 import { type ComponentProps } from "react";
 import { type Editor } from "@tiptap/react";
 import { Icon } from "@/app/components/icons";
+import { AppContextMenu, type AppContextMenuItem } from "@/app/components/Native/AppContextMenu";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -27,6 +28,16 @@ interface ToolbarButton {
 
 interface MarkdownToolbarProps {
   editor: Editor | null;
+  /** Where the toolbar sits relative to the editor content */
+  position?: "top" | "bottom";
+  /** Called when the AI Transcribe (mic) button is tapped */
+  onTranscribe?: () => void;
+  /** Called when an AI Transform option is selected — passes the config ID */
+  onTransform?: (configId: string, customPrompt?: string) => void;
+  /** Whether AI transcription is currently recording */
+  isRecording?: boolean;
+  /** Whether AI transform is currently streaming */
+  isTransforming?: boolean;
   className?: string;
 }
 
@@ -149,14 +160,17 @@ const TOOLBAR_BUTTONS: ToolbarButton[] = [
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
-const TOOLBAR_BASE = [
-  "flex items-center gap-0.5 overflow-x-auto",
-  "px-2 py-1.5",
-  "border-t border-[var(--border-muted)]",
-  "bg-[var(--surfaces-base-primary)]",
-  "rounded-b-[var(--radius-md)]",
-  "scrollbar-none",
-].join(" ");
+function toolbarBaseClasses(position: "top" | "bottom") {
+  return [
+    "flex items-center gap-0.5 overflow-x-auto",
+    "px-2 py-1.5",
+    position === "top"
+      ? "border-b border-[var(--border-muted)]"
+      : "border-t border-[var(--border-muted)]",
+    "bg-[var(--surfaces-base-primary)]",
+    "scrollbar-none",
+  ].join(" ");
+}
 
 const BTN_BASE = [
   "flex-shrink-0 flex items-center justify-center",
@@ -173,11 +187,19 @@ const DIVIDER = "self-stretch w-px mx-0.5 bg-[var(--border-muted)]";
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export function MarkdownToolbar({ editor, className = "" }: MarkdownToolbarProps) {
+export function MarkdownToolbar({
+  editor,
+  position = "bottom",
+  onTranscribe,
+  onTransform,
+  isRecording = false,
+  isTransforming = false,
+  className = "",
+}: MarkdownToolbarProps) {
   if (!editor) return null;
 
   return (
-    <div className={[TOOLBAR_BASE, className].join(" ")} role="toolbar" aria-label="Formatting options">
+    <div className={[toolbarBaseClasses(position), className].join(" ")} role="toolbar" aria-label="Formatting options">
       {TOOLBAR_BUTTONS.map((btn) => (
         <span key={btn.label} className="contents">
           <button
@@ -187,7 +209,7 @@ export function MarkdownToolbar({ editor, className = "" }: MarkdownToolbarProps
             aria-pressed={btn.isActive?.(editor) ?? false}
             className={[BTN_BASE, btn.isActive?.(editor) ? BTN_ACTIVE : ""].join(" ")}
             onMouseDown={(e) => {
-              e.preventDefault(); // Prevent editor blur
+              e.preventDefault();
               btn.action(editor);
             }}
           >
@@ -196,9 +218,74 @@ export function MarkdownToolbar({ editor, className = "" }: MarkdownToolbarProps
           {btn.divider && <div className={DIVIDER} aria-hidden="true" />}
         </span>
       ))}
+
+      {/* AI Tools — transcribe + transform (matches iOS keyboard toolbar Group 7) */}
+      {(onTranscribe || onTransform) && (
+        <>
+          <div className={DIVIDER} aria-hidden="true" />
+
+          {/* Transcribe (mic) button */}
+          {onTranscribe && (
+            <button
+              type="button"
+              title={isRecording ? "Stop recording" : "Voice transcribe"}
+              aria-label={isRecording ? "Stop recording" : "Voice transcribe"}
+              className={[BTN_BASE, isRecording ? "text-[var(--icons-error)]" : ""].join(" ")}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                onTranscribe();
+              }}
+            >
+              <Icon name={isRecording ? "StopCircle" : "Microphone"} size="sm" weight="fill" />
+            </button>
+          )}
+
+          {/* Transform (sparkles) button with context menu dropdown */}
+          {onTransform && (
+            <AppContextMenu
+              mode="dropdown"
+              items={TRANSFORM_OPTIONS.map((opt): AppContextMenuItem => ({
+                label: opt.label,
+                icon: <Icon name={opt.icon} size="sm" />,
+                onPress: () => {
+                  if (opt.configId === "md-custom") {
+                    const instruction = window.prompt("Enter your instruction:");
+                    if (instruction) onTransform(opt.configId, instruction);
+                  } else {
+                    onTransform(opt.configId);
+                  }
+                },
+              }))}
+            >
+              <button
+                type="button"
+                title="AI Transform"
+                aria-label="AI Transform"
+                className={[BTN_BASE, isTransforming ? BTN_ACTIVE : ""].join(" ")}
+              >
+                {isTransforming ? (
+                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                ) : (
+                  <Icon name="Sparkle" size="sm" weight="fill" />
+                )}
+              </button>
+            </AppContextMenu>
+          )}
+        </>
+      )}
     </div>
   );
 }
+
+const TRANSFORM_OPTIONS: { configId: string; label: string; icon: IconName }[] = [
+  { configId: "md-summarise", label: "Summarise", icon: "TextAlignLeft" },
+  { configId: "md-key-pointers", label: "Key Pointers", icon: "ListBullets" },
+  { configId: "md-action-items", label: "List Actions", icon: "CheckSquare" },
+  { configId: "md-custom", label: "Custom...", icon: "Sparkle" },
+];
 
 // ─── Table Actions Toolbar (shown when cursor is inside a table) ──────────── */
 

@@ -124,10 +124,10 @@ export function SegmentControlBar({
       ref={containerRef}
       role={isMulti ? "group" : "radiogroup"}
       className={[
-        "relative inline-flex items-center",
+        "relative flex items-center",
         isSegment
-          ? "px-1 py-0.5 bg-[var(--surfaces-base-low-contrast)] rounded-[var(--radius-md)]"
-          : "gap-2",
+          ? "px-1 py-0.5 bg-[var(--surfaces-base-low-contrast)] rounded-full"
+          : "inline-flex gap-2",
         className,
       ].join(" ")}
     >
@@ -135,7 +135,7 @@ export function SegmentControlBar({
       {isSegment && (
         <span
           aria-hidden="true"
-          className="absolute bg-[var(--surfaces-base-primary)] rounded-[var(--radius-sm)] shadow-sm transition-[left,width] duration-200 ease-out pointer-events-none"
+          className="absolute segment-thumb rounded-full shadow-sm transition-[left,width] duration-200 ease-out pointer-events-none"
           style={{
             left: thumbStyle.left,
             width: thumbStyle.width,
@@ -159,13 +159,14 @@ export function SegmentControlBar({
             onClick={() => handleSelect(item.id)}
             className={[
               "relative z-10 inline-flex items-center justify-center",
+              isSegment ? "flex-1" : "",
               "select-none whitespace-nowrap cursor-pointer",
               "transition-colors duration-150",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-active)] focus-visible:ring-inset",
               s.tab,
               isSegment
                 ? [
-                    "rounded-[var(--radius-sm)]",
+                    "rounded-full",
                     active
                       ? "text-[var(--typography-primary)]"
                       : "text-[var(--typography-secondary)] hover:text-[var(--typography-primary)]",

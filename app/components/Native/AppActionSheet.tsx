@@ -45,12 +45,15 @@ const styling = {
     maxWidth:     "380px",
   },
   typography: {
-    title:        "var(--typography-caption-md-size)",
-    message:      "var(--typography-caption-md-size)",
-    action:       "var(--typography-body-lg-size)",
-    actionWeight: "400",
-    cancel:       "var(--typography-body-lg-size)",
-    cancelWeight: "600",
+    title:         "var(--typography-body-md-em-size)",
+    titleWeight:   "var(--typography-body-md-em-weight)",
+    titleLeading:  "var(--typography-body-md-em-leading)",
+    message:       "var(--typography-caption-md-size)",
+    messageLeading:"var(--typography-caption-md-leading)",
+    action:        "var(--typography-body-lg-size)",
+    actionWeight:  "400",
+    cancel:        "var(--typography-body-lg-size)",
+    cancelWeight:  "600",
   },
 } as const;
 
@@ -138,7 +141,8 @@ export function AppActionSheet({
                   style={{
                     color:      styling.colors.titleText,
                     fontSize:   styling.typography.title,
-                    fontWeight: "400",
+                    fontWeight: styling.typography.titleWeight,
+                    lineHeight: styling.typography.titleLeading,
                   }}
                 >
                   {title}
@@ -147,8 +151,9 @@ export function AppActionSheet({
               {message && (
                 <AlertDialogDescription
                   style={{
-                    color:    styling.colors.messageText,
-                    fontSize: styling.typography.message,
+                    color:      styling.colors.messageText,
+                    fontSize:   styling.typography.message,
+                    lineHeight: styling.typography.messageLeading,
                   }}
                 >
                   {message}
@@ -162,7 +167,7 @@ export function AppActionSheet({
             <button
               key={i}
               onClick={() => handleAction(action)}
-              className="w-full text-center transition-colors hover:bg-[var(--surfaces-base-primary-hover)]"
+              className="w-full text-center transition-colors hover:bg-[var(--surfaces-base-primary-hover)] active:bg-[var(--surfaces-base-primary-pressed)] cursor-pointer"
               style={{
                 color:         action.role === "destructive"
                                  ? styling.colors.destructiveText
@@ -173,12 +178,9 @@ export function AppActionSheet({
                 paddingRight:  styling.layout.itemPaddingX,
                 paddingTop:    styling.layout.itemPaddingY,
                 paddingBottom: styling.layout.itemPaddingY,
-                // First row has no top border when there's no header
                 borderTop:     i === 0 && !title && !message
                                  ? "none"
                                  : `1px solid ${styling.colors.divider}`,
-                background:    "transparent",
-                cursor:        "pointer",
               }}
             >
               {action.label}
@@ -190,7 +192,7 @@ export function AppActionSheet({
         {cancelAction && (
           <button
             onClick={() => handleAction(cancelAction)}
-            className="w-full text-center transition-colors hover:bg-[var(--surfaces-base-primary-hover)]"
+            className="w-full text-center transition-colors hover:bg-[var(--surfaces-base-primary-hover)] active:bg-[var(--surfaces-base-primary-pressed)] cursor-pointer"
             style={{
               marginTop:       styling.layout.cancelGap,
               backgroundColor: styling.colors.cancelBg,
@@ -200,7 +202,6 @@ export function AppActionSheet({
               borderRadius:    styling.layout.cancelRadius,
               paddingTop:      styling.layout.itemPaddingY,
               paddingBottom:   styling.layout.itemPaddingY,
-              cursor:          "pointer",
               border:          "none",
             }}
           >

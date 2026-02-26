@@ -126,23 +126,35 @@ export function AdaptiveNavShell({
 
           <div className="flex-1" />
 
-          {/* --- Collapse/Expand Toggle --- */}
+          {/* --- Collapse/Expand Toggle (styled like a menu item) --- */}
           <button
             onClick={() => setIsSidebarExpanded((prev) => !prev)}
             aria-label={isSidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
-            className="flex items-center justify-center mx-auto"
+            className="flex items-center text-left w-full cursor-pointer hover:bg-[var(--surfaces-base-primary-hover)] transition-colors"
             style={{
-              height: 44,
-              width: "100%",
+              height: styling.layout.itemHeight,
+              paddingLeft: styling.spacing.itemPaddingX,
+              paddingRight: styling.spacing.itemPaddingX,
+              marginLeft: "var(--space-1)",
+              marginRight: "var(--space-1)",
+              gap: styling.spacing.itemGap,
               color: styling.colors.inactiveText,
+              borderRadius: styling.layout.radius,
               marginBottom: "var(--space-2)",
             }}
           >
-            <Icon
-              name={isSidebarExpanded ? "SidebarSimple" : "List"}
-              size="md"
-              color="currentColor"
-            />
+            <span className="flex items-center justify-center" style={{ width: 24, height: 24 }}>
+              <Icon
+                name={isSidebarExpanded ? "SidebarSimple" : "List"}
+                size="md"
+                color="currentColor"
+              />
+            </span>
+            {isSidebarExpanded && (
+              <span className="truncate text-sm font-medium flex-1" style={{ lineHeight: "20px" }}>
+                {isSidebarExpanded ? "Collapse" : "Expand"}
+              </span>
+            )}
           </button>
         </nav>
       </aside>
@@ -203,7 +215,7 @@ function SidebarItem({
       onClick={onClick}
       aria-label={tab.label}
       aria-current={isActive ? "page" : undefined}
-      className="flex items-center text-left w-full"
+      className={`flex items-center text-left w-full cursor-pointer ${isActive ? "" : "hover:bg-[var(--surfaces-base-primary-hover)]"} transition-colors`}
       style={{
         height: styling.layout.itemHeight,
         paddingLeft: styling.spacing.itemPaddingX,
@@ -212,7 +224,7 @@ function SidebarItem({
         marginRight: "var(--space-1)",
         gap: styling.spacing.itemGap,
         color: isActive ? styling.colors.activeText : styling.colors.inactiveText,
-        backgroundColor: isActive ? `color-mix(in srgb, ${styling.colors.activeBg} 10%, transparent)` : "transparent",
+        backgroundColor: isActive ? `color-mix(in srgb, ${styling.colors.activeBg} 10%, transparent)` : undefined,
         borderRadius: styling.layout.radius,
         transition: "background-color 0.15s ease, color 0.15s ease",
       }}

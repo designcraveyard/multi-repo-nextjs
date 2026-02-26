@@ -18,19 +18,6 @@
    ─────────────────────────────────────────────────────────────────────────── */
 
 :root {
-  /* Slate */
-  --color-slate-50:   #F8FAFC;
-  --color-slate-100:  #F1F5F9;
-  --color-slate-200:  #E2E8F0;
-  --color-slate-300:  #CBD5E1;
-  --color-slate-400:  #94A3B8;
-  --color-slate-500:  #64748B;
-  --color-slate-600:  #475569;
-  --color-slate-700:  #334155;
-  --color-slate-800:  #1E293B;
-  --color-slate-900:  #0F172A;
-  --color-slate-950:  #020617;
-
   /* Zinc */
   --color-zinc-50:    #FAFAFA;
   --color-zinc-100:   #F4F4F5;
@@ -225,12 +212,12 @@
   --surfaces-error-subtle-pressed: var(--color-red-300);
 
   /* ── Typography ───────────────────────────────────────────────────────── */
-  --typography-primary:          var(--color-slate-900);
-  --typography-secondary:        var(--color-slate-700);
-  --typography-muted:            var(--color-slate-500);
-  --typography-inverse-primary:  var(--color-slate-50);
-  --typography-inverse-secondary:var(--color-slate-300);
-  --typography-inverse-muted:    var(--color-slate-500);
+  --typography-primary:          var(--color-neutral-900);
+  --typography-secondary:        var(--color-neutral-700);
+  --typography-muted:            var(--color-neutral-500);
+  --typography-inverse-primary:  var(--color-neutral-50);
+  --typography-inverse-secondary:var(--color-neutral-300);
+  --typography-inverse-muted:    var(--color-neutral-500);
   --typography-brand:            var(--color-zinc-950);
   --typography-on-brand-primary: var(--color-base-white);
   --typography-accent:           var(--color-indigo-700);
@@ -241,14 +228,14 @@
   --typography-black:            var(--color-base-black);
 
   /* ── Icons ────────────────────────────────────────────────────────────── */
-  --icons-primary:           var(--color-slate-950);
-  --icons-secondary:         var(--color-slate-600);
-  --icons-muted:             var(--color-slate-400);
-  --icons-inverse-primary:   var(--color-slate-50);
-  --icons-inverse-secondary: var(--color-slate-400);
-  --icons-inverse-muted:     var(--color-slate-800);
+  --icons-primary:           var(--color-neutral-950);
+  --icons-secondary:         var(--color-neutral-600);
+  --icons-muted:             var(--color-neutral-400);
+  --icons-inverse-primary:   var(--color-neutral-50);
+  --icons-inverse-secondary: var(--color-neutral-400);
+  --icons-inverse-muted:     var(--color-neutral-800);
   --icons-brand:             var(--color-zinc-950);
-  --icons-on-brand-primary:  var(--color-slate-50);
+  --icons-on-brand-primary:  var(--color-neutral-50);
   --icons-accent:            var(--color-indigo-700);
   --icons-success:           var(--color-green-600);
   --icons-warning:           var(--color-amber-500);
@@ -258,7 +245,7 @@
 
   /* ── Border ───────────────────────────────────────────────────────────── */
   --border-brand:    var(--color-zinc-950);
-  --border-active:   var(--color-slate-950);
+  --border-active:   var(--color-neutral-950);
   --border-default:  var(--color-neutral-200);
   --border-muted:    var(--color-neutral-100);
   --border-success:  var(--color-green-600);
@@ -482,12 +469,12 @@
     --surfaces-error-subtle-pressed: var(--color-red-800);
 
     /* Typography */
-    --typography-primary:          var(--color-slate-50);
-    --typography-secondary:        var(--color-slate-300);
-    --typography-muted:            var(--color-slate-400);
-    --typography-inverse-primary:  var(--color-slate-950);
-    --typography-inverse-secondary:var(--color-slate-700);
-    --typography-inverse-muted:    var(--color-slate-500);
+    --typography-primary:          var(--color-neutral-50);
+    --typography-secondary:        var(--color-neutral-300);
+    --typography-muted:            var(--color-neutral-400);
+    --typography-inverse-primary:  var(--color-neutral-950);
+    --typography-inverse-secondary:var(--color-neutral-700);
+    --typography-inverse-muted:    var(--color-neutral-500);
     --typography-brand:            var(--color-zinc-50);
     --typography-on-brand-primary: var(--color-base-black);
     --typography-accent:           var(--color-indigo-300);
@@ -496,14 +483,14 @@
     --typography-error:            var(--color-red-400);
 
     /* Icons */
-    --icons-primary:           var(--color-slate-50);
-    --icons-secondary:         var(--color-slate-400);
-    --icons-muted:             var(--color-slate-700);
-    --icons-inverse-primary:   var(--color-slate-950);
-    --icons-inverse-secondary: var(--color-slate-600);
-    --icons-inverse-muted:     var(--color-slate-400);
+    --icons-primary:           var(--color-neutral-50);
+    --icons-secondary:         var(--color-neutral-400);
+    --icons-muted:             var(--color-neutral-700);
+    --icons-inverse-primary:   var(--color-neutral-950);
+    --icons-inverse-secondary: var(--color-neutral-600);
+    --icons-inverse-muted:     var(--color-neutral-400);
     --icons-brand:             var(--color-zinc-50);
-    --icons-on-brand-primary:  var(--color-slate-950);
+    --icons-on-brand-primary:  var(--color-neutral-950);
     --icons-accent:            var(--color-indigo-300);
     --icons-success:           var(--color-green-400);
     --icons-warning:           var(--color-amber-400);
@@ -511,9 +498,9 @@
 
     /* Border */
     --border-brand:    var(--color-zinc-50);
-    --border-active:   var(--color-slate-50);
-    --border-default:  var(--color-slate-800);
-    --border-muted:    var(--color-slate-900);
+    --border-active:   var(--color-neutral-50);
+    --border-default:  var(--color-neutral-800);
+    --border-muted:    var(--color-neutral-900);
     --border-success:  var(--color-green-300);
     --border-warning:  var(--color-amber-300);
     --border-error:    var(--color-red-300);
@@ -649,5 +636,47 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ─── Segment Control thumb — light: BasePrimary, dark: BaseHighContrast ──── */
+.segment-thumb {
+  background: var(--surfaces-base-primary);
+}
+@media (prefers-color-scheme: dark) {
+  .segment-thumb {
+    background: var(--surfaces-base-high-contrast);
+  }
+}
+
+/* ─── Range Slider — override shadcn Tailwind classes with design tokens ──── */
+.native-range-slider [data-slot="slider-track"] {
+  background: var(--surfaces-base-low-contrast) !important;
+}
+.native-range-slider [data-slot="slider-range"] {
+  background: var(--surfaces-brand-interactive) !important;
+}
+.native-range-slider [data-slot="slider-thumb"] {
+  background: var(--surfaces-brand-interactive) !important;
+  border-color: var(--surfaces-brand-interactive) !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* ─── Calendar — override shadcn theme classes with design tokens ─────────── */
+[data-slot="calendar"] {
+  background: transparent !important;
+}
+[data-slot="calendar"] [data-selected-single="true"] {
+  background: var(--surfaces-brand-interactive) !important;
+  color: var(--typography-on-brand-primary) !important;
+  border-radius: 9999px !important;
+}
+[data-slot="calendar"] .rdp-today:not([data-selected="true"]) {
+  background: var(--surfaces-base-low-contrast) !important;
+  color: var(--typography-primary) !important;
+}
+/* Remove ghost button hover bg that creates a white square behind selected circle */
+[data-slot="calendar"] button[data-selected-single="true"]:hover {
+  background: var(--surfaces-brand-interactive) !important;
 }
 

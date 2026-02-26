@@ -2,9 +2,25 @@
 
 import Script from "next/script";
 import { ChatKit, useChatKit } from "@openai/chatkit-react";
+import { useEffect, useState } from "react";
+import type { ColorScheme } from "@openai/chatkit";
+
+function useColorScheme(): ColorScheme {
+  const [scheme, setScheme] = useState<ColorScheme>("light");
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    setScheme(mq.matches ? "dark" : "light");
+    const handler = (e: MediaQueryListEvent) => setScheme(e.matches ? "dark" : "light");
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return scheme;
+}
 
 export default function AssistantPage() {
+  const colorScheme = useColorScheme();
   const chatkit = useChatKit({
+    theme: colorScheme,
     api: {
       async getClientSecret() {
         const res = await fetch("/api/chatkit/session", { method: "POST" });

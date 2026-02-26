@@ -182,6 +182,8 @@ export function IconButton({
         v.wrapper,
         // Icon colour (sets currentColor)
         v.icon,
+        // Cursor
+        "cursor-pointer",
         // Disabled: 50% opacity — Figma disabled state
         "disabled:opacity-50 disabled:cursor-not-allowed",
         // Transition

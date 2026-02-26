@@ -183,7 +183,7 @@ export function Button({
     >
       {/* Leading Icon — colored via currentColor (inherits text-[var(--...)]) */}
       {leadingIcon && !isLoading && (
-        <span className={`${s.iconSize} flex-shrink-0`} aria-hidden="true">
+        <span className={`${s.iconSize} flex-shrink-0 flex items-center justify-center`} aria-hidden="true">
           {leadingIcon}
         </span>
       )}
@@ -216,7 +216,7 @@ export function Button({
 
       {/* Trailing Icon */}
       {trailingIcon && (
-        <span className={`${s.iconSize} flex-shrink-0`} aria-hidden="true">
+        <span className={`${s.iconSize} flex-shrink-0 flex items-center justify-center`} aria-hidden="true">
           {trailingIcon}
         </span>
       )}

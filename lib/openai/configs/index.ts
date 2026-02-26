@@ -15,10 +15,20 @@
  */
 import type { TransformConfig } from "../types";
 import { foodLoggerConfig } from "./food-logger";
+import {
+  markdownSummariseConfig,
+  markdownKeyPointersConfig,
+  markdownActionItemsConfig,
+  markdownCustomConfig,
+} from "./markdown-transforms";
 
 /** Map of config ID -> TransformConfig. IDs are kebab-case strings used by the client. */
 const configs: Record<string, TransformConfig> = {
   "food-logger": foodLoggerConfig,
+  "md-summarise": markdownSummariseConfig,
+  "md-key-pointers": markdownKeyPointersConfig,
+  "md-action-items": markdownActionItemsConfig,
+  "md-custom": markdownCustomConfig,
 };
 
 /**

@@ -15,6 +15,8 @@ export default function EditorDemoPage() {
         onChange={setMarkdown}
         placeholder="Start typing markdown…"
         autoFocus
+        enableAITranscribe
+        enableAITransform
         className="flex-1"
       />
     </div>

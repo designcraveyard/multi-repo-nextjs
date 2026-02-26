@@ -25,25 +25,32 @@ export interface ToastProps {
   className?: string;
 }
 
-// ─── Default Toast Style ──────────────────────────────────────────────────────
+// ─── Variant Styles ──────────────────────────────────────────────────────────
 //
-// Surfaces/InversePrimary bg (dark theme)
-// Typography/InversePrimary text color
-// Info icon, rounded-full pill shape for default, action button on the right
+// Matches iOS AppToast: all variants use InversePrimary bg, only the icon
+// color differs per variant. Text is always InversePrimary/InverseSecondary.
 
-const toastStyle = {
+type ToastVariant = "default" | "success" | "warning" | "error" | "info";
+
+const variantStyles: Record<ToastVariant, { iconName: string; iconColor: string }> = {
+  default: { iconName: "Info",             iconColor: "var(--icons-inverse-primary)" },
+  info:    { iconName: "Info",             iconColor: "var(--icons-inverse-primary)" },
+  success: { iconName: "CheckCircle",      iconColor: "var(--icons-success)" },
+  warning: { iconName: "WarningCircle",    iconColor: "var(--icons-warning)" },
+  error:   { iconName: "XCircle",          iconColor: "var(--icons-error)" },
+};
+
+const baseStyle = {
   wrapper: "bg-[var(--surfaces-inverse-primary)] border-transparent",
-  iconName: "Info",
-  iconColor: "var(--icons-inverse-primary)",
   textColor: "text-[var(--typography-inverse-primary)]",
   descColor: "text-[var(--typography-inverse-secondary)]",
-  actionColor: "text-[var(--typography-inverse-primary)] underline",
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function Toast({
   message,
+  variant = "default",
   description,
   actionLabel,
   onAction,
@@ -52,7 +59,7 @@ export function Toast({
   duration = 0,
   className = "",
 }: ToastProps) {
-  const v = toastStyle;
+  const v = { ...baseStyle, ...variantStyles[variant] };
 
   const dismiss = useCallback(() => {
     onDismiss?.();
@@ -77,40 +84,39 @@ export function Toast({
         className,
       ].join(" ")}
     >
-      {/* Status icon */}
-      <span className="flex-shrink-0" aria-hidden="true">
-        <Icon name={v.iconName as any} size="sm" color={v.iconColor} />
+      {/* Status icon — variant-specific color (matches iOS) */}
+      <span className="flex-shrink-0 flex items-center justify-center" aria-hidden="true">
+        <Icon name={v.iconName as any} size="sm" color={v.iconColor} weight="fill" />
       </span>
 
       {/* Content */}
       <div className="flex-1 min-w-0">
         <p className={[
           "text-[length:var(--typography-body-sm-em-size)] leading-[var(--typography-body-sm-em-leading)] font-[var(--typography-body-sm-em-weight)]",
-          v.textColor,
+          baseStyle.textColor,
         ].join(" ")}>
           {message}
         </p>
         {description && (
           <p className={[
             "mt-0.5 text-[length:var(--typography-body-sm-size)] leading-[var(--typography-body-sm-leading)] font-[var(--typography-body-sm-weight)]",
-            "opacity-80",
-            v.descColor,
+            baseStyle.descColor,
           ].join(" ")}>
             {description}
           </p>
         )}
       </div>
 
-      {/* Action pill button */}
+      {/* Action pill button — matches iOS capsule with 20% opacity bg */}
       {actionLabel && onAction && (
         <button
           onClick={onAction}
           className={[
-            "flex-shrink-0 px-3 py-1 rounded-full",
+            "flex-shrink-0 px-3 py-1 rounded-full cursor-pointer",
             "text-[length:var(--typography-cta-sm-size)] leading-[var(--typography-cta-sm-leading)] font-[var(--typography-cta-sm-weight)]",
-            "bg-[var(--surfaces-base-primary)] opacity-90 hover:opacity-100 transition-opacity",
+            "bg-[var(--surfaces-base-primary)]/20 hover:bg-[var(--surfaces-base-primary)]/30 transition-colors",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current",
-            "text-[var(--typography-brand)]",
+            baseStyle.textColor,
           ].join(" ")}
         >
           {actionLabel}
@@ -123,10 +129,10 @@ export function Toast({
           onClick={dismiss}
           aria-label="Dismiss notification"
           className={[
-            "flex-shrink-0 p-1 rounded-full",
+            "flex-shrink-0 p-1 rounded-full cursor-pointer",
             "opacity-60 hover:opacity-100 transition-opacity",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current",
-            v.textColor,
+            baseStyle.textColor,
           ].join(" ")}
         >
           <Icon name="X" size="sm" color="currentColor" />
