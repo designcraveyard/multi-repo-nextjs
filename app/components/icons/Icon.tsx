@@ -36,6 +36,8 @@ const SIZE_MAP: Record<IconSize, number> = {
 
 // ─── Icon name type — keys of all exported Phosphor icons ────────────────────
 
+// Conditional type that filters the Phosphor module exports to only those that
+// are actual Icon components (excludes utility types, context, etc.)
 type PhosphorIconName = {
   [K in keyof typeof PhosphorIcons]: (typeof PhosphorIcons)[K] extends PhosphorIconType
     ? K
@@ -72,8 +74,10 @@ export function Icon({
   label,
   className,
 }: IconProps) {
+  // Dynamic lookup: resolve the PascalCase name to the actual Phosphor component
   const IconComponent = PhosphorIcons[name] as PhosphorIconType | undefined;
 
+  // Guard against invalid names -- dev-only warning, renders nothing in production
   if (!IconComponent) {
     if (process.env.NODE_ENV === "development") {
       console.warn(`[Icon] Unknown icon name: "${name}"`);
@@ -81,6 +85,7 @@ export function Icon({
     return null;
   }
 
+  // Accept either a token alias ("sm", "md", etc.) or a raw pixel number
   const resolvedSize = typeof size === "number" ? size : SIZE_MAP[size];
 
   return (

@@ -43,6 +43,16 @@ export interface AppColorPickerProps {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * A color swatch input with an optional label, backed by the native
+ * `<input type="color">` element.
+ *
+ * Uses `appearance: none` to strip default browser chrome so the swatch
+ * fills the full element. A stable `useId()` links the `<label>` to the
+ * `<input>` for accessibility.
+ *
+ * Cross-platform counterpart: `AppColorPicker` on iOS (wraps SwiftUI `ColorPicker`).
+ */
 export function AppColorPicker({
   value,
   onChange,

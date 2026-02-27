@@ -1,5 +1,31 @@
 "use client";
 
+/**
+ * Toast -- notification banner from the bubbles-kit design system.
+ *
+ * Renders a pill-shaped alert with an icon, message, optional description,
+ * optional action button, and optional dismiss button. Uses inverse-primary
+ * surface for all variants (dark bg in light mode, light bg in dark mode).
+ *
+ * @variant "default" -- info icon, neutral (default)
+ * @variant "info"    -- same as default
+ * @variant "success" -- green check icon
+ * @variant "warning" -- yellow warning icon
+ * @variant "error"   -- red X icon
+ *
+ * @prop message     -- primary text (required)
+ * @prop description -- secondary text below the message
+ * @prop actionLabel -- text for the optional action pill button
+ * @prop onAction    -- callback when action is clicked
+ * @prop dismissible -- show X button to dismiss
+ * @prop duration    -- auto-dismiss after ms (0 = no auto-dismiss, default)
+ *
+ * Companion: ToastContainer -- fixed-position wrapper for positioning toasts
+ * in a corner of the viewport.
+ *
+ * Figma source: bubbles-kit node 108:4229 (Toast Message)
+ */
+
 import { useEffect, useCallback, ReactNode } from "react";
 import { Icon } from "@/app/components/icons";
 
@@ -59,12 +85,16 @@ export function Toast({
   duration = 0,
   className = "",
 }: ToastProps) {
+  // --- State
+  // Merge base (shared) styles with variant-specific icon name/color
   const v = { ...baseStyle, ...variantStyles[variant] };
 
+  // Memoize dismiss to keep the auto-dismiss timer effect stable
   const dismiss = useCallback(() => {
     onDismiss?.();
   }, [onDismiss]);
 
+  // Auto-dismiss timer: if duration > 0, fire onDismiss after that many ms
   useEffect(() => {
     if (duration > 0) {
       const timer = setTimeout(dismiss, duration);
@@ -72,6 +102,7 @@ export function Toast({
     }
   }, [duration, dismiss]);
 
+  // --- Render
   return (
     <div
       role="alert"
@@ -162,6 +193,12 @@ const positionClasses: Record<ToastPosition, string> = {
   "bottom-right":   "bottom-4 right-4 items-end",
 };
 
+/**
+ * ToastContainer -- fixed viewport overlay that positions toast notifications.
+ *
+ * @prop position -- corner/edge of the viewport (default: "bottom-right")
+ * @prop children -- Toast components to render
+ */
 export function ToastContainer({
   position = "bottom-right",
   children,

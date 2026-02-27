@@ -60,6 +60,10 @@ export interface ListItemProps {
 
 // --- Helpers ─────────────────────────────────────────────────────────────────
 
+/**
+ * Renders the appropriate trailing action component based on the discriminated
+ * union type. Each branch maps to a different atomic component from the design system.
+ */
 function TrailingSlot({ trailing }: { trailing: ListItemTrailing }) {
   switch (trailing.type) {
     case "button":
@@ -120,6 +124,17 @@ function TrailingSlot({ trailing }: { trailing: ListItemTrailing }) {
 
 // --- Render ──────────────────────────────────────────────────────────────────
 
+/**
+ * A horizontal row pattern composing Thumbnail + TextBlock + an optional trailing
+ * action slot (Button, IconButton, Badge, Radio, Checkbox, or Switch).
+ *
+ * All slots are optional except `title`. The trailing action type is selected via
+ * a discriminated union on `trailing.type` to keep the prop surface clean.
+ *
+ * Composition: Thumbnail (leading) + TextBlock (center) + TrailingSlot (trailing).
+ *
+ * @see TrailingSlot  -- renders the trailing action based on the union branch
+ */
 export function ListItem({
   title,
   subtitle,

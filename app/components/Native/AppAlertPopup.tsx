@@ -94,6 +94,17 @@ function resolveButtonColors(role: AlertButtonRole = "default"): {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * A centered alert dialog for confirmations or destructive-action warnings.
+ *
+ * Wraps shadcn AlertDialog (Radix) with semantic design tokens and a
+ * role-based button system (default / destructive / cancel). The cancel
+ * button uses `AlertDialogCancel` (dismisses without action), while all
+ * other roles use `AlertDialogAction` (dismisses and confirms).
+ *
+ * Cross-platform counterpart: `AppAlertPopup` on iOS (`.appAlert` modifier),
+ * `AppAlertPopup` on Android (Material AlertDialog wrapper).
+ */
 export function AppAlertPopup({
   isPresented,
   onClose,

@@ -1,5 +1,27 @@
 "use client";
 
+/**
+ * Tabs -- horizontal tab bar with an animated sliding indicator.
+ *
+ * Supports both controlled (activeTab prop) and uncontrolled (defaultTab prop)
+ * usage. Implements full WAI-ARIA Tabs pattern with keyboard navigation
+ * (ArrowLeft/Right, Home, End).
+ *
+ * @size "sm" -- compact 12px CTA font, 2px indicator
+ * @size "md" -- standard 14px CTA font, 2px indicator (default)
+ * @size "lg" -- large 16px CTA font, 2px indicator
+ *
+ * @prop items      -- array of { id, label, icon? } tab definitions
+ * @prop activeTab  -- controlled active tab id (overrides internal state)
+ * @prop defaultTab -- initial active tab for uncontrolled usage
+ * @prop onChange   -- called with the newly selected tab id
+ *
+ * Companion: TabPanel -- renders content associated with a tab, using
+ * matching id/aria attributes for accessibility.
+ *
+ * Figma source: bubbles-kit node 76:660 (_Tabs) + node 78:284 (Tabs bar)
+ */
+
 import { useState, useRef, useEffect, useLayoutEffect, ReactNode, KeyboardEvent } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -63,17 +85,22 @@ export function Tabs({
   onChange,
   className = "",
 }: TabsProps) {
+  // --- State
+  // Supports both controlled (external activeTab) and uncontrolled (internal state) modes
   const isControlled = controlledActiveTab !== undefined;
   const [internalActive, setInternalActive] = useState<string>(defaultTab ?? items[0]?.id ?? "");
   const activeId = isControlled ? controlledActiveTab : internalActive;
 
-  // Track each tab button's position for the sliding indicator
+  // Track each tab button's DOM position for the sliding indicator overlay
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
 
   const s = sizeStyles[size];
 
+  // --- Helpers
+  // Measures the active tab button's position relative to the container
+  // and updates the indicator's left offset and width for the slide animation.
   const updateIndicator = () => {
     const el = tabRefs.current.get(activeId);
     const container = containerRef.current;
@@ -86,12 +113,12 @@ export function Tabs({
     });
   };
 
-  // Update on active tab change
+  // Recalculate indicator position whenever active tab changes
   useLayoutEffect(() => {
     updateIndicator();
   }, [activeId]);
 
-  // Update on resize
+  // Recalculate on container resize (e.g. window resize, font load)
   useEffect(() => {
     const observer = new ResizeObserver(updateIndicator);
     if (containerRef.current) observer.observe(containerRef.current);
@@ -103,6 +130,8 @@ export function Tabs({
     onChange?.(id);
   };
 
+  // WAI-ARIA keyboard navigation: ArrowLeft/Right cycle through tabs,
+  // Home/End jump to first/last tab. Focus and selection move together.
   const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>, currentIndex: number) => {
     const ids = items.map((t) => t.id);
     if (e.key === "ArrowRight") {
@@ -126,6 +155,7 @@ export function Tabs({
     }
   };
 
+  // --- Render
   return (
     <div
       role="tablist"
@@ -195,8 +225,16 @@ export function Tabs({
 }
 
 // ─── TabPanel ─────────────────────────────────────────────────────────────────
-// Companion component to associate content panels with tabs
 
+/**
+ * TabPanel -- content panel companion to Tabs.
+ *
+ * Renders a div with the proper role="tabpanel" and aria attributes.
+ * Hidden when the panel id does not match the activeTab value.
+ *
+ * @prop id        -- must match a TabItem.id from the Tabs items array
+ * @prop activeTab -- the currently active tab id (controls visibility)
+ */
 export function TabPanel({
   id,
   activeTab,

@@ -87,6 +87,21 @@ export interface AdaptiveNavShellProps {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * Root navigation shell that adapts to screen size:
+ * - **Mobile (<768px):** fixed bottom tab bar with icon + label.
+ * - **Desktop (>=768px):** collapsible sidebar icon rail (60px collapsed / 240px expanded)
+ *   with a toggle button at the bottom.
+ *
+ * Active tabs use a filled icon variant and brand color highlight. Optional
+ * numeric badge counts are rendered as pills (sidebar: inline pill, bottom bar:
+ * absolute-positioned mini badge).
+ *
+ * Composition: SidebarItem (desktop) + BottomTabItem (mobile) sub-components
+ * render individual tab entries.
+ *
+ * Cross-platform counterpart: `AdaptiveNavShell` on iOS / Android.
+ */
 export function AdaptiveNavShell({
   tabs,
   selectedTab,
@@ -197,6 +212,11 @@ export function AdaptiveNavShell({
 
 // ─── Sidebar Item ─────────────────────────────────────────────────────────────
 
+/**
+ * A single row in the desktop sidebar. When active, shows a tinted brand
+ * background (10% opacity via `color-mix`) and a filled icon. When the
+ * sidebar is expanded, also renders the text label and optional badge count.
+ */
 function SidebarItem({
   tab,
   isActive,
@@ -272,6 +292,11 @@ function SidebarItem({
 
 // ─── Bottom Tab Item ──────────────────────────────────────────────────────────
 
+/**
+ * A single item in the mobile bottom navigation bar. Renders a vertically
+ * stacked icon + label. Active state uses brand color and a filled icon.
+ * Optional badge is positioned as an absolute mini-pill over the icon.
+ */
 function BottomTabItem({
   tab,
   isActive,

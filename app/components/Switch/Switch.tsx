@@ -1,5 +1,20 @@
 "use client";
 
+/**
+ * Switch -- toggle switch for binary on/off settings.
+ *
+ * Renders a track-and-thumb toggle using a <button role="switch">.
+ * Uses brand-interactive color when on, base-low-contrast when off.
+ *
+ * @prop checked  -- controlled on/off state (default: false)
+ * @prop onChange -- called with the new boolean value on toggle
+ * @prop label   -- optional text beside the switch (clickable)
+ *
+ * Implementation: Uses a native <button> with role="switch" and aria-checked
+ * instead of a hidden <input type="checkbox"> for simpler DOM structure.
+ * The thumb slides via translate-x transition (translate-x-0 off, translate-x-5 on).
+ */
+
 import { ButtonHTMLAttributes, useId } from "react";
 
 // --- Types -------------------------------------------------------------------
@@ -16,7 +31,6 @@ export interface SwitchProps
 
 // --- Switch ------------------------------------------------------------------
 
-/** Toggle switch for binary on/off settings. */
 export function Switch({
   checked = false,
   onChange,
@@ -26,6 +40,7 @@ export function Switch({
   id,
   ...rest
 }: SwitchProps) {
+  // Generate a stable id for aria-labelledby linkage between switch and label
   const autoId = useId();
   const switchId = id ?? autoId;
   const labelId = label ? `${switchId}-label` : undefined;
@@ -44,7 +59,7 @@ export function Switch({
         className,
       ].join(" ")}
     >
-      {/* Switch track + thumb */}
+      {/* Switch track -- brand color when checked, low-contrast when off */}
       <button
         {...rest}
         id={switchId}
@@ -65,7 +80,7 @@ export function Switch({
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--surfaces-brand-interactive)]",
         ].join(" ")}
       >
-        {/* Thumb */}
+        {/* Thumb -- slides via translate-x (0 = off, 5 = on) with eased transition */}
         <span
           aria-hidden="true"
           className={[

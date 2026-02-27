@@ -34,7 +34,10 @@ export interface StepperProps {
 
 // --- Helpers ─────────────────────────────────────────────────────────────────
 
-/** Left column: indicator dot + optional connector line to the next step */
+/**
+ * Left column of a single step row: renders the StepIndicator dot and, unless
+ * this is the last step, a vertical connector line stretching to the next step.
+ */
 function StepTrack({ completed, isLast }: { completed: boolean; isLast: boolean }) {
   return (
     <div className="flex flex-col items-center gap-[var(--space-2)] pt-[var(--space-2)] self-stretch w-3 flex-shrink-0">
@@ -51,6 +54,13 @@ function StepTrack({ completed, isLast }: { completed: boolean; isLast: boolean 
 
 // --- Render ──────────────────────────────────────────────────────────────────
 
+/**
+ * A vertical timeline of steps, each composed of a StepIndicator dot, a
+ * connecting line, and TextBlock content. Display-only -- no interaction;
+ * the caller owns the data.
+ *
+ * Composition: StepTrack (StepIndicator + connector line) + TextBlock per step.
+ */
 export function Stepper({ steps }: StepperProps) {
   if (steps.length === 0) return null;
 

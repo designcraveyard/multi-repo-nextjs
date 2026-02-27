@@ -72,6 +72,8 @@ export interface MarkdownEditorProps {
 }
 
 // ─── State visual spec (reuses InputField pattern) ────────────────────────────
+// Maps each InputFieldState to a border class and hint text color.
+// This keeps the MarkdownEditor visually consistent with InputField.
 
 interface StateSpec {
   border: string;
@@ -104,6 +106,8 @@ const HINT_STYLE =
   "text-[length:var(--typography-caption-md-size)] leading-[var(--typography-caption-md-leading)] font-[var(--typography-caption-md-weight)]";
 
 // ─── Bubble menu button styles ────────────────────────────────────────────────
+// Inverse-color buttons shown in the floating selection toolbar (BubbleMenu).
+// Active state uses a brighter inverse background to indicate toggled-on formatting.
 
 const BUBBLE_BTN = [
   "flex items-center justify-center w-8 h-8",
@@ -137,6 +141,9 @@ export function MarkdownEditor({
   const isInternalUpdate = useRef(false);
 
   // ── Tiptap editor ──
+  // Configures all Tiptap extensions: StarterKit (headings, lists, code blocks),
+  // TaskList/TaskItem, Table, Link (autolink, no open-on-click), Placeholder,
+  // and tiptap-markdown for bidirectional markdown <-> ProseMirror conversion.
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -182,6 +189,9 @@ export function MarkdownEditor({
   });
 
   // ── Sync external value changes into the editor ──
+  // When `value` changes externally (not from our own onUpdate callback),
+  // push the new content into the editor. The isInternalUpdate ref prevents
+  // a feedback loop: onUpdate sets it true, and this effect skips that cycle.
   useEffect(() => {
     if (!editor) return;
     if (isInternalUpdate.current) {
@@ -215,6 +225,9 @@ export function MarkdownEditor({
   }, [editor]);
 
   // ── AI Transcribe (voice-to-text) ──
+  // Uses the browser MediaRecorder to capture audio, then POSTs the blob
+  // to /api/ai/transcribe for server-side speech-to-text. The resulting
+  // text is inserted at the current cursor position.
   const recorder = useAudioRecorder();
   const [isTranscribing, setIsTranscribing] = useState(false);
 
@@ -244,7 +257,11 @@ export function MarkdownEditor({
     }
   }, [editor, recorder]);
 
-  // ── AI Transform (text → AI → text) ──
+  // ── AI Transform (text -> AI -> text) ──
+  // Sends selected text (or full document) through a server-side AI transform
+  // pipeline. The result streams back and is appended to the editor content
+  // once streaming completes. Tracks the previous isStreaming state via ref
+  // to detect the streaming -> done transition.
   const transformStream = useTransformStream();
 
   // Insert transform result when streaming completes

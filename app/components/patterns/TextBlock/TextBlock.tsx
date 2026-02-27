@@ -26,6 +26,17 @@ export interface TextBlockProps {
 
 // --- Render ──────────────────────────────────────────────────────────────────
 
+/**
+ * A vertical typography stack composing up to five optional text slots:
+ * overline, title, subtext, body, and metadata.
+ *
+ * The header group (overline / title / subtext) uses a tighter inner gap
+ * (`--space-1`), while body and metadata are separated by the outer gap
+ * (`--space-2`). All typography tokens come from the semantic layer.
+ *
+ * This is a foundational pattern used by ListItem, Stepper, and other
+ * composite components that need structured text layouts.
+ */
 export function TextBlock({
   overline,
   title,

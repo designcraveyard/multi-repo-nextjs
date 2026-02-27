@@ -99,6 +99,16 @@ function itemStyle(destructive?: boolean): React.CSSProperties {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * A menu overlay supporting two trigger modes:
+ * - `"context"` -- right-click / long-press (Radix ContextMenu)
+ * - `"dropdown"` -- click-triggered popover (Radix DropdownMenu)
+ *
+ * Both modes share the same styling tokens, item layout, and destructive-item
+ * semantics. Items can include an optional leading icon and a visual separator.
+ *
+ * Cross-platform counterpart: `AppContextMenu` on iOS (`.appContextMenu` modifier).
+ */
 export function AppContextMenu({
   mode = "context",
   children,

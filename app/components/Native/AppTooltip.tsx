@@ -54,6 +54,18 @@ export interface AppTooltipProps {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * A hover/focus tooltip bubble wrapping shadcn Tooltip (Radix).
+ *
+ * Renders a high-contrast inverse-color bubble with either plain `tipText`
+ * or custom `tipContent`. Supports controlled (`open` / `onOpenChange`) and
+ * uncontrolled modes. A 400ms delay prevents accidental triggers.
+ *
+ * The `TooltipProvider` is included inline so each `AppTooltip` is
+ * self-contained; nesting providers is idempotent and safe.
+ *
+ * Cross-platform counterpart: `AppTooltip` on iOS (`.appTooltip` popover modifier).
+ */
 export function AppTooltip({
   children,
   tipText,

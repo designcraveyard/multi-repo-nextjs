@@ -1,5 +1,30 @@
 "use client";
 
+/**
+ * Chip -- toggleable pill button from the bubbles-kit design system.
+ *
+ * Used for tab rows, filter toggles, and segment controls. Renders as a
+ * button with active/inactive visual states and optional leading/trailing icons.
+ *
+ * @variant "chipTabs"       -- tab-style chip, pill shape with pressed bg when active
+ * @variant "filters"        -- filter toggle with border; active state uses border-active
+ * @variant "segmentControl" -- segment inside SegmentControlBar (no border, shadow when active)
+ *
+ * @size "sm" -- 24px height, compact
+ * @size "md" -- 36px height, standard (default)
+ * @size "lg" -- 48px height, large touch target
+ *
+ * @prop label        -- chip text (required)
+ * @prop isActive     -- toggles active/inactive visual state
+ * @prop leadingIcon  -- icon before the label
+ * @prop trailingIcon -- icon after the label
+ *
+ * ARIA: chipTabs variant uses role="tab" + aria-selected;
+ *       filters variant uses role="button" + aria-pressed.
+ *
+ * Figma source: bubbles-kit node 76:460 (Chips component set)
+ */
+
 import { ReactNode, ButtonHTMLAttributes } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -99,6 +124,9 @@ export function Chip({
   const v = variantStyles[variant];
   const s = chipSizeStyles[size];
 
+  // --- Render
+  // ARIA role depends on variant: chipTabs acts as a tab, filters acts as a toggle button.
+  // segmentControl chips are typically managed by SegmentControlBar parent.
   return (
     <button
       role={variant === "chipTabs" ? "tab" : "button"}

@@ -82,6 +82,17 @@ export interface AppActionSheetProps {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * An iOS-style action sheet presenting a list of actions with an optional
+ * title and message, plus a visually separated cancel button at the bottom.
+ *
+ * Built on shadcn AlertDialog (Radix). The cancel action is automatically
+ * split from the main actions and rendered in its own rounded panel below
+ * the action group, matching the native iOS `UIAlertController.Style.actionSheet`
+ * appearance. Action rows include dividers and hover/pressed states.
+ *
+ * Cross-platform counterpart: `AppActionSheet` on iOS (`.appActionSheet` modifier).
+ */
 export function AppActionSheet({
   isPresented,
   onClose,

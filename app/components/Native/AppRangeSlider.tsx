@@ -65,6 +65,20 @@ export interface AppRangeSliderProps {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * A dual-thumb range slider for selecting a numeric interval.
+ *
+ * Wraps shadcn Slider (Radix) with `value={[lower, upper]}` for native
+ * dual-thumb behavior. Design tokens are injected via CSS custom properties
+ * (`--slider-track-color`, `--slider-range-color`, etc.) to override
+ * shadcn defaults.
+ *
+ * A `pointerdown` handler sets `document.body.style.cursor = "grabbing"`
+ * for the drag duration, because Radix captures the pointer away from the
+ * thumb element, causing `:active` cursor styles to drop mid-drag.
+ *
+ * Cross-platform counterpart: `AppRangeSlider` on iOS (dual `Slider` wrapper).
+ */
 export function AppRangeSlider({
   lowerValue,
   upperValue,

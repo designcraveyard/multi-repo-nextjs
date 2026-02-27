@@ -147,6 +147,11 @@ const SEPARATOR = "self-stretch w-px shrink-0 bg-[var(--surfaces-base-high-contr
 
 // ─── InputField (single line) ─────────────────────────────────────────────────
 
+// --- Props
+// Supports all native <input> attributes plus design-system slots for labels,
+// pickers, icons, and separators. Validation state controls border color and
+// auto-injects a trailing state icon when no explicit trailing content is provided.
+
 export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
   function InputField(
     {
@@ -171,6 +176,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
     },
     ref
   ) {
+    // --- State
     const generatedId = useId();
     const id = propId ?? generatedId;
     const spec = STATE_SPEC[state];
@@ -192,7 +198,9 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       propOnChange?.(e);
     };
 
-    // Default state: muted at rest → primary when focused or filled
+    // --- Helpers
+    // Default state: muted at rest, primary when focused or filled.
+    // Validation states always use their own icon color from STATE_SPEC.
     const iconColor =
       state === "default"
         ? isFocused || hasValue
@@ -200,8 +208,8 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
           : "text-[var(--icons-muted)]"
         : spec.iconColor;
 
-    // Auto-inject state icon into trailing slot when state !== default
-    // and no explicit trailingIcon/trailingLabel/trailingPicker is provided
+    // Auto-inject a trailing state icon (check/warning/error) when the validation
+    // state is not "default" and no explicit trailing content overrides it
     const stateIconEl =
       spec.stateIcon && !trailingIcon && !trailingLabel && !trailingPicker ? (
         <span className={`w-5 h-5 flex-shrink-0 self-center ${spec.iconColor}`} aria-hidden="true">
@@ -209,10 +217,11 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
         </span>
       ) : null;
 
-    // Separator shows when prop is true AND there is content on that side
+    // Separator is only rendered when enabled AND there is actual content on that side
     const showLeadingSep = leadingSeparator && (leadingLabel || leadingPicker);
     const showTrailingSep = trailingSeparator && (trailingLabel || trailingPicker);
 
+    // --- Render
     return (
       <div className={["flex flex-col gap-1", className].join(" ")}>
         {label && (
@@ -297,6 +306,16 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
 
 // ─── TextField (multiline) ────────────────────────────────────────────────────
 
+/**
+ * TextField -- multiline text input variant of InputField.
+ *
+ * Simpler than InputField: no leading/trailing slots, just a label, hint,
+ * validation state, and a resizable <textarea>. Uses the same token-based
+ * styling (bg, border, typography) as InputField for visual consistency.
+ *
+ * @prop rows  -- number of visible text rows (default: 4)
+ * @prop state -- "default" | "success" | "warning" | "error"
+ */
 export const TextField = forwardRef<HTMLTextAreaElement, TextFieldProps>(
   function TextField(
     {

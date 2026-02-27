@@ -87,6 +87,10 @@ const COLOR: Record<LabelType, string> = {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+// --- Props
+// Destructured with defaults: label="Label", size="md", type="secondaryAction".
+// Icon visibility is controlled by showLeadingIcon/showTrailingIcon booleans.
+
 export function Label({
   label = "Label",
   size = "md",

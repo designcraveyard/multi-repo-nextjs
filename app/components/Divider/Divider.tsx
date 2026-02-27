@@ -1,3 +1,21 @@
+/**
+ * Divider -- horizontal or vertical separator from the bubbles-kit design system.
+ *
+ * Renders a visual divider between content sections or list rows. Supports
+ * horizontal/vertical orientations and an optional centered label (section
+ * type, horizontal only).
+ *
+ * @type "section" -- thicker, higher-contrast divider for separating page sections
+ * @type "row"     -- hairline separator for list/table rows (default)
+ *
+ * @orientation "horizontal" -- full-width line (default)
+ * @orientation "vertical"   -- self-stretching inline line for column separation
+ *
+ * @prop label -- centered text label that splits the divider line (horizontal section only)
+ *
+ * Figma source: bubbles-kit node 95:2092 (Divider component set)
+ */
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 //
 // Figma: Divider (node 95:2092)
@@ -28,7 +46,7 @@ export function Divider({
   const isSection = type === "section";
   const isVertical = orientation === "vertical";
 
-  // Vertical divider — simple line
+  // Vertical divider -- simple self-stretching line; section uses border-default, row uses border-muted
   if (isVertical) {
     return (
       <span
@@ -43,7 +61,7 @@ export function Divider({
     );
   }
 
-  // Horizontal with label
+  // Horizontal with label -- two flex-1 lines flanking centered text
   if (label) {
     const lineClass = isSection
       ? "bg-[var(--border-default)]"
@@ -63,7 +81,7 @@ export function Divider({
     );
   }
 
-  // Plain horizontal divider
+  // Plain horizontal divider -- section type renders 8px tall bar, row renders 1px hairline
   return (
     <hr
       role="separator"

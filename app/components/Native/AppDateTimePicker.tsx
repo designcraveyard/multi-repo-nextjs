@@ -67,6 +67,16 @@ export interface AppDateTimePickerProps {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * A date and/or time picker supporting three modes (`date`, `time`, `dateAndTime`)
+ * and two display styles (`compact` trigger + popover, or `inline` embedded calendar).
+ *
+ * Backed by shadcn Calendar (react-day-picker) + a native `<input type="time">`.
+ * When `mode` is `"dateAndTime"`, selecting a day preserves the existing time.
+ * In `"date"` mode, the popover auto-closes after a day is selected.
+ *
+ * Cross-platform counterpart: `AppDateTimePicker` on iOS (wraps SwiftUI `DatePicker`).
+ */
 export function AppDateTimePicker({
   value,
   onChange,

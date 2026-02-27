@@ -99,6 +99,22 @@ export interface AdaptiveSheetProps {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * Responsive presentation wrapper that adapts to screen size:
+ * - **Mobile (<768px):** bottom drawer (vaul Drawer) with swipe-to-dismiss and
+ *   optional snap points.
+ * - **Desktop (>=768px):** centered modal dialog (Radix Dialog) with overlay scrim
+ *   and close button, max-width 480px.
+ *
+ * The breakpoint is detected at runtime via `useMediaQuery("(min-width: 768px)")`.
+ * Snap points are only applied on mobile; they are ignored in the desktop dialog.
+ *
+ * Use this instead of raw `AppBottomSheet` or `Dialog` in screen files to get
+ * automatic responsive behavior.
+ *
+ * Cross-platform counterpart: `AdaptiveSheet` on iOS (bottom sheet on iPhone,
+ * centered sheet on iPad landscape).
+ */
 export function AdaptiveSheet({
   isPresented,
   onClose,

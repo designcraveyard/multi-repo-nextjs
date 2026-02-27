@@ -48,6 +48,17 @@ export type AppProgressLoaderProps = {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * A loading indicator with two variants:
+ * - `"indefinite"` -- a spinning circular ring (pure CSS animation).
+ * - `"definite"` -- a linear progress bar with a fill percentage
+ *   (backed by shadcn `Progress`).
+ *
+ * Both variants accept an optional `label` rendered below the indicator.
+ * The variant is selected via a discriminated union on the `variant` field.
+ *
+ * Cross-platform counterpart: `AppProgressLoader` on iOS (wraps `ProgressView`).
+ */
 export function AppProgressLoader(props: AppProgressLoaderProps) {
   const { label, className = "" } = props;
 

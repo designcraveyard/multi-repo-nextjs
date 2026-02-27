@@ -1,12 +1,29 @@
-// Thumbnail.tsx
-// Figma source: bubbles-kit › node 82:1235 "Thumbnail"
-//
-// Axes: Sizes(xs/sm/md/lg/xl/xxl) × Rounded(Off/On) = 12
-//
+/**
+ * Thumbnail -- avatar / image thumbnail from the bubbles-kit design system.
+ *
+ * Renders a sized container that displays an image, text initials, or a
+ * generic person silhouette fallback. Supports both square (rounded-corner)
+ * and circular shapes.
+ *
+ * @size "xs"  -- 32px
+ * @size "sm"  -- 40px
+ * @size "md"  -- 48px (default)
+ * @size "lg"  -- 64px
+ * @size "xl"  -- 80px
+ * @size "xxl" -- 96px
+ *
+ * @prop src     -- image URL; when absent, falls back to children or silhouette SVG
+ * @prop alt     -- accessible alt text (required)
+ * @prop rounded -- when true, renders as a circle; otherwise uses radius-sm square
+ * @prop children -- custom fallback content (e.g. initials "AB")
+ *
+ * Figma source: bubbles-kit node 82:1235 (Thumbnail component set)
+ */
+
 // Usage:
 //   <Thumbnail src="/avatar.png" alt="User avatar" size="md" />
 //   <Thumbnail src="/photo.jpg" alt="Photo" size="lg" rounded />
-//   <Thumbnail alt="Initials" size="md" rounded>AB</Thumbnail>  // fallback slot
+//   <Thumbnail alt="Initials" size="md" rounded>AB</Thumbnail>
 
 import React from "react";
 
@@ -50,6 +67,7 @@ export function Thumbnail({
   className = "",
 }: ThumbnailProps) {
   const { cls } = SIZE_MAP[size];
+  // Circle for avatars (rounded=true) or soft square using the design system radius token
   const shapeClass = rounded ? "rounded-full" : "rounded-[var(--radius-sm)]";
 
   const baseClass = [
@@ -62,6 +80,7 @@ export function Thumbnail({
     .filter(Boolean)
     .join(" ");
 
+  // When an image source is provided, render a native <img> with object-cover
   if (src) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
@@ -74,6 +93,7 @@ export function Thumbnail({
     );
   }
 
+  // No image source: render either custom children (initials) or a fallback silhouette SVG
   return (
     <span className={baseClass} aria-label={alt} role="img">
       {children ? (

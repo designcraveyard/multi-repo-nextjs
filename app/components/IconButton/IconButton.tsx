@@ -1,5 +1,30 @@
 "use client";
 
+/**
+ * IconButton -- icon-only circular button from the bubbles-kit design system.
+ *
+ * Renders a square, pill-shaped (circular) button containing a single icon.
+ * Provides the same six color variants as Button, plus a "quarternary"
+ * transparent variant for toolbar/inline actions.
+ *
+ * @variant "primary"     -- solid brand background, icon uses on-brand color
+ * @variant "secondary"   -- low-contrast brand background
+ * @variant "tertiary"    -- outlined with brand border
+ * @variant "quarternary" -- transparent, no border (ghost style)
+ * @variant "success"     -- solid green background
+ * @variant "danger"      -- solid red background
+ *
+ * @size "sm" -- 24x24px container, 16px icon
+ * @size "md" -- 36x36px container, 20px icon
+ * @size "lg" -- 48x48px container, 24px icon (default)
+ *
+ * @prop icon      -- Phosphor icon ReactNode (required)
+ * @prop label     -- accessible label for screen readers (required)
+ * @prop isLoading -- replaces icon with a spinner and disables interaction
+ *
+ * Figma source: bubbles-kit node 76:208 (IconButton component set)
+ */
+
 import { ButtonHTMLAttributes, ReactNode } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -151,6 +176,10 @@ const variantStyles: Record<IconButtonVariant, VariantStyle> = {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+// --- Props
+// Destructured with defaults: variant="primary", size="lg", isLoading=false.
+// `label` is used for both aria-label and title (tooltip on hover).
+
 export function IconButton({
   icon,
   variant = "primary",
@@ -161,10 +190,13 @@ export function IconButton({
   className = "",
   ...rest
 }: IconButtonProps) {
+  // --- State
   const v = variantStyles[variant];
   const s = sizeStyles[size];
+  // Treat the button as disabled when loading to prevent duplicate submissions
   const isDisabled = disabled || isLoading;
 
+  // --- Render
   return (
     <button
       disabled={isDisabled}

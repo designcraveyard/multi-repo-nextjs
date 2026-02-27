@@ -1,3 +1,25 @@
+/**
+ * Badge -- small status indicator from the bubbles-kit design system.
+ *
+ * Renders a pill-shaped inline badge for counts, labels, or dot indicators.
+ * Supports solid (high-emphasis) and subtle (tinted, low-emphasis) color modes.
+ *
+ * @size "tiny"   -- 6px dot-only indicator, no text (e.g. unread notification dot)
+ * @size "sm"     -- 14px height, compact text label
+ * @size "number" -- 14px height, same as "sm" but documented separately for numeric counts
+ * @size "md"     -- 16px height, standard text label (default)
+ *
+ * @type "brand"   -- brand-colored (default)
+ * @type "success" -- green
+ * @type "error"   -- red
+ * @type "accent"  -- accent/purple
+ *
+ * @prop subtle -- when true, uses tinted (low-contrast) background instead of solid
+ * @prop label  -- text or number to display (ignored for "tiny" size)
+ *
+ * Figma source: bubbles-kit node 87:1071 (Badge component set)
+ */
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 //
 // Figma: Badge (node 87:1071)
@@ -58,9 +80,10 @@ export function Badge({
   label,
   className = "",
 }: BadgeProps) {
+  // Pick solid or subtle color set based on the subtle prop
   const colors = subtle ? subtleColors[type] : solidColors[type];
 
-  // Tiny — dot only
+  // Tiny -- renders a small colored dot with no text; used for notification indicators
   if (size === "tiny") {
     return (
       <span
@@ -74,6 +97,7 @@ export function Badge({
     );
   }
 
+  // "md" size uses slightly taller height (16px vs 14px) and larger font token
   const isMd = size === "md";
 
   return (

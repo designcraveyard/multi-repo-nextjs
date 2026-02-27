@@ -62,6 +62,19 @@ export interface AppBottomSheetProps {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * A bottom-sheet drawer for presenting supplementary content or forms.
+ *
+ * Wraps the vaul `Drawer` primitive with semantic design tokens. Supports
+ * optional snap points (fractions of screen height) matching iOS
+ * `presentationDetents`. The built-in drag handle from shadcn/vaul is
+ * used -- no additional handle is rendered.
+ *
+ * For responsive mobile-drawer / desktop-modal behavior, prefer
+ * `AdaptiveSheet` which delegates to this component on mobile.
+ *
+ * Cross-platform counterpart: `AppBottomSheet` on iOS (`.appBottomSheet` modifier).
+ */
 export function AppBottomSheet({
   isPresented,
   onClose,

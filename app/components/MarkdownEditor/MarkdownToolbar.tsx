@@ -42,6 +42,9 @@ interface MarkdownToolbarProps {
 }
 
 // ─── Toolbar Buttons ──────────────────────────────────────────────────────────
+// Static button definitions for the main formatting toolbar. Each entry maps a
+// Phosphor icon to a Tiptap editor chain command. Buttons are grouped by
+// function with optional `divider` flags to insert visual separators.
 
 const TOOLBAR_BUTTONS: ToolbarButton[] = [
   // --- Text formatting ---
@@ -160,6 +163,9 @@ const TOOLBAR_BUTTONS: ToolbarButton[] = [
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
+/** Returns Tailwind classes for the toolbar container, varying the border
+ *  position (top or bottom) based on where the toolbar sits relative to
+ *  the editor content area. */
 function toolbarBaseClasses(position: "top" | "bottom") {
   return [
     "flex items-center gap-0.5 overflow-x-auto",
@@ -187,6 +193,23 @@ const DIVIDER = "self-stretch w-px mx-0.5 bg-[var(--border-muted)]";
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * Fixed formatting toolbar for the MarkdownEditor.
+ *
+ * Renders a horizontally scrollable row of formatting buttons organized into
+ * groups: text formatting, headings, lists, block elements, table insert,
+ * and link toggle. Each button toggles a Tiptap command via `onMouseDown`
+ * (not `onClick`) to prevent the editor from losing focus.
+ *
+ * Optionally appends AI tool buttons at the end:
+ * - **Transcribe (mic):** toggles audio recording on/off.
+ * - **Transform (sparkles):** opens an `AppContextMenu` dropdown with
+ *   predefined AI transform options (summarise, key pointers, action items,
+ *   custom prompt).
+ *
+ * Rendered twice in MarkdownEditor: at the top on desktop (hidden on mobile)
+ * and at the bottom on mobile (hidden on desktop).
+ */
 export function MarkdownToolbar({
   editor,
   position = "bottom",
@@ -280,6 +303,9 @@ export function MarkdownToolbar({
   );
 }
 
+// Predefined AI transform options shown in the sparkles dropdown menu.
+// Each configId maps to a server-side transform pipeline. "md-custom" prompts
+// the user for a freeform instruction before sending.
 const TRANSFORM_OPTIONS: { configId: string; label: string; icon: IconName }[] = [
   { configId: "md-summarise", label: "Summarise", icon: "TextAlignLeft" },
   { configId: "md-key-pointers", label: "Key Pointers", icon: "ListBullets" },
@@ -287,12 +313,13 @@ const TRANSFORM_OPTIONS: { configId: string; label: string; icon: IconName }[] =
   { configId: "md-custom", label: "Custom...", icon: "Sparkle" },
 ];
 
-// ─── Table Actions Toolbar (shown when cursor is inside a table) ──────────── */
+// ─── Table Actions Toolbar (shown when cursor is inside a table) ─────────────
 
 interface TableToolbarProps {
   editor: Editor;
 }
 
+// Table-specific actions: add/remove rows and columns, delete the entire table.
 const TABLE_ACTIONS: ToolbarButton[] = [
   {
     icon: "ArrowLineDown",
@@ -332,6 +359,12 @@ const TABLE_ACTIONS: ToolbarButton[] = [
   },
 ];
 
+/**
+ * A contextual toolbar that appears when the cursor is inside a Tiptap table.
+ * Provides row/column add/remove actions and a delete-table button.
+ * Rendered on a low-contrast background to visually distinguish it from
+ * the main formatting toolbar.
+ */
 export function TableToolbar({ editor }: TableToolbarProps) {
   if (!editor.isActive("table")) return null;
 

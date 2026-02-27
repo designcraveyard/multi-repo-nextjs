@@ -1,5 +1,30 @@
 "use client";
 
+/**
+ * SegmentControlBar -- grouped selection control from the bubbles-kit design system.
+ *
+ * Renders a row of selectable segments with three visual modes. Supports both
+ * controlled (value prop) and uncontrolled (defaultValue prop) usage.
+ *
+ * @type "segmentControl" -- pill container with a sliding background thumb (single-select, default)
+ * @type "chips"          -- row of ChipTab-style pills (single-select)
+ * @type "filters"        -- row of bordered filter chips (multi-select via checkbox semantics)
+ *
+ * @size "sm" -- compact 12px CTA font
+ * @size "md" -- standard 14px CTA font (default)
+ * @size "lg" -- large 16px CTA font
+ *
+ * @prop items        -- array of { id, label } segment definitions
+ * @prop value        -- controlled selected value: string for single-select, string[] for filters
+ * @prop defaultValue -- initial value for uncontrolled usage
+ * @prop onChange     -- called with the new selection (string or string[])
+ *
+ * ARIA: segmentControl/chips use role="radiogroup" + role="radio";
+ *       filters uses role="group" + role="checkbox" for multi-select.
+ *
+ * Figma source: bubbles-kit node 81:637 (SegmentControlBar component set)
+ */
+
 import { useState, useRef, useLayoutEffect, useEffect } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -61,9 +86,12 @@ export function SegmentControlBar({
   onChange,
   className = "",
 }: SegmentControlBarProps) {
+  // --- State
+  // "filters" type supports multi-select; others are single-select
   const isMulti = type === "filters";
   const isControlled = controlledValue !== undefined;
 
+  // Initialize internal state: multi-select defaults to empty array, single-select to first item
   const [internalValue, setInternalValue] = useState<string | string[]>(() => {
     if (defaultValue !== undefined) return defaultValue;
     if (isMulti) return [];
@@ -82,6 +110,9 @@ export function SegmentControlBar({
     return activeValue === id;
   };
 
+  // --- Helpers
+  // For multi-select (filters), toggle the item in/out of the array.
+  // For single-select, just set the new id directly.
   const handleSelect = (id: string) => {
     let next: string | string[];
     if (isMulti) {
@@ -116,7 +147,9 @@ export function SegmentControlBar({
     return () => observer.disconnect();
   }, []);
 
-  // Render as a pill container (SegmentControl) or flat row (Chips/Filters)
+  // --- Render
+  // SegmentControl renders a pill container with a sliding thumb;
+  // Chips/Filters render as a flat row of individual chip buttons.
   const isSegment = type === "segmentControl";
 
   return (
@@ -145,6 +178,7 @@ export function SegmentControlBar({
         />
       )}
 
+      {/* Segment buttons -- style varies by type (segment/chips/filters) */}
       {items.map((item) => {
         const active = isActive(item.id);
         return (

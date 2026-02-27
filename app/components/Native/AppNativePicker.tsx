@@ -143,6 +143,23 @@ export interface AppNativePickerProps<T extends string = string> {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * A chip-styled select dropdown backed by shadcn Select (Radix).
+ *
+ * Supports two rendering modes:
+ * - **Standalone** (default): form label above, chip trigger, optional error text below.
+ * - **Embedded** (`embedded={true}`): bare chip trigger only, designed for use inside
+ *   InputField's `leadingPicker` / `trailingPicker` slots. Embedded mode forces `sm`
+ *   size and `chipTabs` variant, and removes the focus ring (the parent handles focus).
+ *
+ * Two visual variants:
+ * - `"chipTabs"`: low-contrast surface background, no border (default).
+ * - `"filters"`: primary surface background with a `--border-default` border.
+ *
+ * The trigger dimensions follow the chip size spec (sm / md / lg) to match `AppChip`.
+ *
+ * Cross-platform counterpart: `AppNativePicker` on iOS (wraps SwiftUI `Picker`).
+ */
 export function AppNativePicker<T extends string = string>({
   label,
   value,

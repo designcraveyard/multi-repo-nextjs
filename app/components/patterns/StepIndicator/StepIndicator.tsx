@@ -20,6 +20,14 @@ export interface StepIndicatorProps {
 
 // --- Render ──────────────────────────────────────────────────────────────────
 
+/**
+ * A 12x12 circular dot representing a single step in a timeline.
+ *
+ * - Incomplete: hollow circle with `--border-default` stroke.
+ * - Completed: filled `--surfaces-success-solid` circle with a white checkmark icon.
+ *
+ * Used as a building block inside the Stepper pattern component.
+ */
 export function StepIndicator({ completed = false }: StepIndicatorProps) {
   if (completed) {
     return (

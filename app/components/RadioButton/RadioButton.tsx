@@ -1,5 +1,21 @@
 "use client";
 
+/**
+ * RadioButton + RadioGroup -- single-selection controls from the bubbles-kit design system.
+ *
+ * RadioButton renders a custom-styled radio with a hidden native <input> for
+ * accessibility. Can be used standalone (controlled via checked/onChange) or
+ * inside a RadioGroup which manages single-selection state via React context.
+ *
+ * @prop checked  -- controlled selected state (standalone usage)
+ * @prop onChange -- called with the new boolean value (standalone usage)
+ * @prop label   -- optional text beside the radio circle
+ * @prop value   -- identifies this radio within a RadioGroup
+ *
+ * RadioGroup wraps multiple RadioButtons and provides shared name, value,
+ * disabled, and onChange via context. Uses role="radiogroup" for accessibility.
+ */
+
 import { InputHTMLAttributes, createContext, useContext, useId } from "react";
 
 // --- Types -------------------------------------------------------------------
@@ -42,7 +58,6 @@ const RadioGroupContext = createContext<RadioGroupContextValue | null>(null);
 
 // --- RadioButton -------------------------------------------------------------
 
-/** Standalone radio button with optional label. Use inside RadioGroup for single-selection. */
 export function RadioButton({
   checked,
   onChange,
@@ -54,6 +69,9 @@ export function RadioButton({
   id,
   ...rest
 }: RadioButtonProps) {
+  // --- State
+  // When inside a RadioGroup, context provides name, value, disabled, and onChange.
+  // Standalone usage falls back to the directly-passed props.
   const group = useContext(RadioGroupContext);
   const autoId = useId();
   const inputId = id ?? autoId;
@@ -63,6 +81,9 @@ export function RadioButton({
   const isDisabled = group ? group.disabled || !!disabled : !!disabled;
   const inputName = group ? group.name : name;
 
+  // --- Helpers
+  // In group mode, notify the group of the new selection.
+  // In standalone mode, toggle the checked state via onChange.
   function handleChange() {
     if (isDisabled) return;
     if (group && value !== undefined) {
@@ -72,6 +93,7 @@ export function RadioButton({
     }
   }
 
+  // --- Render
   return (
     <label
       htmlFor={inputId}
@@ -125,7 +147,6 @@ export function RadioButton({
 
 // --- RadioGroup --------------------------------------------------------------
 
-/** Manages single-selection state across a group of RadioButton children. */
 export function RadioGroup({
   value,
   onChange,

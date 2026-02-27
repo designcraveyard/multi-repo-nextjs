@@ -1,5 +1,22 @@
 "use client";
 
+/**
+ * Checkbox -- binary toggle control from the bubbles-kit design system.
+ *
+ * Renders a custom-styled checkbox with a hidden native <input> for
+ * accessibility. Supports checked, unchecked, and indeterminate (mixed)
+ * visual states.
+ *
+ * @prop checked       -- controlled checked state
+ * @prop onChange      -- called with the new boolean value on toggle
+ * @prop label        -- optional text rendered beside the checkbox
+ * @prop indeterminate -- shows a horizontal dash instead of a checkmark
+ *
+ * Implementation: The native checkbox is visually hidden (sr-only) but remains
+ * in the DOM for screen reader and keyboard access. The custom square is
+ * rendered as a sibling <span> styled via peer-* Tailwind utilities.
+ */
+
 import { InputHTMLAttributes, useId } from "react";
 
 // --- Types -------------------------------------------------------------------
@@ -18,7 +35,6 @@ export interface CheckboxProps
 
 // --- Checkbox ----------------------------------------------------------------
 
-/** Standalone checkbox with optional label. Supports checked, unchecked, and indeterminate states. */
 export function Checkbox({
   checked = false,
   onChange,
@@ -47,7 +63,9 @@ export function Checkbox({
         className,
       ].join(" ")}
     >
-      {/* Hidden native input for accessibility */}
+      {/* Hidden native input -- sr-only keeps it in the a11y tree while the
+          custom square handles visuals. The ref sets the DOM indeterminate property
+          which cannot be set via HTML attributes alone. */}
       <input
         {...rest}
         id={inputId}
@@ -62,7 +80,8 @@ export function Checkbox({
         }}
       />
 
-      {/* Custom checkbox square */}
+      {/* Custom checkbox square -- uses peer-* utilities to react to the hidden input's
+          hover and focus-visible states. Checked/indeterminate fills with brand color. */}
       <span
         aria-hidden="true"
         className={[

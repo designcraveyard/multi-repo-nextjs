@@ -63,6 +63,20 @@ export interface AppCarouselProps {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * A horizontally scrollable carousel with two layout styles:
+ * - `"paged"` -- full-width slides, one visible at a time (iOS `.page` equivalent).
+ * - `"scrollSnap"` -- partial peek of adjacent cards with snap alignment.
+ *
+ * Powered by shadcn Carousel (Embla Carousel). Optionally renders dot page
+ * indicators and prev/next IconButton navigation arrows at the edges.
+ *
+ * State is managed internally via the Embla API: the component tracks the
+ * selected index and scroll-ability to show/hide navigation arrows and
+ * highlight the active dot.
+ *
+ * Cross-platform counterpart: `AppCarousel` on iOS (wraps `TabView(.page)` / `ScrollView`).
+ */
 export function AppCarousel({
   items,
   style: carouselStyle = "paged",
@@ -77,6 +91,8 @@ export function AppCarousel({
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
 
+  // Callback ref: stores the Embla API and wires up event listeners
+  // to keep selectedIndex, canScrollPrev, and canScrollNext in sync.
   function onSetApi(carouselApi: CarouselApi) {
     setApi(carouselApi);
     if (!carouselApi) return;

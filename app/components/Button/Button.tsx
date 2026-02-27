@@ -1,5 +1,29 @@
 "use client";
 
+/**
+ * Button -- primary action component from the bubbles-kit design system.
+ *
+ * Renders a pill-shaped button with semantic color variants, three size tiers,
+ * optional leading/trailing icons, and a built-in loading spinner.
+ *
+ * @variant "primary"   -- solid brand background, high-emphasis CTA
+ * @variant "secondary"  -- low-contrast brand background, medium-emphasis
+ * @variant "tertiary"   -- outlined with brand border, low-emphasis
+ * @variant "success"    -- solid green background for confirmations
+ * @variant "danger"     -- solid red background for destructive actions
+ *
+ * @size "sm" -- 24px height, compact inline use
+ * @size "md" -- 36px height, standard forms
+ * @size "lg" -- 48px height, primary page CTAs (default)
+ *
+ * @prop label         -- button text (required)
+ * @prop leadingIcon   -- ReactNode rendered before the label
+ * @prop trailingIcon  -- ReactNode rendered after the label
+ * @prop isLoading     -- replaces leading icon with a spinner and disables interaction
+ *
+ * Figma source: bubbles-kit node 229:3892 (_Button component set)
+ */
+
 import { ReactNode, ButtonHTMLAttributes } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -140,6 +164,10 @@ const variantStyles: Record<ButtonVariant, VariantStyle> = {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+// --- Props
+// Destructured with defaults: variant="primary", size="lg", isLoading=false.
+// Extends native <button> attributes for full HTML compatibility.
+
 export function Button({
   variant = "primary",
   size = "lg",
@@ -151,10 +179,13 @@ export function Button({
   className = "",
   ...rest
 }: ButtonProps) {
+  // --- State
   const v = variantStyles[variant];
   const s = sizeStyles[size];
+  // Treat the button as disabled when loading to prevent duplicate submissions
   const isDisabled = disabled || isLoading;
 
+  // --- Render
   return (
     <button
       disabled={isDisabled}
