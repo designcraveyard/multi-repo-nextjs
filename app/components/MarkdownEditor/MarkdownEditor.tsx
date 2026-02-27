@@ -15,7 +15,7 @@
  *   <MarkdownEditor value={md} onChange={setMd} state="error" hint="Content is required" />
  */
 
-import { useEffect, useRef, useCallback, useId } from "react";
+import { useEffect, useRef, useCallback, useId, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import { StarterKit } from "@tiptap/starter-kit";
@@ -27,6 +27,8 @@ import { Placeholder } from "@tiptap/extension-placeholder";
 import { Markdown } from "tiptap-markdown";
 import { Icon } from "@/app/components/icons";
 import { type InputFieldState } from "@/app/components/InputField";
+import { useAudioRecorder } from "@/app/hooks/use-audio-recorder";
+import { useTransformStream } from "@/app/hooks/use-transform-stream";
 import { MarkdownToolbar, TableToolbar } from "./MarkdownToolbar";
 import "./markdown-editor.css";
 
@@ -61,6 +63,10 @@ export interface MarkdownEditorProps {
   disabled?: boolean;
   /** Auto-focus the editor on mount */
   autoFocus?: boolean;
+  /** Enable AI transcribe (mic) button in toolbar */
+  enableAITranscribe?: boolean;
+  /** Enable AI transform (sparkles) button in toolbar */
+  enableAITransform?: boolean;
   /** Additional CSS class on the outer wrapper */
   className?: string;
 }
@@ -122,6 +128,8 @@ export function MarkdownEditor({
   maxHeight,
   disabled = false,
   autoFocus = false,
+  enableAITranscribe = false,
+  enableAITransform = false,
   className = "",
 }: MarkdownEditorProps) {
   const generatedId = useId();
@@ -206,6 +214,63 @@ export function MarkdownEditor({
     }
   }, [editor]);
 
+  // ── AI Transcribe (voice-to-text) ──
+  const recorder = useAudioRecorder();
+  const [isTranscribing, setIsTranscribing] = useState(false);
+
+  const handleTranscribe = useCallback(async () => {
+    if (!editor) return;
+
+    if (recorder.state === "recording") {
+      // Stop recording and transcribe
+      const blob = await recorder.stopRecording();
+      if (!blob) return;
+      setIsTranscribing(true);
+      try {
+        const formData = new FormData();
+        formData.append("audio", blob, "recording.webm");
+        const res = await fetch("/api/ai/transcribe", { method: "POST", body: formData });
+        if (!res.ok) throw new Error("Transcription failed");
+        const { text } = await res.json();
+        if (text) {
+          editor.chain().focus().insertContent(text).run();
+        }
+      } finally {
+        setIsTranscribing(false);
+      }
+    } else {
+      // Start recording
+      await recorder.startRecording();
+    }
+  }, [editor, recorder]);
+
+  // ── AI Transform (text → AI → text) ──
+  const transformStream = useTransformStream();
+
+  // Insert transform result when streaming completes
+  const prevStreamingRef = useRef(false);
+  useEffect(() => {
+    if (prevStreamingRef.current && !transformStream.isStreaming && transformStream.text && editor) {
+      editor.chain().focus().insertContent("\n\n" + transformStream.text).run();
+      transformStream.reset();
+    }
+    prevStreamingRef.current = transformStream.isStreaming;
+  }, [transformStream.isStreaming, transformStream.text, editor, transformStream]);
+
+  const handleTransform = useCallback(
+    (configId: string, customPrompt?: string) => {
+      if (!editor) return;
+      const { from, to } = editor.state.selection;
+      const selectedText = editor.state.doc.textBetween(from, to, "\n");
+      const inputText = selectedText || getMarkdownFromEditor(editor);
+      if (!inputText.trim()) return;
+
+      const text = customPrompt ? `${customPrompt}\n\n${inputText}` : inputText;
+      transformStream.startTransform(configId, { text });
+    },
+    [editor, transformStream],
+  );
+
   return (
     <div className={["flex flex-col gap-1", className].join(" ")}>
       {/* ── Label ── */}
@@ -215,15 +280,12 @@ export function MarkdownEditor({
         </label>
       )}
 
-      {/* ── Editor container ── */}
+      {/* ── Editor container — no bg/border/radius by default, blends with page ── */}
       <div
         className={[
           "flex flex-col flex-1",
-          "rounded-[var(--radius-md)]",
-          "bg-[var(--surfaces-base-low-contrast)]",
           "transition-colors duration-150",
           "overflow-hidden",
-          spec.border,
           disabled ? "opacity-50 cursor-not-allowed" : "",
         ].join(" ")}
       >
@@ -332,6 +394,18 @@ export function MarkdownEditor({
           </BubbleMenu>
         )}
 
+        {/* ── Toolbar: top on desktop, bottom on mobile ── */}
+        <div className="hidden md:block">
+          <MarkdownToolbar
+            editor={editor}
+            position="top"
+            onTranscribe={enableAITranscribe ? handleTranscribe : undefined}
+            onTransform={enableAITransform ? handleTransform : undefined}
+            isRecording={recorder.state === "recording" || isTranscribing}
+            isTransforming={transformStream.isStreaming}
+          />
+        </div>
+
         {/* ── Editor content area ── */}
         <div
           className="markdown-editor px-4 py-3.5 overflow-y-auto flex-1"
@@ -346,8 +420,17 @@ export function MarkdownEditor({
         {/* ── Table toolbar (visible when cursor in table) ── */}
         {editor && <TableToolbar editor={editor} />}
 
-        {/* ── Bottom formatting toolbar ── */}
-        <MarkdownToolbar editor={editor} />
+        {/* ── Toolbar: bottom on mobile ── */}
+        <div className="md:hidden">
+          <MarkdownToolbar
+            editor={editor}
+            position="bottom"
+            onTranscribe={enableAITranscribe ? handleTranscribe : undefined}
+            onTransform={enableAITransform ? handleTransform : undefined}
+            isRecording={recorder.state === "recording" || isTranscribing}
+            isTransforming={transformStream.isStreaming}
+          />
+        </div>
       </div>
 
       {/* ── Hint ── */}

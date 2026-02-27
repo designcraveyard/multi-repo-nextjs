@@ -69,7 +69,7 @@ export function Switch({
         <span
           aria-hidden="true"
           className={[
-            "pointer-events-none inline-block h-5 w-5 rounded-full bg-white",
+            "pointer-events-none inline-block h-5 w-5 rounded-full bg-[var(--surfaces-base-primary)]",
             "shadow-sm transform transition-transform duration-200 ease-in-out",
             checked ? "translate-x-5" : "translate-x-0",
           ].join(" ")}

@@ -109,11 +109,12 @@
   text-decoration: line-through;
 }
 
+/* Inline code — matches iOS: HighContrast bg + secondary text */
 .markdown-editor .ProseMirror code {
   font-family: var(--font-mono);
   font-size: 0.9em;
-  background: var(--surfaces-base-low-contrast);
-  color: var(--typography-accent);
+  background: var(--surfaces-base-high-contrast);
+  color: var(--typography-secondary);
   padding: 2px var(--space-1);
   border-radius: var(--radius-xs);
 }
@@ -225,11 +226,12 @@
 
 /* ─── Code blocks ──────────────────────────────────────────────────────────── */
 
+/* Code blocks — matches iOS: HighContrast bg + secondary text */
 .markdown-editor .ProseMirror pre {
   font-family: var(--font-mono);
   font-size: 0.9em;
-  background: var(--surfaces-base-low-contrast);
-  color: var(--typography-primary);
+  background: var(--surfaces-base-high-contrast);
+  color: var(--typography-secondary);
   padding: var(--space-4);
   border-radius: var(--radius-md);
   overflow-x: auto;
@@ -246,10 +248,11 @@
 
 /* ─── Horizontal rule ──────────────────────────────────────────────────────── */
 
+/* Full-width horizontal rule — extends edge to edge by offsetting container padding */
 .markdown-editor .ProseMirror hr {
   border: none;
   border-top: 1px solid var(--border-default);
-  margin: var(--space-4) 0;
+  margin: var(--space-4) calc(-1 * var(--space-4));
 }
 
 /* ─── Tables ───────────────────────────────────────────────────────────────── */

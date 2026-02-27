@@ -160,5 +160,29 @@ const { data: { user } } = await supabase.auth.getUser();
 
 - `/login` — Login screen (`app/(auth)/login/page.tsx`)
 - `/` — Home / Component showcase (`app/(authenticated)/page.tsx`)
+- `/assistant` — AI Assistant ChatKit page (`app/(authenticated)/assistant/page.tsx`)
+- `/assistant-embed` — Embed-only ChatKit page for WebView (`app/assistant-embed/page.tsx`) — excluded from auth middleware
+- `/api/chatkit/session` — Creates ChatKit sessions via `openai.beta.chatkit.sessions.create()`
 
 _Add new routes here as features are added via `/cross-platform-feature` or `/new-screen`._
+
+---
+
+## ChatKit (AI Assistant)
+
+**Dependency:** `@openai/chatkit-react` + `openai` SDK
+
+**How it works:**
+1. API route (`app/api/chatkit/session/route.ts`) creates a session with OpenAI using `openai.beta.chatkit.sessions.create()` with a workflow ID
+2. Client pages use `useChatKit({ api: { getClientSecret } })` hook to fetch the session secret
+3. `<ChatKit control={chatkit.control} />` renders the chat UI
+
+**Two routes serve the same ChatKit component:**
+- `/assistant` — inside `(authenticated)` layout, cookie auth, full nav chrome
+- `/assistant-embed` — bare layout, no auth chrome, for iOS/Android WebView loading
+
+**Middleware exclusions:** `/assistant-embed` and `/api/chatkit` are excluded from auth redirect.
+
+**CDN script required:** `https://cdn.platform.openai.com/deployments/chatkit/chatkit.js` — loaded via `next/script` in the layout/page.
+
+**Config:** Workflow ID and settings in `chatkit.config.json` at workspace root.

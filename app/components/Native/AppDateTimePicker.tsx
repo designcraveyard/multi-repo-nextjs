@@ -201,8 +201,16 @@ export function AppDateTimePicker({
             </button>
           </PopoverTrigger>
 
-          {/* No border on the popover panel */}
-          <PopoverContent className="p-0 w-auto border-none" align="start">
+          {/* No border — matches context menu dropdown styling */}
+          <PopoverContent
+            className="p-0 w-auto border-none shadow-lg"
+            align="start"
+            style={{
+              backgroundColor: styling.colors.calendarBg,
+              borderRadius:    "var(--radius-md)",
+              overflow:        "hidden",
+            }}
+          >
             {calendarNode}
           </PopoverContent>
         </Popover>

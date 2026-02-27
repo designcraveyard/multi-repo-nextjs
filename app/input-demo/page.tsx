@@ -14,6 +14,12 @@ import { useState } from "react";
 import { Label } from "@/app/components/Label";
 import { InputField, TextField } from "@/app/components/InputField";
 import { Icon } from "@/app/components/icons";
+import { AppNativePicker } from "@/app/components/Native/AppNativePicker";
+import { AppDateTimePicker } from "@/app/components/Native/AppDateTimePicker";
+import { AppColorPicker } from "@/app/components/Native/AppColorPicker";
+import { AppRangeSlider } from "@/app/components/Native/AppRangeSlider";
+import { AppBottomSheet } from "@/app/components/Native/AppBottomSheet";
+import { Button } from "@/app/components/Button";
 
 // ─── Section wrapper ──────────────────────────────────────────────────────────
 
@@ -57,6 +63,21 @@ export default function InputDemoPage() {
   const [value, setValue] = useState("");
   const [email, setEmail] = useState("user@example.com");
   const [bio, setBio] = useState("");
+
+  // --- Picker state ---
+  const [currency, setCurrency] = useState("usd");
+  const [country, setCountry] = useState("us");
+  const [pickerDate, setPickerDate] = useState<Date | undefined>(undefined);
+  const [pickerColor, setPickerColor] = useState("#3B82F6");
+
+  // --- Range slider state ---
+  const [priceRange, setPriceRange] = useState<[number, number]>([20, 80]);
+  const [ageRange, setAgeRange] = useState<[number, number]>([18, 65]);
+  const [singleSlider, setSingleSlider] = useState<[number, number]>([0, 50]);
+
+  // --- Bottom sheet state ---
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [formSheetOpen, setFormSheetOpen] = useState(false);
 
   return (
     <main className="min-h-screen bg-[var(--surfaces-base-primary)] px-6 py-10">
@@ -435,6 +456,335 @@ export default function InputDemoPage() {
               placeholder="Write as much as you need…"
               rows={8}
             />
+          </Row>
+        </Section>
+
+        {/* ═══════════════════════════════════════════════════════════════════
+            SECTION 5 — Pickers in InputField
+        ═══════════════════════════════════════════════════════════════════ */}
+        <Section title="5 · InputField — with Pickers">
+
+          <Row label="Leading picker (currency selector)">
+            <InputField
+              label="Amount"
+              placeholder="0.00"
+              leadingPicker={
+                <AppNativePicker
+                  label="Currency"
+                  value={currency}
+                  onChange={setCurrency}
+                  options={[
+                    { label: "USD", value: "usd" },
+                    { label: "EUR", value: "eur" },
+                    { label: "GBP", value: "gbp" },
+                    { label: "INR", value: "inr" },
+                  ]}
+                  embedded
+                />
+              }
+              leadingSeparator
+            />
+          </Row>
+
+          <Row label="Trailing picker (country selector)">
+            <InputField
+              label="Phone"
+              placeholder="Enter phone number"
+              leadingIcon={<Icon name="Phone" size="md" />}
+              trailingPicker={
+                <AppNativePicker
+                  label="Country"
+                  value={country}
+                  onChange={setCountry}
+                  options={[
+                    { label: "US", value: "us" },
+                    { label: "UK", value: "uk" },
+                    { label: "IN", value: "in" },
+                    { label: "DE", value: "de" },
+                  ]}
+                  embedded
+                />
+              }
+              trailingSeparator
+            />
+          </Row>
+
+          <Row label="Both pickers (currency conversion)">
+            <InputField
+              label="Convert"
+              placeholder="0.00"
+              leadingPicker={
+                <AppNativePicker
+                  label="From"
+                  value={currency}
+                  onChange={setCurrency}
+                  options={[
+                    { label: "USD", value: "usd" },
+                    { label: "EUR", value: "eur" },
+                    { label: "GBP", value: "gbp" },
+                  ]}
+                  embedded
+                />
+              }
+              trailingPicker={
+                <AppNativePicker
+                  label="To"
+                  value={country}
+                  onChange={setCountry}
+                  options={[
+                    { label: "INR", value: "in" },
+                    { label: "JPY", value: "de" },
+                    { label: "AUD", value: "uk" },
+                  ]}
+                  embedded
+                />
+              }
+              leadingSeparator
+              trailingSeparator
+            />
+          </Row>
+
+          <Row label="Picker with validation (error state)">
+            <InputField
+              label="Budget"
+              defaultValue="abc"
+              state="error"
+              hint="Enter a valid number"
+              leadingPicker={
+                <AppNativePicker
+                  label="Currency"
+                  value={currency}
+                  onChange={setCurrency}
+                  options={[
+                    { label: "USD", value: "usd" },
+                    { label: "EUR", value: "eur" },
+                  ]}
+                  embedded
+                />
+              }
+              leadingSeparator
+            />
+          </Row>
+        </Section>
+
+        {/* ═══════════════════════════════════════════════════════════════════
+            SECTION 6 — Standalone Pickers
+        ═══════════════════════════════════════════════════════════════════ */}
+        <Section title="6 · Standalone Pickers">
+
+          <Row label="Native Picker — default (chipTabs)">
+            <AppNativePicker
+              label="Favorite fruit"
+              value={currency}
+              onChange={setCurrency}
+              options={[
+                { label: "Apple", value: "usd" },
+                { label: "Banana", value: "eur" },
+                { label: "Cherry", value: "gbp" },
+                { label: "Date", value: "inr" },
+              ]}
+            />
+          </Row>
+
+          <Row label="Native Picker — filters variant">
+            <AppNativePicker
+              label="Sort by"
+              value={country}
+              onChange={setCountry}
+              options={[
+                { label: "Newest", value: "us" },
+                { label: "Oldest", value: "uk" },
+                { label: "Popular", value: "in" },
+              ]}
+              variant="filters"
+            />
+          </Row>
+
+          <Row label="Native Picker — medium size">
+            <AppNativePicker
+              label="Category"
+              value={currency}
+              onChange={setCurrency}
+              options={[
+                { label: "Design", value: "usd" },
+                { label: "Development", value: "eur" },
+                { label: "Marketing", value: "gbp" },
+              ]}
+              size="md"
+            />
+          </Row>
+
+          <Row label="Native Picker — error state">
+            <AppNativePicker
+              label="Required field"
+              value=""
+              onChange={() => {}}
+              options={[
+                { label: "Option A", value: "a" },
+                { label: "Option B", value: "b" },
+              ]}
+              placeholder="Select one..."
+              showError
+              errorMessage="This field is required"
+            />
+          </Row>
+
+          <Row label="Date Picker — compact">
+            <AppDateTimePicker
+              label="Start date"
+              value={pickerDate}
+              onChange={setPickerDate}
+              mode="date"
+            />
+          </Row>
+
+          <Row label="Date & Time Picker">
+            <AppDateTimePicker
+              label="Event start"
+              value={pickerDate}
+              onChange={setPickerDate}
+              mode="dateAndTime"
+            />
+          </Row>
+
+          <Row label="Color Picker">
+            <AppColorPicker
+              label="Theme color"
+              value={pickerColor}
+              onChange={setPickerColor}
+            />
+          </Row>
+        </Section>
+
+        {/* ═══════════════════════════════════════════════════════════════════
+            SECTION 7 — Range Sliders
+        ═══════════════════════════════════════════════════════════════════ */}
+        <Section title="7 · Range Sliders">
+
+          <Row label="Price range ($0–$100)">
+            <AppRangeSlider
+              lowerValue={priceRange[0]}
+              upperValue={priceRange[1]}
+              onChange={(vals) => setPriceRange(vals)}
+              range={[0, 100]}
+              step={5}
+              showLabels
+            />
+          </Row>
+
+          <Row label="Age range (0–100, step 1)">
+            <AppRangeSlider
+              lowerValue={ageRange[0]}
+              upperValue={ageRange[1]}
+              onChange={(vals) => setAgeRange(vals)}
+              range={[0, 100]}
+              step={1}
+              showLabels
+            />
+          </Row>
+
+          <Row label="Single value (lower pinned at 0)">
+            <AppRangeSlider
+              lowerValue={singleSlider[0]}
+              upperValue={singleSlider[1]}
+              onChange={(vals) => setSingleSlider(vals)}
+              range={[0, 100]}
+              step={10}
+              showLabels
+            />
+          </Row>
+        </Section>
+
+        {/* ═══════════════════════════════════════════════════════════════════
+            SECTION 8 — Bottom Sheets
+        ═══════════════════════════════════════════════════════════════════ */}
+        <Section title="8 · Bottom Sheets">
+
+          <Row label="Basic bottom sheet">
+            <Button
+              label="Open Sheet"
+              variant="secondary"
+              size="md"
+              onClick={() => setSheetOpen(true)}
+            />
+            <AppBottomSheet
+              isPresented={sheetOpen}
+              onClose={() => setSheetOpen(false)}
+              title="Basic Sheet"
+              description="This is a simple bottom sheet example."
+            >
+              <div className="p-[var(--space-4)] flex flex-col gap-[var(--space-3)]">
+                <p className="text-[length:var(--typography-body-md-size)] text-[var(--typography-primary)]">
+                  Bottom sheets slide up from the bottom of the screen. They can contain any content.
+                </p>
+                <Button
+                  label="Close"
+                  variant="primary"
+                  size="md"
+                  onClick={() => setSheetOpen(false)}
+                />
+              </div>
+            </AppBottomSheet>
+          </Row>
+
+          <Row label="Form in bottom sheet">
+            <Button
+              label="Open Form Sheet"
+              variant="secondary"
+              size="md"
+              onClick={() => setFormSheetOpen(true)}
+            />
+            <AppBottomSheet
+              isPresented={formSheetOpen}
+              onClose={() => setFormSheetOpen(false)}
+              title="Add Item"
+              description="Fill in the details below."
+            >
+              <div className="p-[var(--space-4)] flex flex-col gap-[var(--space-4)]">
+                <InputField
+                  label="Name"
+                  placeholder="Enter item name"
+                />
+                <InputField
+                  label="Price"
+                  placeholder="0.00"
+                  leadingPicker={
+                    <AppNativePicker
+                      label="Currency"
+                      value={currency}
+                      onChange={setCurrency}
+                      options={[
+                        { label: "USD", value: "usd" },
+                        { label: "EUR", value: "eur" },
+                      ]}
+                      embedded
+                    />
+                  }
+                  leadingSeparator
+                />
+                <TextField
+                  label="Description"
+                  placeholder="Describe the item..."
+                  rows={3}
+                />
+                <div className="flex gap-[var(--space-3)]">
+                  <Button
+                    label="Cancel"
+                    variant="tertiary"
+                    size="md"
+                    onClick={() => setFormSheetOpen(false)}
+                    className="flex-1"
+                  />
+                  <Button
+                    label="Save"
+                    variant="primary"
+                    size="md"
+                    onClick={() => setFormSheetOpen(false)}
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+            </AppBottomSheet>
           </Row>
         </Section>
 

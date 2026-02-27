@@ -68,7 +68,7 @@ export function AppTooltip({
     // AppTooltip self-contained. The provider is idempotent so nesting is safe.
     <TooltipProvider delayDuration={styling.layout.delayMs}>
       <Tooltip open={open} onOpenChange={onOpenChange}>
-        <TooltipTrigger asChild className={className}>
+        <TooltipTrigger asChild className={`cursor-pointer ${className}`}>
           {children}
         </TooltipTrigger>
 

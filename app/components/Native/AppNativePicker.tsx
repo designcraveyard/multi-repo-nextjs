@@ -212,12 +212,15 @@ export function AppNativePicker<T extends string = string>({
           clipping here fixes first/last item corner bleed at both panel and viewport level
       */}
       <SelectContent
+        position="popper"
+        align="start"
         className="border-none"
         viewportClassName="p-1 overflow-hidden rounded-[var(--radius-md)]"
         style={{
           backgroundColor: styling.colors.menuBg,
           borderRadius:    "var(--radius-md)",
           overflow:        "hidden",
+          minWidth:        "140px",
         }}
       >
         {options.map((opt) => {

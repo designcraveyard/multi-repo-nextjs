@@ -20,10 +20,10 @@ const styling = {
     trackActive:     "var(--surfaces-brand-interactive)",
     // Unfilled track (outside the thumb range)
     trackBackground: "var(--surfaces-base-low-contrast)",
-    // Thumb circle fill — high-contrast so the dot reads clearly on the track
-    thumb:       "var(--surfaces-base-high-contrast)",
+    // Thumb circle fill — brand color matching iOS surfacesBrandInteractive
+    thumb:       "var(--surfaces-brand-interactive)",
     // Thumb border / shadow ring
-    thumbBorder: "var(--border-brand)",
+    thumbBorder: "var(--border-default)",
     // Optional min/max label text
     label:           "var(--typography-muted)",
   },

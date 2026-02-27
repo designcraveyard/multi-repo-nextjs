@@ -7,6 +7,8 @@ import {
   CarouselItem,
   type CarouselApi,
 } from "@/components/ui/carousel";
+import { IconButton } from "@/app/components/IconButton";
+import { Icon } from "@/app/components/icons";
 
 // ─── Styling Config ───────────────────────────────────────────────────────────
 // Change tokens here to restyle AppCarousel everywhere it is used.
@@ -49,6 +51,12 @@ export interface AppCarouselProps {
   style?: "paged" | "scrollSnap";
   /** When true, renders dot indicators below the carousel */
   showDots?: boolean;
+  /** Show prev/next navigation buttons on the edges (default: true) */
+  showNavButtons?: boolean;
+  /** Accessible label for the previous button */
+  prevLabel?: string;
+  /** Accessible label for the next button */
+  nextLabel?: string;
   /** Additional CSS class for the outer wrapper */
   className?: string;
 }
@@ -59,18 +67,29 @@ export function AppCarousel({
   items,
   style: carouselStyle = "paged",
   showDots = true,
+  showNavButtons = true,
+  prevLabel = "Previous slide",
+  nextLabel = "Next slide",
   className = "",
 }: AppCarouselProps) {
-  // CarouselApi from shadcn gives us the Embla instance that the <Carousel>
-  // component itself controls — no second useEmblaCarousel call needed.
   const [api, setApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
 
-  // Subscribe to Embla's "select" event once the API is available
   function onSetApi(carouselApi: CarouselApi) {
     setApi(carouselApi);
     if (!carouselApi) return;
-    carouselApi.on("select", () => setSelectedIndex(carouselApi.selectedScrollSnap()));
+
+    const updateState = () => {
+      setSelectedIndex(carouselApi.selectedScrollSnap());
+      setCanScrollPrev(carouselApi.canScrollPrev());
+      setCanScrollNext(carouselApi.canScrollNext());
+    };
+
+    carouselApi.on("select", updateState);
+    carouselApi.on("reInit", updateState);
+    updateState();
   }
 
   const opts =
@@ -80,25 +99,57 @@ export function AppCarousel({
 
   return (
     <div className={`flex flex-col ${className}`} style={{ gap: styling.layout.dotsSpacing }}>
-      <Carousel opts={opts} setApi={onSetApi}>
-        <CarouselContent
-          style={{
-            gap: carouselStyle === "scrollSnap" ? styling.layout.cardSpacing : undefined,
-          }}
-        >
-          {items.map((item, i) => (
-            <CarouselItem
-              key={i}
-              // scrollSnap shows a peek of adjacent cards; paged fills full width
-              className={carouselStyle === "scrollSnap" ? "basis-[85%]" : "basis-full"}
-            >
-              {item}
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+      {/* Carousel with navigation arrows */}
+      <div className="relative">
+        <Carousel opts={opts} setApi={onSetApi}>
+          <CarouselContent
+            style={{
+              gap: carouselStyle === "scrollSnap" ? styling.layout.cardSpacing : undefined,
+            }}
+          >
+            {items.map((item, i) => (
+              <CarouselItem
+                key={i}
+                className={carouselStyle === "scrollSnap" ? "basis-[85%]" : "basis-full"}
+              >
+                {item}
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
 
-      {/* Dot indicators — only shown when showDots=true and there are multiple slides */}
+        {/* Navigation buttons — positioned on left/right edges, vertically centered */}
+        {showNavButtons && items.length > 1 && (
+          <>
+            <div
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-10 transition-opacity"
+              style={{ opacity: canScrollPrev ? 1 : 0, pointerEvents: canScrollPrev ? "auto" : "none" }}
+            >
+              <IconButton
+                icon={<Icon name="CaretLeft" size="sm" />}
+                label={prevLabel}
+                variant="secondary"
+                size="sm"
+                onClick={() => api?.scrollPrev()}
+              />
+            </div>
+            <div
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-10 transition-opacity"
+              style={{ opacity: canScrollNext ? 1 : 0, pointerEvents: canScrollNext ? "auto" : "none" }}
+            >
+              <IconButton
+                icon={<Icon name="CaretRight" size="sm" />}
+                label={nextLabel}
+                variant="secondary"
+                size="sm"
+                onClick={() => api?.scrollNext()}
+              />
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Dot indicators */}
       {showDots && items.length > 1 && (
         <div
           className="flex items-center justify-center"
@@ -114,12 +165,13 @@ export function AppCarousel({
                 role="tab"
                 aria-selected={isActive}
                 aria-label={`Slide ${i + 1}`}
+                onClick={() => api?.scrollTo(i)}
+                className="cursor-pointer"
                 style={{
                   width:           isActive ? styling.layout.dotActiveWidth : styling.layout.dotInactiveSize,
                   height:          styling.layout.dotHeight,
                   borderRadius:    styling.layout.dotRadius,
                   backgroundColor: isActive ? styling.colors.dotActive : styling.colors.dotInactive,
-                  // Smooth width transition when active dot changes
                   transition:      "width 200ms ease",
                   display:         "inline-block",
                 }}
