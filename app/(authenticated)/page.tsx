@@ -33,6 +33,7 @@ import {
   AppRangeSlider,
   AppColorPicker,
 } from "@/app/components/Native";
+import { DateGrid } from "@/app/components/DateGrid";
 
 // ─── Section wrapper ──────────────────────────────────────────────────────────
 
@@ -119,6 +120,7 @@ export default function ComponentShowcase() {
   const [sliderLow, setSliderLow] = useState(20);
   const [sliderHigh, setSliderHigh] = useState(80);
   const [colorVal, setColorVal] = useState("#6366f1");
+  const [gridDate, setGridDate] = useState<Date>(new Date());
 
   function triggerLoading() {
     setLoadingBtn(true);
@@ -1231,6 +1233,20 @@ export default function ComponentShowcase() {
             />
           </Row>
           <p className="text-xs text-[var(--typography-muted)]">Selected: {colorVal}</p>
+        </Section>
+
+        {/* ── DateGrid ─────────────────────────────────────────────────────── */}
+        <Section title="Date Grid">
+          <p className="text-xs text-[var(--typography-muted)] mb-3">
+            Scroll left/right to navigate weeks — same weekday auto-selected.
+          </p>
+          <DateGrid
+            selectedDate={gridDate}
+            onSelect={setGridDate}
+          />
+          <p className="text-xs text-[var(--typography-muted)] mt-2">
+            Selected: {gridDate.toDateString()}
+          </p>
         </Section>
 
       </div>

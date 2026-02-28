@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { RadioButton, RadioGroup } from "@/app/components/RadioButton";
 import { Checkbox } from "@/app/components/Checkbox";
 import { Switch } from "@/app/components/Switch";
 import { ListItem } from "@/app/components/patterns/ListItem";
 import { Divider } from "@/app/components/Divider";
+import { DateItem, DateGrid } from "@/app/components/DateGrid";
 
 // --- Section header helper ---------------------------------------------------
 
@@ -17,7 +18,7 @@ function SectionHeader({ children }: { children: string }) {
   );
 }
 
-function SubHeader({ children }: { children: string }) {
+function SubHeader({ children }: { children: React.ReactNode }) {
   return (
     <p className="text-[length:var(--typography-caption-md-size)] leading-[var(--typography-caption-md-leading)] text-[var(--typography-muted)] mb-[var(--space-2)]">
       {children}
@@ -30,6 +31,7 @@ function SubHeader({ children }: { children: string }) {
 
 export default function ComponentsShowcasePage() {
   // --- State -----------------------------------------------------------------
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [radioValue, setRadioValue] = useState("email");
   const [checkNotifications, setCheckNotifications] = useState(true);
   const [checkUpdates, setCheckUpdates] = useState(false);
@@ -50,6 +52,39 @@ export default function ComponentsShowcasePage() {
       </h1>
 
       <div className="flex flex-col gap-[var(--space-8)] max-w-lg">
+
+        {/* ── DateGrid ─────────────────────────────────────────────────── */}
+        <section>
+          <SectionHeader>Date Grid</SectionHeader>
+
+          <SubHeader>Full week strip (self-managed selection)</SubHeader>
+          <DateGrid className="mb-[var(--space-4)]" />
+
+          <SubHeader>Controlled — selected: {selectedDate.toDateString()}</SubHeader>
+          <DateGrid
+            selectedDate={selectedDate}
+            onSelect={setSelectedDate}
+            className="mb-[var(--space-4)]"
+          />
+
+          <SubHeader>Individual cells</SubHeader>
+          <div className="flex gap-[var(--space-1)]">
+            {[-2, -1, 0, 1, 2].map((offset) => {
+              const d = new Date();
+              d.setDate(d.getDate() + offset);
+              return (
+                <DateItem
+                  key={offset}
+                  date={d}
+                  isActive={offset === 0}
+                  onSelect={() => {}}
+                />
+              );
+            })}
+          </div>
+        </section>
+
+        <Divider type="row" />
 
         {/* ── Radio Buttons ────────────────────────────────────────────── */}
         <section>
