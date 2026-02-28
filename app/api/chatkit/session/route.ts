@@ -3,7 +3,7 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const WORKFLOW_ID = "wf_69157991bfd081909cc0815050b47abf0f93481201224b4b";
+const WORKFLOW_ID = "wf_69a2bcef0bc88190ae5b19395712e63e0ed59b891ba2d259";
 
 export async function POST() {
   try {
