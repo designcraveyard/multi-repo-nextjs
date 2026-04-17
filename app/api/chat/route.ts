@@ -4,12 +4,14 @@
 
 import { NextRequest } from 'next/server';
 import { run, RunItemStreamEvent, RunAgentUpdatedStreamEvent, RunHandoffOutputItem, RunToolCallItem, RunToolCallOutputItem, RunMessageOutputItem } from '@openai/agents';
+import type { AgentInputItem } from '@openai/agents';
 import { authenticateRequest, createAuthenticatedClient } from '@/lib/auth/api-auth';
 import { getAgentGraph } from '@/lib/agents';
 import { loadAgentContext } from '@/lib/agents/context';
 import { Trace } from '@/lib/agents/trace';
 import {
   createSession,
+  loadChatHistory,
   saveChatMessage,
   setSessionTitle,
 } from '@/lib/chat/sessions';
@@ -82,14 +84,25 @@ export async function POST(req: NextRequest): Promise<Response> {
       // Emit session info first
       await write('session', { sessionId });
 
-      // Load context and agent graph in parallel
+      // Load context, history, and agent graph in parallel
       trace.startTimer('setup');
-      const [agentContext, graph] = await Promise.all([
+      const [agentContext, history, graph] = await Promise.all([
         loadAgentContext(userId, sessionId, supabase, trace),
+        loadChatHistory(sessionId, 20),
         getAgentGraph(supabase, cookieHeader),
       ]);
       const setupMs = trace.endTimer('setup');
-      trace.route('setup_complete', { setupMs });
+      trace.route('setup_complete', { setupMs, historyMessages: history.length });
+
+      // Build agent input: prior conversation history + current user message
+      const input: AgentInputItem[] = [
+        ...history.map((msg): AgentInputItem =>
+          msg.role === 'user'
+            ? { role: 'user', content: msg.content }
+            : { role: 'assistant', status: 'completed', content: [{ type: 'output_text', text: msg.content }] },
+        ),
+        { role: 'user', content: message },
+      ];
 
       // 6. Stream the agent run
       let fullText = '';
@@ -99,7 +112,7 @@ export async function POST(req: NextRequest): Promise<Response> {
 
       const stream = await run(
         graph.entryAgent,
-        [{ role: 'user', content: message }],
+        input,
         {
           stream: true,
           context: agentContext,
