@@ -37,7 +37,14 @@ export function TypeMatchupCard({ data }: TypeMatchupCardProps) {
   const { pokemon, weaknesses, resistances, immunities } = data;
 
   return (
-    <div className="rounded-xl border border-[var(--border-default)] p-4 bg-[var(--surfaces-base-primary)] w-full max-w-sm">
+    <div
+      className="shrink-0 rounded-2xl border p-4"
+      style={{
+        width: 300,
+        borderColor: "var(--border-default)",
+        background: "var(--surfaces-base-primary)",
+      }}
+    >
       <h3 className="text-sm font-semibold text-[var(--typography-primary)] capitalize mb-3">
         {pokemon} — Type Matchups
       </h3>

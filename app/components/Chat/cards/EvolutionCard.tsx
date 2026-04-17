@@ -1,55 +1,84 @@
-'use client';
+"use client";
 
-import type { EvolutionCardPayload } from '@/lib/agents/types';
-
-// --- Props ---
+import { useState } from "react";
+import type { EvolutionCardPayload } from "@/lib/agents/types";
+import { Lightbox } from "./Lightbox";
 
 interface EvolutionCardProps {
   data: EvolutionCardPayload;
 }
 
-// --- Component ---
-
 export function EvolutionCard({ data }: EvolutionCardProps) {
   const { chain } = data;
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+  const [lightboxAlt, setLightboxAlt] = useState<string>("");
 
   if (!chain || chain.length === 0) return null;
 
   return (
-    <div className="rounded-xl border border-[var(--border-default)] p-4 bg-[var(--surfaces-base-primary)] w-full max-w-sm">
-      <h3 className="text-sm font-semibold text-[var(--typography-secondary)] mb-3 uppercase tracking-wide">
-        Evolution Chain
-      </h3>
-      <div className="flex flex-wrap items-center gap-2">
-        {chain.map((stage, index) => (
-          <div key={stage.name} className="flex items-center gap-2">
-            {/* Arrow + trigger (not before first stage) */}
-            {index > 0 && (
-              <div className="flex flex-col items-center gap-0.5">
-                {stage.trigger && (
-                  <span className="text-[10px] text-[var(--typography-secondary)] max-w-[60px] text-center leading-tight">
-                    {stage.trigger}
+    <>
+      <div
+        className="shrink-0 rounded-2xl border p-4"
+        style={{
+          minWidth: 320,
+          borderColor: "var(--border-default)",
+          background: "var(--surfaces-base-primary)",
+        }}
+      >
+        <h3
+          className="text-xs font-semibold uppercase tracking-wide mb-3"
+          style={{ color: "var(--typography-secondary)" }}
+        >
+          Evolution Chain
+        </h3>
+        <div className="flex items-center gap-3 overflow-x-auto pb-1">
+          {chain.map((stage, index) => (
+            <div key={`${stage.name}-${index}`} className="flex items-center gap-3 shrink-0">
+              {/* Arrow + trigger */}
+              {index > 0 && (
+                <div className="flex flex-col items-center gap-0.5 shrink-0">
+                  {stage.trigger && (
+                    <span
+                      className="text-[10px] max-w-[72px] text-center leading-tight"
+                      style={{ color: "var(--typography-secondary)" }}
+                    >
+                      {stage.trigger}
+                    </span>
+                  )}
+                  <span
+                    className="text-lg"
+                    style={{ color: "var(--typography-secondary)" }}
+                  >
+                    →
                   </span>
-                )}
-                <span className="text-[var(--typography-secondary)] text-base">→</span>
-              </div>
-            )}
+                </div>
+              )}
 
-            {/* Stage: sprite + name */}
-            <div className="flex flex-col items-center gap-1">
-              <img
-                src={stage.sprite}
-                alt={stage.name}
-                className="w-16 h-16 object-contain"
-                loading="lazy"
-              />
-              <span className="text-xs font-medium text-[var(--typography-primary)] capitalize">
-                {stage.name}
-              </span>
+              {/* Stage: sprite + name */}
+              <button
+                onClick={() => { setLightboxSrc(stage.sprite); setLightboxAlt(stage.name); }}
+                className="flex flex-col items-center gap-1.5 shrink-0 rounded-lg p-2 cursor-zoom-in hover:bg-[var(--surfaces-base-low-contrast)] transition"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={stage.sprite}
+                  alt={stage.name}
+                  className="w-20 h-20 object-contain"
+                  loading="lazy"
+                />
+                <span
+                  className="text-xs font-medium capitalize"
+                  style={{ color: "var(--typography-primary)" }}
+                >
+                  {stage.name}
+                </span>
+              </button>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+
+      <Lightbox src={lightboxSrc} alt={lightboxAlt} onClose={() => setLightboxSrc(null)} />
+    </>
   );
 }

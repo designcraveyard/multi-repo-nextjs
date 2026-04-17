@@ -37,7 +37,14 @@ export function TeamCard({ data }: TeamCardProps) {
   const { team, coverage } = data;
 
   return (
-    <div className="rounded-xl border border-[var(--border-default)] p-4 bg-[var(--surfaces-base-primary)] w-full max-w-sm">
+    <div
+      className="shrink-0 rounded-2xl border p-4"
+      style={{
+        width: 380,
+        borderColor: "var(--border-default)",
+        background: "var(--surfaces-base-primary)",
+      }}
+    >
       <h3 className="text-sm font-semibold text-[var(--typography-secondary)] mb-3 uppercase tracking-wide">
         Team Suggestion
       </h3>

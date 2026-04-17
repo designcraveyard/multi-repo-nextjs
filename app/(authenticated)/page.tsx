@@ -519,7 +519,7 @@ function MessageBubble({ message, isLast, onRegenerate }: { message: Message; is
   const showActions = !message.isStreaming && message.content && !message.eventLabel;
 
   return (
-    <div className="group flex flex-col gap-3 max-w-[85%]">
+    <div className="group flex flex-col gap-3 w-full">
       {message.agentName && (
         <p className="text-xs opacity-60 px-1">{message.agentName}</p>
       )}
@@ -543,9 +543,12 @@ function MessageBubble({ message, isLast, onRegenerate }: { message: Message; is
       )}
 
       {message.cards && message.cards.length > 0 && (
-        <div className="flex flex-col gap-3">
+        <div
+          className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4"
+          style={{ scrollbarWidth: "thin" }}
+        >
           {message.cards.map((card, i) => (
-            <div key={i}>
+            <div key={i} className="shrink-0">
               {card.type === "pokemon_card" && <PokemonCard data={card.data as never} />}
               {card.type === "evolution_card" && <EvolutionCard data={card.data as never} />}
               {card.type === "type_matchup_card" && <TypeMatchupCard data={card.data as never} />}
