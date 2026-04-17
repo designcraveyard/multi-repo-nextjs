@@ -36,7 +36,7 @@ export const suggestTeam = tool({
   description: 'Build a competitive team around a core Pokémon, selecting 5 complementary teammates with type coverage analysis.',
   parameters: z.object({
     core_pokemon: z.string().describe('The Pokémon to build the team around'),
-    strategy: z.string().optional().describe('Team strategy: "balanced", "offensive", "defensive", "rain", "sun"'),
+    strategy: z.string().nullable().describe('Team strategy: "balanced", "offensive", "defensive", "rain", "sun". Pass null for balanced default.'),
   }),
   execute: async ({ core_pokemon, strategy }) => {
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${core_pokemon.toLowerCase().trim()}`);

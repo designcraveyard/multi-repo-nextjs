@@ -8,7 +8,7 @@ export const saveMemory = tool({
   parameters: z.object({
     content: z.string().describe('The preference or fact to remember'),
     memory_type: z.enum(['preference', 'requirement', 'context', 'feedback']).describe('Type of memory'),
-    confidence: z.number().min(0).max(1).optional().describe('Confidence level (0-1), defaults to 0.8'),
+    confidence: z.number().min(0).max(1).nullable().describe('Confidence level (0-1). Pass null to use default 0.8.'),
   }),
   execute: async ({ content, memory_type, confidence }, runContext) => {
     try {
