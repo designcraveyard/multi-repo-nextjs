@@ -37,15 +37,31 @@ export function ChatHistorySheet({ isOpen, onClose, onLoadSession, onNewChat }: 
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch sessions when opened
   useEffect(() => {
     if (!isOpen) return;
-    setLoading(true);
-    fetch('/api/chat/sessions')
-      .then(res => res.ok ? res.json() : [])
-      .then(data => setSessions(Array.isArray(data) ? data : []))
-      .catch(() => setSessions([]))
-      .finally(() => setLoading(false));
+    const controller = new AbortController();
+    let cancelled = false;
+
+    async function load() {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/chat/sessions', { signal: controller.signal });
+        const data = res.ok ? await res.json() : [];
+        if (cancelled) return;
+        setSessions(Array.isArray(data) ? data : []);
+      } catch {
+        if (cancelled) return;
+        setSessions([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    void load();
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
   }, [isOpen]);
 
   const handleDelete = useCallback(async (id: string, e: React.MouseEvent) => {

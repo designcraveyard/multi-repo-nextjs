@@ -7,7 +7,7 @@ import { createPokedexExpert } from './pokedex-expert';
 import { createTeamBuilder } from './team-builder';
 import { createBattleStrategist } from './battle-strategist';
 import { createMemoryAgent } from './memory-agent';
-import { loadFromDb, getAgentConfig, shouldUseCodeFallback } from './config-cache';
+import { loadFromDb, shouldUseCodeFallback } from './config-cache';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { AgentContext } from './types';
 import type { Agent } from '@openai/agents';

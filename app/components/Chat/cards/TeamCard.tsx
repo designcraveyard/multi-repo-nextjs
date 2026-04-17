@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import type { TeamCardPayload } from '@/lib/agents/types';
 
 // --- Type color map ---
@@ -56,9 +57,12 @@ export function TeamCard({ data }: TeamCardProps) {
             key={member.name}
             className="flex flex-col items-center gap-1 p-2 rounded-lg bg-[var(--surfaces-base-low-contrast)]"
           >
-            <img
+            <Image
               src={member.sprite}
               alt={member.name}
+              width={48}
+              height={48}
+              unoptimized
               className="w-12 h-12 object-contain"
               loading="lazy"
             />
