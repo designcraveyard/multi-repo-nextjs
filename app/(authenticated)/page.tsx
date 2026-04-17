@@ -47,6 +47,14 @@ const SSE_STYLES = `
 .chat-md table { border-collapse: collapse; margin: 0.5em 0; }
 .chat-md th, .chat-md td { border: 1px solid var(--border-default); padding: 0.35em 0.75em; }
 .chat-md img { max-width: 100%; border-radius: 8px; margin: 0.5em 0; }
+/* Mac-style: hidden by default, fades in on hover, thin + translucent */
+.mac-scroll { scrollbar-width: thin; scrollbar-color: transparent transparent; transition: scrollbar-color 0.2s ease; }
+.mac-scroll:hover { scrollbar-color: rgba(120,120,120,0.35) transparent; }
+.mac-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+.mac-scroll::-webkit-scrollbar-track { background: transparent; }
+.mac-scroll::-webkit-scrollbar-thumb { background: transparent; border-radius: 4px; transition: background 0.2s ease; }
+.mac-scroll:hover::-webkit-scrollbar-thumb { background: rgba(120,120,120,0.35); }
+.mac-scroll::-webkit-scrollbar-thumb:hover { background: rgba(120,120,120,0.55); }
 `;
 
 // --- Types ---
@@ -383,7 +391,7 @@ export default function HomePage() {
         </header>
 
         {/* Messages */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto">
+        <div ref={scrollRef} className="mac-scroll flex-1 overflow-y-auto">
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center px-6 py-10">
               <div className="text-6xl mb-6">⚡</div>
@@ -543,10 +551,7 @@ function MessageBubble({ message, isLast, onRegenerate }: { message: Message; is
       )}
 
       {message.cards && message.cards.length > 0 && (
-        <div
-          className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4"
-          style={{ scrollbarWidth: "thin" }}
-        >
+        <div className="mac-scroll flex gap-3 overflow-x-auto pb-2 -mx-4 px-4">
           {message.cards.map((card, i) => (
             <div key={i} className="shrink-0">
               {card.type === "pokemon_card" && <PokemonCard data={card.data as never} />}

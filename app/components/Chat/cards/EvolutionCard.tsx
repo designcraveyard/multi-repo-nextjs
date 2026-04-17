@@ -31,7 +31,7 @@ export function EvolutionCard({ data }: EvolutionCardProps) {
         >
           Evolution Chain
         </h3>
-        <div className="flex items-center gap-3 overflow-x-auto pb-1">
+        <div className="mac-scroll flex items-center gap-3 overflow-x-auto pb-1">
           {chain.map((stage, index) => (
             <div key={`${stage.name}-${index}`} className="flex items-center gap-3 shrink-0">
               {/* Arrow + trigger */}
