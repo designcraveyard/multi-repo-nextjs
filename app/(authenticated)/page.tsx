@@ -11,6 +11,7 @@ import { EvolutionCard } from "@/app/components/Chat/cards/EvolutionCard";
 import { TypeMatchupCard } from "@/app/components/Chat/cards/TypeMatchupCard";
 import { TeamCard } from "@/app/components/Chat/cards/TeamCard";
 import { DebugPanel } from "@/app/components/Chat/debug/DebugPanel";
+import { Lightbox } from "@/app/components/Chat/cards/Lightbox";
 import { useDebugEvents } from "@/lib/hooks/use-debug-events";
 
 // --- SSE animation styles ---
@@ -486,9 +487,22 @@ export default function HomePage() {
   );
 }
 
+// --- Extract inline markdown images & strip them from text ---
+// Returns { images: [{src, alt}], cleanedContent } so we can hoist images to the top.
+const MD_IMAGE_RE = /!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
+function extractInlineImages(content: string): { images: { src: string; alt: string }[]; cleanedContent: string } {
+  const images: { src: string; alt: string }[] = [];
+  const cleanedContent = content.replace(MD_IMAGE_RE, (_m, alt: string, src: string) => {
+    images.push({ src, alt: alt || "image" });
+    return "";
+  }).replace(/\n{3,}/g, "\n\n").trim();
+  return { images, cleanedContent };
+}
+
 // --- Message Bubble (inline) ---
 function MessageBubble({ message, isLast, onRegenerate }: { message: Message; isLast: boolean; onRegenerate: () => void }) {
   const [copied, setCopied] = useState(false);
+  const [inlineLightbox, setInlineLightbox] = useState<string | null>(null);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(message.content || "");
@@ -542,15 +556,51 @@ function MessageBubble({ message, isLast, onRegenerate }: { message: Message; is
         </div>
       )}
 
-      {message.content && (
-        <div className="chat-md" style={{ color: "var(--typography-primary)" }}>
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {message.content}
-          </ReactMarkdown>
-        </div>
-      )}
+      {(() => {
+        if (!message.content) return null;
+        const { images, cleanedContent } = extractInlineImages(message.content);
+        return (
+          <>
+            {/* Hoisted inline images — horizontal scroll, above the text (only after streaming) */}
+            {images.length > 0 && !message.isStreaming && (
+              <div className="mac-scroll flex gap-3 overflow-x-auto pb-2 -mx-4 px-4">
+                {images.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setInlineLightbox(img.src)}
+                    className="shrink-0 rounded-2xl overflow-hidden border cursor-zoom-in"
+                    style={{
+                      width: 200,
+                      height: 200,
+                      borderColor: "var(--border-default)",
+                      background: "var(--surfaces-base-low-contrast)",
+                    }}
+                    aria-label={`View ${img.alt} fullscreen`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={img.src}
+                      alt={img.alt}
+                      className="w-full h-full object-contain p-3"
+                      loading="lazy"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+            {/* Body text (with images stripped) */}
+            {cleanedContent && (
+              <div className="chat-md" style={{ color: "var(--typography-primary)" }}>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {cleanedContent}
+                </ReactMarkdown>
+              </div>
+            )}
+          </>
+        );
+      })()}
 
-      {message.cards && message.cards.length > 0 && (
+      {message.cards && message.cards.length > 0 && !message.isStreaming && (
         <div className="mac-scroll flex gap-3 overflow-x-auto pb-2 -mx-4 px-4">
           {message.cards.map((card, i) => (
             <div key={i} className="shrink-0">
@@ -562,6 +612,8 @@ function MessageBubble({ message, isLast, onRegenerate }: { message: Message; is
           ))}
         </div>
       )}
+
+      <Lightbox src={inlineLightbox} onClose={() => setInlineLightbox(null)} />
 
       {/* Action buttons */}
       {showActions && (
