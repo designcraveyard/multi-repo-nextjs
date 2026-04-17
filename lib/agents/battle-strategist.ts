@@ -16,7 +16,7 @@ Rules:
 - Consider both singles and doubles formats unless specified
 - Keep advice actionable and concise
 
-${ctx.profileSummary ? `User preferences: ${ctx.profileSummary}` : ''}`,
+${ctx.context.profileSummary ? `User preferences: ${ctx.context.profileSummary}` : ''}`,
     tools: [analyzeTypeMatchup, getMoveDetails, lookupPokemon],
     handoffs: [], // wired in index.ts
     modelSettings: { temperature: 0.6 },

@@ -15,7 +15,7 @@ Rules:
 - Explain your reasoning: why each pick, what role it fills, what weakness it covers
 - Consider the user's stated preferences when suggesting
 
-${ctx.profileSummary ? `User preferences: ${ctx.profileSummary}` : ''}`,
+${ctx.context.profileSummary ? `User preferences: ${ctx.context.profileSummary}` : ''}`,
     tools: [suggestTeam, lookupPokemon, analyzeTypeMatchup],
     handoffs: [], // wired in index.ts
     modelSettings: { temperature: 0.8 },

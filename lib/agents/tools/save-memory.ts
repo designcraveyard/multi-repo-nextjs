@@ -10,7 +10,7 @@ export const saveMemory = tool({
     memory_type: z.enum(['preference', 'requirement', 'context', 'feedback']).describe('Type of memory'),
     confidence: z.number().min(0).max(1).optional().describe('Confidence level (0-1), defaults to 0.8'),
   }),
-  execute: async ({ content, memory_type, confidence }, { context }) => {
+  execute: async ({ content, memory_type, confidence }, runContext) => {
     try {
       const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -18,7 +18,7 @@ export const saveMemory = tool({
         { auth: { persistSession: false } },
       );
 
-      const userId = (context as { userId?: string })?.userId;
+      const userId = (runContext?.context as { userId?: string } | undefined)?.userId;
       if (!userId) return { error: 'No user ID in context' };
 
       const { error } = await supabase

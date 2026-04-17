@@ -16,7 +16,7 @@ Rules:
 - Keep text responses concise (under 200 words alongside cards)
 - Be enthusiastic but accurate
 
-${ctx.profileSummary ? `User preferences: ${ctx.profileSummary}` : ''}`,
+${ctx.context.profileSummary ? `User preferences: ${ctx.context.profileSummary}` : ''}`,
     tools: [lookupPokemon, getEvolutionChain, searchPokemonIntel],
     handoffs: [], // wired in index.ts
     modelSettings: { temperature: 0.7 },

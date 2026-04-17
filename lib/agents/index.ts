@@ -63,9 +63,9 @@ function applyDbOverrides(graph: AgentGraph, dbConfig: Awaited<ReturnType<typeof
     }
     if (agentConfig.system_prompt) {
       const originalInstructions = agent.instructions;
-      agent.instructions = (ctx: AgentContext) => {
+      agent.instructions = async (runContext, agentArg) => {
         const base = typeof originalInstructions === 'function'
-          ? originalInstructions(ctx)
+          ? await originalInstructions(runContext, agentArg)
           : originalInstructions ?? '';
         return agentConfig.system_prompt + '\n\n' + base;
       };
