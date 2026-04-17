@@ -144,27 +144,54 @@ export async function POST(req: NextRequest): Promise<Response> {
 
           // Tool call result — detect card-shaped payloads
           if (item instanceof RunToolCallOutputItem) {
-            const output = item.output;
-            if (typeof output === 'string') {
-              try {
-                const parsed = JSON.parse(output) as Record<string, unknown>;
+            const rawOutput: unknown = item.output;
+            let parsed: Record<string, unknown> | null = null;
 
-                if (parsed.sprite && parsed.stats) {
-                  trace.card('pokemon_card');
-                  await write('pokemon_card', parsed);
-                } else if (parsed.chain) {
-                  trace.card('evolution_card');
-                  await write('evolution_card', parsed);
-                } else if (parsed.weaknesses && parsed.pokemon) {
-                  trace.card('type_matchup_card');
-                  await write('type_matchup_card', parsed);
-                } else if (parsed.team) {
-                  trace.card('team_card');
-                  await write('team_card', parsed);
-                }
-              } catch {
-                // Not JSON — ignore
+            // Output may be a string, a JSON object, or a wrapper with {text} / {output}
+            if (typeof rawOutput === 'string') {
+              try { parsed = JSON.parse(rawOutput); } catch { /* not JSON */ }
+            } else if (rawOutput && typeof rawOutput === 'object') {
+              const asRecord = rawOutput as Record<string, unknown>;
+              // Try unwrapping common shapes
+              if (typeof asRecord.text === 'string') {
+                try { parsed = JSON.parse(asRecord.text); } catch { /* not JSON */ }
+              } else if (typeof asRecord.output === 'string') {
+                try { parsed = JSON.parse(asRecord.output); } catch { /* not JSON */ }
+              } else {
+                // Treat the object itself as the payload
+                parsed = asRecord;
               }
+            }
+
+            // Also check rawItem.output for raw JSON text
+            if (!parsed) {
+              const rawItem = item.rawItem as unknown as { output?: string | { text?: string } };
+              const ro = rawItem?.output;
+              if (typeof ro === 'string') {
+                try { parsed = JSON.parse(ro); } catch { /* not JSON */ }
+              } else if (ro && typeof ro === 'object' && typeof ro.text === 'string') {
+                try { parsed = JSON.parse(ro.text); } catch { /* not JSON */ }
+              }
+            }
+
+            if (parsed) {
+              trace.card('tool_output_parsed', { keys: Object.keys(parsed).slice(0, 8) });
+
+              if (parsed.sprite && parsed.stats) {
+                trace.card('pokemon_card');
+                await write('pokemon_card', parsed);
+              } else if (parsed.chain) {
+                trace.card('evolution_card');
+                await write('evolution_card', parsed);
+              } else if (parsed.weaknesses && parsed.pokemon) {
+                trace.card('type_matchup_card');
+                await write('type_matchup_card', parsed);
+              } else if (parsed.team) {
+                trace.card('team_card');
+                await write('team_card', parsed);
+              }
+            } else {
+              trace.card('tool_output_unparseable', { outputType: typeof rawOutput });
             }
           }
 

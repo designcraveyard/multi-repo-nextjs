@@ -24,7 +24,30 @@ const SSE_STYLES = `
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: text-shimmer 2.5s linear infinite;
-}`;
+}
+.chat-md { line-height: 1.6; font-size: 15px; }
+.chat-md p { margin: 0 0 0.75em 0; }
+.chat-md p:last-child { margin-bottom: 0; }
+.chat-md ul, .chat-md ol { margin: 0.5em 0; padding-left: 1.5em; }
+.chat-md ul { list-style: disc; }
+.chat-md ol { list-style: decimal; }
+.chat-md li { margin: 0.25em 0; }
+.chat-md strong { font-weight: 600; }
+.chat-md em { font-style: italic; }
+.chat-md h1, .chat-md h2, .chat-md h3 { font-weight: 600; margin: 1em 0 0.5em; }
+.chat-md h1 { font-size: 1.25em; }
+.chat-md h2 { font-size: 1.15em; }
+.chat-md h3 { font-size: 1.05em; }
+.chat-md code { background: var(--surfaces-base-low-contrast); padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.9em; font-family: ui-monospace, monospace; }
+.chat-md pre { background: var(--surfaces-base-low-contrast); padding: 0.75em; border-radius: 8px; overflow-x: auto; margin: 0.5em 0; }
+.chat-md pre code { background: transparent; padding: 0; }
+.chat-md a { color: var(--surfaces-brand-interactive); text-decoration: underline; }
+.chat-md blockquote { border-left: 3px solid var(--border-default); padding-left: 1em; margin: 0.5em 0; opacity: 0.8; }
+.chat-md hr { border: 0; border-top: 1px solid var(--border-default); margin: 1em 0; }
+.chat-md table { border-collapse: collapse; margin: 0.5em 0; }
+.chat-md th, .chat-md td { border: 1px solid var(--border-default); padding: 0.35em 0.75em; }
+.chat-md img { max-width: 100%; border-radius: 8px; margin: 0.5em 0; }
+`;
 
 // --- Types ---
 type CardPayload =
@@ -316,7 +339,7 @@ export default function HomePage() {
         </>
       )}
 
-      {/* --- Main Chat Column --- */}
+      {/* --- Main Chat Column (flex-1) + Debug Panel (right sibling) --- */}
       <div className="flex flex-col flex-1 min-w-0">
         {/* Header */}
         <header
@@ -383,8 +406,24 @@ export default function HomePage() {
             </div>
           ) : (
             <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
-              {messages.map(msg => (
-                <MessageBubble key={msg.id} message={msg} />
+              {messages.map((msg, i) => (
+                <MessageBubble
+                  key={msg.id}
+                  message={msg}
+                  isLast={i === messages.length - 1}
+                  onRegenerate={() => {
+                    // Find the user message immediately before this assistant message and re-send it
+                    const idx = messages.findIndex(m => m.id === msg.id);
+                    for (let j = idx - 1; j >= 0; j--) {
+                      if (messages[j].role === "user") {
+                        // Remove the last assistant message, then re-send
+                        setMessages(prev => prev.filter(m => m.id !== msg.id));
+                        sendMessage(messages[j].content);
+                        return;
+                      }
+                    }
+                  }}
+                />
               ))}
             </div>
           )}
@@ -426,10 +465,10 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* --- Debug Panel --- */}
+      {/* --- Debug Panel (inline right sibling, desktop only) --- */}
       <DebugPanel
         isOpen={debugOpen}
-        onToggle={() => setDebugOpen(v => !v)}
+        onToggle={() => setDebugOpen(false)}
         events={debugEvents.events}
         traceId={debugEvents.traceId}
         sessionId={sessionId}
@@ -440,7 +479,30 @@ export default function HomePage() {
 }
 
 // --- Message Bubble (inline) ---
-function MessageBubble({ message }: { message: Message }) {
+function MessageBubble({ message, isLast, onRegenerate }: { message: Message; isLast: boolean; onRegenerate: () => void }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(message.content || "");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  const handleShare = async () => {
+    const text = message.content || "";
+    if (navigator.share) {
+      try {
+        await navigator.share({ text, title: "PokéChat response" });
+      } catch {
+        // User cancelled
+      }
+    } else {
+      navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }
+  };
+
   if (message.role === "user") {
     return (
       <div className="flex justify-end">
@@ -454,8 +516,10 @@ function MessageBubble({ message }: { message: Message }) {
     );
   }
 
+  const showActions = !message.isStreaming && message.content && !message.eventLabel;
+
   return (
-    <div className="flex flex-col gap-3 max-w-[85%]">
+    <div className="group flex flex-col gap-3 max-w-[85%]">
       {message.agentName && (
         <p className="text-xs opacity-60 px-1">{message.agentName}</p>
       )}
@@ -471,7 +535,7 @@ function MessageBubble({ message }: { message: Message }) {
       )}
 
       {message.content && (
-        <div className="prose prose-sm max-w-none" style={{ color: "var(--typography-primary)" }}>
+        <div className="chat-md" style={{ color: "var(--typography-primary)" }}>
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {message.content}
           </ReactMarkdown>
@@ -490,6 +554,47 @@ function MessageBubble({ message }: { message: Message }) {
           ))}
         </div>
       )}
+
+      {/* Action buttons */}
+      {showActions && (
+        <div className={`flex items-center gap-1 transition-opacity ${isLast ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
+          <ActionBtn
+            onClick={handleCopy}
+            label={copied ? "Copied" : "Copy"}
+            icon={copied ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" /></svg>
+            )}
+          />
+          {isLast && (
+            <ActionBtn
+              onClick={onRegenerate}
+              label="Regenerate"
+              icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 019-9 9.75 9.75 0 016.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 01-9 9 9.75 9.75 0 01-6.74-2.74L3 16" /><path d="M3 21v-5h5" /></svg>}
+            />
+          )}
+          <ActionBtn
+            onClick={handleShare}
+            label="Share"
+            icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16 6 12 2 8 6" /><line x1="12" y1="2" x2="12" y2="15" /></svg>}
+          />
+        </div>
+      )}
     </div>
+  );
+}
+
+function ActionBtn({ onClick, label, icon }: { onClick: () => void; label: string; icon: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center gap-1.5 px-2 py-1 text-xs rounded-lg hover:bg-black/5 transition"
+      style={{ color: "var(--typography-secondary)" }}
+      title={label}
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
   );
 }
