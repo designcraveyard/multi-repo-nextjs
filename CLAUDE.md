@@ -159,30 +159,31 @@ const { data: { user } } = await supabase.auth.getUser();
 ## Screens / Routes
 
 - `/login` — Login screen (`app/(auth)/login/page.tsx`)
-- `/` — Home / Component showcase (`app/(authenticated)/page.tsx`)
-- `/assistant` — AI Assistant ChatKit page (`app/(authenticated)/assistant/page.tsx`)
-- `/assistant-embed` — Embed-only ChatKit page for WebView (`app/assistant-embed/page.tsx`) — excluded from auth middleware
-- `/api/chatkit/session` — Creates ChatKit sessions via `openai.beta.chatkit.sessions.create()`
+- `/` — Home: neutral template landing linking to the demos (`app/(authenticated)/page.tsx`)
+- `/chat` — Agent chat demo (Pokémon) — OpenAI Agents SDK graph + SSE (`app/(authenticated)/chat/page.tsx` → `app/components/Chat/ChatPage`)
+- `/components-showcase` — Design-system component gallery
+- `/editor-demo` — MarkdownEditor demo
+- `/ai-demo` — AI Transform & Transcribe demo (backed by `/api/ai/*`)
+- `/admin/*` — Agent admin: agents, tools, handoffs, versions, test (role-gated via `admin_roles`)
+- `/api/chat*` — SSE agent endpoint + session CRUD (`lib/agents/` graph)
+- `/api/ai/*` — Transform (SSE) and Transcribe endpoints
+- `/api/admin/*` — Admin CRUD (service-role, gated by `admin_roles`)
 
 _Add new routes here as features are added via `/cross-platform-feature` or `/new-screen`._
 
 ---
 
-## ChatKit (AI Assistant)
+## AI Architecture (OpenAI Agents SDK)
 
-**Dependency:** `@openai/chatkit-react` + `openai` SDK
+The canonical AI stack is the **self-hosted agent graph** (ChatKit was removed 2026-06-10):
 
-**How it works:**
-1. API route (`app/api/chatkit/session/route.ts`) creates a session with OpenAI using `openai.beta.chatkit.sessions.create()` with a workflow ID
-2. Client pages use `useChatKit({ api: { getClientSecret } })` hook to fetch the session secret
-3. `<ChatKit control={chatkit.control} />` renders the chat UI
+1. `lib/agents/` — agent definitions, handoff graph wiring, tools (OpenAI Agents SDK)
+2. `app/api/chat/route.ts` — SSE streaming endpoint; dual cookie + Bearer-JWT auth (`lib/auth/api-auth.ts`) so iOS/Android clients can call it with a Supabase JWT
+3. `app/components/Chat/` — ChatPage UI with inline cards, debug panel, voice input
+4. `/admin` — DB-backed agent/tool/handoff configuration (`agent_configs` etc.)
 
-**Two routes serve the same ChatKit component:**
-- `/assistant` — inside `(authenticated)` layout, cookie auth, full nav chrome
-- `/assistant-embed` — bare layout, no auth chrome, for iOS/Android WebView loading
+The Pokémon domain is **demo content** — replace `lib/agents/*` specialists and the
+card components with your own domain when building a real app.
 
-**Middleware exclusions:** `/assistant-embed` and `/api/chatkit` are excluded from auth redirect.
-
-**CDN script required:** `https://cdn.platform.openai.com/deployments/chatkit/chatkit.js` — loaded via `next/script` in the layout/page.
-
-**Config:** Workflow ID and settings in `chatkit.config.json` at workspace root.
+Transform/Transcribe (`/api/ai/*` on web; `supabase/functions/ai-transform|ai-transcribe`
+edge functions for mobile) are the lightweight request/response AI services.

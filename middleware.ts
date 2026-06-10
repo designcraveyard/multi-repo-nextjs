@@ -35,8 +35,6 @@ export async function middleware(request: NextRequest) {
     !user &&
     !request.nextUrl.pathname.startsWith("/login") &&
     !request.nextUrl.pathname.startsWith("/auth") &&
-    !request.nextUrl.pathname.startsWith("/assistant-embed") &&
-    !request.nextUrl.pathname.startsWith("/api/chatkit") &&
     !request.nextUrl.pathname.startsWith("/api/chat") &&
     !request.nextUrl.pathname.startsWith("/api/admin") &&
     !request.nextUrl.pathname.startsWith("/api/ai")

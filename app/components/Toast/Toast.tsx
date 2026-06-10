@@ -27,7 +27,7 @@
  */
 
 import { useEffect, useCallback, ReactNode } from "react";
-import { Icon } from "@/app/components/icons";
+import { Icon, type IconProps } from "@/app/components/icons";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 //
@@ -58,7 +58,7 @@ export interface ToastProps {
 
 type ToastVariant = "default" | "success" | "warning" | "error" | "info";
 
-const variantStyles: Record<ToastVariant, { iconName: string; iconColor: string }> = {
+const variantStyles: Record<ToastVariant, { iconName: IconProps["name"]; iconColor: string }> = {
   default: { iconName: "Info",             iconColor: "var(--icons-inverse-primary)" },
   info:    { iconName: "Info",             iconColor: "var(--icons-inverse-primary)" },
   success: { iconName: "CheckCircle",      iconColor: "var(--icons-success)" },
@@ -117,7 +117,7 @@ export function Toast({
     >
       {/* Status icon — variant-specific color (matches iOS) */}
       <span className="flex-shrink-0 flex items-center justify-center" aria-hidden="true">
-        <Icon name={v.iconName as any} size="sm" color={v.iconColor} weight="fill" />
+        <Icon name={v.iconName} size="sm" color={v.iconColor} weight="fill" />
       </span>
 
       {/* Content */}
