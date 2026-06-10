@@ -23,6 +23,11 @@ const DEMOS: { href: string; title: string; subtitle: string }[] = [
     subtitle: "Rich text editing with the cross-platform MarkdownEditor component",
   },
   {
+    href: "/input-demo",
+    title: "Inputs & Form Elements",
+    subtitle: "Label, InputField states and slots, pickers, sliders, and sheets",
+  },
+  {
     href: "/ai-demo",
     title: "AI Transform & Transcribe",
     subtitle: "Edge-function backed text transformation and voice transcription",

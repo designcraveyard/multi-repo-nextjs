@@ -160,9 +160,10 @@ const { data: { user } } = await supabase.auth.getUser();
 
 - `/login` — Login screen (`app/(auth)/login/page.tsx`)
 - `/` — Home: neutral template landing linking to the demos (`app/(authenticated)/page.tsx`)
-- `/chat` — Agent chat demo (Pokémon) — OpenAI Agents SDK graph + SSE (`app/(authenticated)/chat/page.tsx` → `app/components/Chat/ChatPage`)
+- `/chat` — Agent chat demo (Pokémon) — full-featured SSE chat UI with inline cards, debug panel, session history (`app/(authenticated)/chat/page.tsx`; the modular `app/components/Chat/ChatPage` is an alternative client kept in the codebase)
 - `/components-showcase` — Design-system component gallery
 - `/editor-demo` — MarkdownEditor demo
+- `/input-demo` — Label + InputField kitchen sink (all states/slots) + native pickers, sliders, sheets
 - `/ai-demo` — AI Transform & Transcribe demo (backed by `/api/ai/*`)
 - `/admin/*` — Agent admin: agents, tools, handoffs, versions, test (role-gated via `admin_roles`)
 - `/api/chat*` — SSE agent endpoint + session CRUD (`lib/agents/` graph)
