@@ -39,15 +39,25 @@ export async function signUpWithEmail(formData: FormData) {
 }
 
 /**
- * Resolve the OAuth callback URL. Prefers `NEXT_PUBLIC_SITE_URL` (set on Vercel
- * to the production domain) so the Supabase hosted Site URL fallback is never
- * used. Falls back to the request's `Origin` header for local dev.
+ * Resolve the OAuth callback URL from the current request/deployment. Vercel
+ * server actions do not always include an Origin header, so prefer explicit
+ * production hosts before falling back to localhost for local dev.
  */
 async function resolveCallbackURL(): Promise<string> {
-  const envSite = process.env.NEXT_PUBLIC_SITE_URL;
-  if (envSite) return `${envSite.replace(/\/$/, "")}/auth/callback`;
-  const origin = (await headers()).get("origin") ?? "http://localhost:3000";
-  return `${origin}/auth/callback`;
+  const headerStore = await headers();
+  const envSite =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+    process.env.VERCEL_URL;
+  const forwardedHost = headerStore.get("x-forwarded-host") || headerStore.get("host");
+  const forwardedProto = headerStore.get("x-forwarded-proto") || "https";
+  const origin =
+    headerStore.get("origin") ||
+    (forwardedHost ? `${forwardedProto}://${forwardedHost}` : undefined) ||
+    (envSite ? `https://${envSite.replace(/^https?:\/\//, "")}` : undefined) ||
+    "http://localhost:3000";
+
+  return `${origin.replace(/\/$/, "")}/auth/callback`;
 }
 
 export async function signInWithGoogle() {
@@ -65,7 +75,7 @@ export async function signInWithGoogle() {
   }
 
   if (data.url) {
-    redirect(data.url);
+    return { url: data.url };
   }
 }
 
@@ -84,7 +94,7 @@ export async function signInWithApple() {
   }
 
   if (data.url) {
-    redirect(data.url);
+    return { url: data.url };
   }
 }
 

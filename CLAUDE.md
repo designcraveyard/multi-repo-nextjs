@@ -160,31 +160,18 @@ const { data: { user } } = await supabase.auth.getUser();
 
 - `/login` — Login screen (`app/(auth)/login/page.tsx`)
 - `/` — Home: neutral template landing linking to the demos (`app/(authenticated)/page.tsx`)
-- `/chat` — Agent chat demo (Pokémon) — full-featured SSE chat UI with inline cards, debug panel, session history (`app/(authenticated)/chat/page.tsx`; the modular `app/components/Chat/ChatPage` is an alternative client kept in the codebase)
 - `/components-showcase` — Design-system component gallery
 - `/editor-demo` — MarkdownEditor demo
 - `/input-demo` — Label + InputField kitchen sink (all states/slots) + native pickers, sliders, sheets
 - `/ai-demo` — AI Transform & Transcribe demo (backed by `/api/ai/*`)
-- `/admin/*` — Agent admin: agents, tools, handoffs, versions, test (role-gated via `admin_roles`)
-- `/api/chat*` — SSE agent endpoint + session CRUD (`lib/agents/` graph)
 - `/api/ai/*` — Transform (SSE) and Transcribe endpoints
-- `/api/admin/*` — Admin CRUD (service-role, gated by `admin_roles`)
 
 _Add new routes here as features are added via `/cross-platform-feature` or `/new-screen`._
 
 ---
 
-## AI Architecture (OpenAI Agents SDK)
-
-The canonical AI stack is the **self-hosted agent graph** (ChatKit was removed 2026-06-10):
-
-1. `lib/agents/` — agent definitions, handoff graph wiring, tools (OpenAI Agents SDK)
-2. `app/api/chat/route.ts` — SSE streaming endpoint; dual cookie + Bearer-JWT auth (`lib/auth/api-auth.ts`) so iOS/Android clients can call it with a Supabase JWT
-3. `app/components/Chat/` — ChatPage UI with inline cards, debug panel, voice input
-4. `/admin` — DB-backed agent/tool/handoff configuration (`agent_configs` etc.)
-
-The Pokémon domain is **demo content** — replace `lib/agents/*` specialists and the
-card components with your own domain when building a real app.
+## AI Transform & Transcribe
 
 Transform/Transcribe (`/api/ai/*` on web; `supabase/functions/ai-transform|ai-transcribe`
 edge functions for mobile) are the lightweight request/response AI services.
+The OpenAI Agents SDK chat/admin/RAG stack has been removed.

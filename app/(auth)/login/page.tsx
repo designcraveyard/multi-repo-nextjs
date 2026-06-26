@@ -6,14 +6,13 @@
 // responsive: N/A — single-column form works at all sizes, centered on desktop
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/app/components/Button";
 import { InputField } from "@/app/components/InputField";
 import { Icon } from "@/app/components/icons";
 import {
   signInWithEmail,
   signUpWithEmail,
-  signInWithGoogle,
-  signInWithApple,
 } from "@/lib/auth/actions";
 
 export default function LoginPage() {
@@ -22,6 +21,20 @@ export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const oauthLinkClass = [
+    "inline-flex items-center justify-center rounded-full",
+    "select-none whitespace-nowrap",
+    "h-12 px-5 py-3 gap-3",
+    "bg-[var(--surfaces-brand-interactive-low-contrast)] text-[var(--typography-brand)]",
+    "hover:bg-[var(--surfaces-brand-interactive-low-contrast-hover)]",
+    "active:bg-[var(--surfaces-brand-interactive-low-contrast-pressed)]",
+    "cursor-pointer transition-colors duration-150 ease-out",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+    "focus-visible:ring-[var(--border-brand)]",
+  ].join(" ");
+  const oauthIconClass = "w-6 h-6 flex-shrink-0 flex items-center justify-center";
+  const oauthLabelClass =
+    "text-[length:var(--typography-cta-lg-size)] leading-[var(--typography-cta-lg-leading)] font-[var(--typography-cta-lg-weight)]";
 
   async function handleEmailAuth() {
     setError(null);
@@ -92,29 +105,25 @@ export default function LoginPage() {
               onClick={handleEmailAuth}
             />
 
-            <Button
-              label="Login via Apple"
-              variant="secondary"
-              size="lg"
-              leadingIcon={<Icon name="AppleLogo" size="md" />}
-              trailingIcon={<Icon name="ArrowRight" size="md" />}
-              onClick={async () => {
-                const result = await signInWithApple();
-                if (result?.error) setError(result.error);
-              }}
-            />
+            <Link href="/auth/oauth/apple" className={oauthLinkClass}>
+              <span className={oauthIconClass} aria-hidden="true">
+                <Icon name="AppleLogo" size="md" />
+              </span>
+              <span className={oauthLabelClass}>Login via Apple</span>
+              <span className={oauthIconClass} aria-hidden="true">
+                <Icon name="ArrowRight" size="md" />
+              </span>
+            </Link>
 
-            <Button
-              label="Login via Google"
-              variant="secondary"
-              size="lg"
-              leadingIcon={<Icon name="GoogleLogo" size="md" />}
-              trailingIcon={<Icon name="ArrowRight" size="md" />}
-              onClick={async () => {
-                const result = await signInWithGoogle();
-                if (result?.error) setError(result.error);
-              }}
-            />
+            <Link href="/auth/oauth/google" className={oauthLinkClass}>
+              <span className={oauthIconClass} aria-hidden="true">
+                <Icon name="GoogleLogo" size="md" />
+              </span>
+              <span className={oauthLabelClass}>Login via Google</span>
+              <span className={oauthIconClass} aria-hidden="true">
+                <Icon name="ArrowRight" size="md" />
+              </span>
+            </Link>
           </div>
 
           {/* --- Toggle sign up / sign in --- */}

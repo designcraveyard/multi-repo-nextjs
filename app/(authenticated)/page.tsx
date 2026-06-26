@@ -8,11 +8,6 @@ import { ListItem } from "@/app/components/patterns/ListItem";
 
 const DEMOS: { href: string; title: string; subtitle: string }[] = [
   {
-    href: "/chat",
-    title: "Agent Chat — Pokémon demo",
-    subtitle: "Multi-agent OpenAI Agents SDK graph with SSE streaming and inline cards",
-  },
-  {
     href: "/components-showcase",
     title: "Component Showcase",
     subtitle: "The design-system components available on web, iOS, and Android",
@@ -31,11 +26,6 @@ const DEMOS: { href: string; title: string; subtitle: string }[] = [
     href: "/ai-demo",
     title: "AI Transform & Transcribe",
     subtitle: "Edge-function backed text transformation and voice transcription",
-  },
-  {
-    href: "/admin",
-    title: "Agent Admin",
-    subtitle: "Configure agents, tools, handoffs, and versions (admin role required)",
   },
 ];
 
