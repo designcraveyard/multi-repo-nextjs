@@ -9,7 +9,7 @@
  * Usage:
  *   import { Icon } from "@/app/components/icons/Icon";
  *   <Icon name="House" />
- *   <Icon name="Heart" weight="fill" size="md" color="var(--icon-error)" />
+ *   <Icon name="Heart" weight="fill" size="md" color="var(--icons-error)" />
  *   <Icon name="ArrowRight" size={20} />           // raw px also accepted
  *
  * Size tokens (match Figma Dimensions grid):

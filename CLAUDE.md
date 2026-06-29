@@ -36,7 +36,7 @@ CSS custom properties in `globals.css` are the **web source of truth** for the s
 Run `/design-token-sync` after any token change to push updates to `DesignTokens.swift` on iOS.
 
 Token categories in `globals.css`:
-- **Colors** — `--surface-*`, `--text-*`, `--icon-*`, `--border-*`, `--overlay-*`
+- **Colors** — `--surfaces-*`, `--typography-*`, `--icons-*`, `--border-*`, `--overlay-*`
 - **Radius** — `--radius-xs` … `--radius-full` (Mobile default + `@media (min-width: 768px)` Desktop override)
 - **Spacing** — `--space-1` (4px) … `--space-24` (96px), wired into Tailwind `p-*`/`gap-*`/`m-*` utilities
 - **Typography** — `--typography-{role}-{size}-{size|leading|weight}` for all 28 type styles
@@ -55,7 +55,7 @@ Always use `var(--token-name)` or Tailwind utilities in components — never har
 - **Always** import from `@/app/components/icons` — never from `@phosphor-icons/react` directly
 - Use the typed `<Icon />` wrapper for all icon usage
 - Default weight: **regular** · Default size: **md** (20px)
-- Use `var(--icon-*)` CSS tokens for color, not hardcoded hex
+- Use `var(--icons-*)` CSS tokens for color, not hardcoded hex
 
 ### Usage
 
@@ -66,7 +66,7 @@ import { Icon } from "@/app/components/icons";
 <Icon name="House" />
 
 // With tokens
-<Icon name="Heart" weight="fill" size="lg" color="var(--icon-error)" />
+<Icon name="Heart" weight="fill" size="lg" color="var(--icons-error)" />
 
 // Accessible (adds aria-label)
 <Icon name="Bell" label="Notifications" />

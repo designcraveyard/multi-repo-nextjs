@@ -7,7 +7,7 @@
  *
  * For IconContext (global defaults in a subtree):
  *   import { IconContext } from "@phosphor-icons/react";
- *   <IconContext.Provider value={{ weight: "bold", color: "var(--icon-primary)" }}>
+ *   <IconContext.Provider value={{ weight: "bold", color: "var(--icons-primary)" }}>
  *     ...
  *   </IconContext.Provider>
  */
