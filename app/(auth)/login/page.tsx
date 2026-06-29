@@ -56,6 +56,20 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[var(--surfaces-base-primary)] flex flex-col">
+      <nav className="absolute left-6 top-6 z-10 flex flex-wrap items-center gap-[var(--space-2)]">
+        <Link
+          href="/components-showcase"
+          className="rounded-full bg-[var(--surfaces-base-primary)] px-[var(--space-4)] py-[var(--space-2)] text-[length:var(--typography-cta-md-size)] font-[var(--typography-cta-md-weight)] text-[var(--typography-brand)] shadow-sm"
+        >
+          Components
+        </Link>
+        <Link
+          href="/login"
+          className="rounded-full bg-[var(--surfaces-brand-interactive)] px-[var(--space-4)] py-[var(--space-2)] text-[length:var(--typography-cta-md-size)] font-[var(--typography-cta-md-weight)] text-[var(--typography-on-brand-primary)] shadow-sm"
+        >
+          Login
+        </Link>
+      </nav>
       {/* --- Hero area --- */}
       <div className="h-[45vh] min-h-[200px] bg-[var(--surfaces-success-subtle)]" />
 

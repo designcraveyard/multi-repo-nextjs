@@ -211,7 +211,7 @@ export function ToastContainer({
       aria-live="polite"
       aria-label="Notifications"
       className={[
-        "fixed z-50 flex flex-col gap-2 pointer-events-none",
+        "fixed z-[2147483647] flex flex-col gap-2 pointer-events-none",
         positionClasses[position],
       ].join(" ")}
     >

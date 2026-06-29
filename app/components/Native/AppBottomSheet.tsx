@@ -16,7 +16,7 @@ import {
 const styling = {
   colors: {
     // Sheet background surface
-    background: "var(--surfaces-base-primary)",
+    background: "var(--surfaces-elevated-overlay)",
     // Optional title text
     titleText:  "var(--typography-primary)",
     // Optional description text
@@ -84,6 +84,12 @@ export function AppBottomSheet({
   snapPoints,
   className = "",
 }: AppBottomSheetProps) {
+  const contentClassName = [
+    "border-none",
+    snapPoints && snapPoints.length > 0 ? "h-[100dvh] max-h-none" : "",
+    className,
+  ].join(" ");
+
   return (
     <Drawer
       open={isPresented}
@@ -97,11 +103,12 @@ export function AppBottomSheet({
         second one manually to avoid duplicate indicators.
       */}
       <DrawerContent
-        className={className}
+        className={contentClassName}
         style={{
           backgroundColor:      styling.colors.background,
           borderTopLeftRadius:  styling.layout.cornerRadius,
           borderTopRightRadius: styling.layout.cornerRadius,
+          border:               "none",
           paddingLeft:          styling.layout.paddingX,
           paddingRight:         styling.layout.paddingX,
           paddingTop:           styling.layout.paddingTop,

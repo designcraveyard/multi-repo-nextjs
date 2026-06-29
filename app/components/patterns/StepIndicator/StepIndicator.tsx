@@ -43,7 +43,7 @@ export function StepIndicator({ completed = false }: StepIndicatorProps) {
           name="Check"
           weight="bold"
           size={8}
-          color="var(--icons-white)"
+          color="var(--icons-inverse-primary)"
           label=""
         />
       </div>

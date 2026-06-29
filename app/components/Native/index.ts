@@ -12,6 +12,8 @@ export { AppAlertPopup }     from "./AppAlertPopup";
 export { AppTooltip }        from "./AppTooltip";
 export { AppRangeSlider }    from "./AppRangeSlider";
 export { AppColorPicker }    from "./AppColorPicker";
+export { AppBottomNavBar }   from "./AppBottomNavBar";
+export { AppPageHeader }     from "./AppPageHeader";
 
 // Re-export prop types for consumers that need them
 export type { AppNativePickerProps, PickerOption }    from "./AppNativePicker";
@@ -25,3 +27,5 @@ export type { AppAlertPopupProps, AlertButton, AlertButtonRole } from "./AppAler
 export type { AppTooltipProps }                       from "./AppTooltip";
 export type { AppRangeSliderProps }                   from "./AppRangeSlider";
 export type { AppColorPickerProps }                   from "./AppColorPicker";
+export type { AppBottomNavBarProps, BottomNavTab }     from "./AppBottomNavBar";
+export type { AppPageHeaderProps, HeaderAction }       from "./AppPageHeader";

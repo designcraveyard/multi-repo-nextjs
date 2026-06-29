@@ -128,6 +128,7 @@ export function DateItem({
 
   const baseCell = [
     "flex flex-col items-center justify-center",
+    "min-h-[64px] min-w-[52px]",
     "p-[var(--space-2)] rounded-[12px]",
     "cursor-pointer select-none",
     "transition-all duration-150",
@@ -136,8 +137,9 @@ export function DateItem({
   ].join(" ");
 
   const activeCell = [
-    "bg-[var(--surfaces-base-primary)]",
-    "shadow-[0px_2px_8px_0px_var(--surfaces-base-high-contrast)]",
+    "bg-[var(--surfaces-raised-selected)]",
+    "ring-1 ring-[var(--border-muted)]",
+    "shadow-[0px_2px_8px_0px_rgb(0_0_0_/_0.10)]",
   ].join(" ");
 
   const inactiveCell = "hover:bg-[var(--surfaces-base-low-contrast-hover)]";

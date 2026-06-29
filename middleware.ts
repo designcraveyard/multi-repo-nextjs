@@ -36,17 +36,16 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  if (!user && pathname === "/") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/components-showcase";
+    return NextResponse.redirect(url);
+  }
+
   // Unauthenticated users can only access public auth, API, and design-system reference routes.
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
-    return NextResponse.redirect(url);
-  }
-
-  // Authenticated users on /login get redirected to home
-  if (user && pathname.startsWith("/login")) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/";
     return NextResponse.redirect(url);
   }
 

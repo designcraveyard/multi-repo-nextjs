@@ -153,6 +153,8 @@
   --surfaces-base-high-contrast:            var(--color-neutral-200);
   --surfaces-base-high-contrast-hover:      var(--color-neutral-300);
   --surfaces-base-high-contrast-pressed:    var(--color-neutral-400);
+  --surfaces-elevated-overlay:              var(--surfaces-base-primary);
+  --surfaces-raised-selected:               var(--surfaces-base-primary);
 
   /* ── Surfaces/Inverse ─────────────────────────────────────────────────── */
   --surfaces-inverse-primary:               var(--color-base-black);
@@ -333,7 +335,7 @@
   --space-24: 96px;
 
   /* ── Typography — Figma "🎨 Tokens & Styles" page (node 18:577) ─────────── */
-  --font-sans: var(--font-geist-sans), "Inter", system-ui, sans-serif;
+  --font-sans: var(--font-inter, "Inter"), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), "JetBrains Mono", monospace;
 
   /* Display */
@@ -410,6 +412,8 @@
     --surfaces-base-high-contrast:            var(--color-neutral-800);
     --surfaces-base-high-contrast-hover:      var(--color-neutral-600);
     --surfaces-base-high-contrast-pressed:    var(--color-neutral-500);
+    --surfaces-elevated-overlay:              var(--surfaces-base-high-contrast);
+    --surfaces-raised-selected:               var(--color-neutral-700);
 
     /* Surfaces/Inverse */
     --surfaces-inverse-primary:               var(--color-base-white);
@@ -510,7 +514,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter, "Inter");
   --font-mono: var(--font-geist-mono);
 
   /* Radius → Tailwind rounded-* utilities */
@@ -592,7 +596,7 @@
 body {
   background: var(--surfaces-base-primary);
   color: var(--typography-primary);
-  font-family: var(--font-geist-sans, Arial, Helvetica, sans-serif);
+  font-family: var(--font-sans);
 }
 
 .dark {
@@ -635,16 +639,17 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
   }
 }
 
-/* ─── Segment Control thumb — light: BasePrimary, dark: BaseHighContrast ──── */
+/* ─── Segment Control thumb — light: BasePrimary, dark: BaseHighContrastHover */
 .segment-thumb {
   background: var(--surfaces-base-primary);
 }
 @media (prefers-color-scheme: dark) {
   .segment-thumb {
-    background: var(--surfaces-base-high-contrast);
+    background: var(--surfaces-raised-selected);
   }
 }
 
@@ -679,4 +684,3 @@ body {
 [data-slot="calendar"] button[data-selected-single="true"]:hover {
   background: var(--surfaces-brand-interactive) !important;
 }
-

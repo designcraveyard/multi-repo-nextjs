@@ -45,7 +45,7 @@ function StepTrack({ completed, isLast }: { completed: boolean; isLast: boolean 
       {!isLast && (
         <div
           aria-hidden="true"
-          className="flex-1 w-0.5 min-h-0 rounded-full bg-[var(--surfaces-base-high-contrast)]"
+          className="flex-1 w-0.5 min-h-0 mb-[calc(var(--space-2)*-1)] rounded-full bg-[var(--border-default)]"
         />
       )}
     </div>

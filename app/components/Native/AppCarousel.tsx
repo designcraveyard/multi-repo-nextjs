@@ -114,9 +114,9 @@ export function AppCarousel({
       : { align: "center" as const, loop: false };
 
   return (
-    <div className={`flex flex-col ${className}`} style={{ gap: styling.layout.dotsSpacing }}>
+    <div className={`min-w-0 overflow-x-clip flex flex-col ${className}`} style={{ gap: styling.layout.dotsSpacing }}>
       {/* Carousel with navigation arrows */}
-      <div className="relative">
+      <div className="relative min-w-0 overflow-hidden">
         <Carousel opts={opts} setApi={onSetApi}>
           <CarouselContent
             style={{

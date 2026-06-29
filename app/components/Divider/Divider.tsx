@@ -46,7 +46,7 @@ export function Divider({
   const isSection = type === "section";
   const isVertical = orientation === "vertical";
 
-  // Vertical divider -- simple self-stretching line; section uses border-default, row uses border-muted
+  // Vertical dividers need a little more optical weight than row hairlines.
   if (isVertical) {
     return (
       <span
@@ -54,7 +54,7 @@ export function Divider({
         aria-orientation="vertical"
         className={[
           "inline-block self-stretch",
-          isSection ? "w-px bg-[var(--border-default)]" : "w-px bg-[var(--border-muted)]",
+          "w-[2px] bg-[var(--border-default)]",
           className,
         ].join(" ")}
       />

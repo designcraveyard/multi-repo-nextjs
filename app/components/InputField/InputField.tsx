@@ -64,6 +64,8 @@ export interface InputFieldProps
   leadingIcon?: ReactNode;
   /** Simple trailing icon */
   trailingIcon?: ReactNode;
+  /** Chrome style. "bare" renders text with only a bottom divider. */
+  variant?: "default" | "bare";
   /** 1px separator between leading content (label or picker) and the text area */
   leadingSeparator?: boolean;
   /** 1px separator between the text area and trailing content (label or picker) */
@@ -142,8 +144,8 @@ const LABEL_STYLE =
 const HINT_STYLE =
   "text-[length:var(--typography-caption-md-size)] leading-[var(--typography-caption-md-leading)] font-[var(--typography-caption-md-weight)]";
 
-// Separator — 1px divider, surfaces/basehighcontrast
-const SEPARATOR = "self-stretch w-px shrink-0 bg-[var(--surfaces-base-high-contrast)]";
+// Separator — 1px structural divider, Border/Default
+const SEPARATOR = "self-stretch w-px shrink-0 bg-[var(--border-default)]";
 
 // ─── InputField (single line) ─────────────────────────────────────────────────
 
@@ -164,6 +166,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       trailingPicker,
       leadingIcon,
       trailingIcon,
+      variant = "default",
       leadingSeparator = false,
       trailingSeparator = false,
       disabled,
@@ -180,6 +183,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
     const generatedId = useId();
     const id = propId ?? generatedId;
     const spec = STATE_SPEC[state];
+    const isBare = variant === "bare";
 
     // ── Focus + fill tracking for default-state icon color ──
     const [isFocused, setIsFocused] = useState(false);
@@ -232,8 +236,16 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
 
         <div
           className={[
-            WRAPPER_BASE,
-            spec.border,
+            isBare
+              ? [
+                  "flex items-stretch gap-2 w-full px-0 py-2 rounded-none bg-transparent",
+                  "border-0 border-b transition-colors duration-150",
+                  isFocused
+                    ? "border-[var(--border-active)]"
+                    : "border-[var(--border-default)]",
+                ].join(" ")
+              : WRAPPER_BASE,
+            isBare ? "" : spec.border,
             disabled ? "opacity-50 cursor-not-allowed" : "",
           ].join(" ")}
         >

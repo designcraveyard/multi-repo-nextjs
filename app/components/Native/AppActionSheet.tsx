@@ -15,7 +15,7 @@ import {
 const styling = {
   colors: {
     // Sheet background panel
-    background:      "var(--surfaces-base-primary)",
+    background:      "var(--surfaces-elevated-overlay)",
     // Title text at the top of the sheet
     titleText:       "var(--typography-secondary)",
     // Optional message text below the title
@@ -26,7 +26,7 @@ const styling = {
     destructiveText: "var(--typography-error)",
     // Cancel button (separated at bottom)
     cancelText:      "var(--typography-brand)",
-    cancelBg:        "var(--surfaces-base-primary)",
+    cancelBg:        "var(--surfaces-elevated-overlay)",
     // Thin divider between rows — border-default per design rules
     divider:         "var(--border-default)",
     // Action row hover background

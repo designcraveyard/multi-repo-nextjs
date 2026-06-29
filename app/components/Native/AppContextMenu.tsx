@@ -23,7 +23,7 @@ import {
 const styling = {
   colors: {
     // Menu panel background
-    background:      "var(--surfaces-base-primary)",
+    background:      "var(--surfaces-elevated-overlay)",
     // Standard menu item text
     itemText:        "var(--typography-primary)",
     // Destructive item text — red
@@ -117,6 +117,7 @@ export function AppContextMenu({
 }: AppContextMenuProps) {
   const contentStyle: React.CSSProperties = {
     backgroundColor: styling.colors.background,
+    border:          "none",
     borderRadius:    styling.layout.radius,
     minWidth:        styling.layout.minWidth,
     padding:         0,
@@ -130,7 +131,7 @@ export function AppContextMenu({
         <ContextMenuTrigger asChild className={className}>
           {children}
         </ContextMenuTrigger>
-        <ContextMenuContent style={contentStyle}>
+        <ContextMenuContent className="border-none" style={contentStyle}>
           {items.map((item, i) => (
             // Fragment with key so React can reconcile the conditional separator + item pair
             <Fragment key={i}>
@@ -162,7 +163,7 @@ export function AppContextMenu({
       <DropdownMenuTrigger asChild className={className}>
         {children}
       </DropdownMenuTrigger>
-      <DropdownMenuContent style={contentStyle}>
+      <DropdownMenuContent className="border-none" style={contentStyle}>
         {items.map((item, i) => (
           <Fragment key={i}>
             {item.separatorAbove && (

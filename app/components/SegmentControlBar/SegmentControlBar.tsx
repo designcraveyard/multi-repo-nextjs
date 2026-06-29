@@ -25,7 +25,7 @@
  * Figma source: bubbles-kit node 81:637 (SegmentControlBar component set)
  */
 
-import { useState, useRef, useLayoutEffect, useEffect } from "react";
+import { useState, useRef, useLayoutEffect, useEffect, useCallback } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 //
@@ -126,7 +126,7 @@ export function SegmentControlBar({
   };
 
   // Sliding thumb for SegmentControl type
-  const updateThumb = () => {
+  const updateThumb = useCallback(() => {
     if (type !== "segmentControl") return;
     const activeId = Array.isArray(activeValue) ? activeValue[0] : activeValue;
     const el = tabRefs.current.get(activeId);
@@ -138,14 +138,14 @@ export function SegmentControlBar({
       left: elRect.left - containerRect.left,
       width: elRect.width,
     });
-  };
+  }, [activeValue, type]);
 
-  useLayoutEffect(() => { updateThumb(); }, [activeValue, type]);
+  useLayoutEffect(() => { updateThumb(); }, [activeValue, type, updateThumb]);
   useEffect(() => {
     const observer = new ResizeObserver(updateThumb);
     if (containerRef.current) observer.observe(containerRef.current);
     return () => observer.disconnect();
-  }, []);
+  }, [updateThumb]);
 
   // --- Render
   // SegmentControl renders a pill container with a sliding thumb;

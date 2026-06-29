@@ -22,7 +22,7 @@
  * Figma source: bubbles-kit node 76:660 (_Tabs) + node 78:284 (Tabs bar)
  */
 
-import { useState, useRef, useEffect, useLayoutEffect, ReactNode, KeyboardEvent } from "react";
+import { useState, useRef, useEffect, useLayoutEffect, useCallback, ReactNode, KeyboardEvent } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 //
@@ -101,7 +101,7 @@ export function Tabs({
   // --- Helpers
   // Measures the active tab button's position relative to the container
   // and updates the indicator's left offset and width for the slide animation.
-  const updateIndicator = () => {
+  const updateIndicator = useCallback(() => {
     const el = tabRefs.current.get(activeId);
     const container = containerRef.current;
     if (!el || !container) return;
@@ -111,19 +111,19 @@ export function Tabs({
       left: elRect.left - containerRect.left,
       width: elRect.width,
     });
-  };
+  }, [activeId]);
 
   // Recalculate indicator position whenever active tab changes
   useLayoutEffect(() => {
     updateIndicator();
-  }, [activeId]);
+  }, [activeId, updateIndicator]);
 
   // Recalculate on container resize (e.g. window resize, font load)
   useEffect(() => {
     const observer = new ResizeObserver(updateIndicator);
     if (containerRef.current) observer.observe(containerRef.current);
     return () => observer.disconnect();
-  }, []);
+  }, [updateIndicator]);
 
   const handleSelect = (id: string) => {
     if (!isControlled) setInternalActive(id);
